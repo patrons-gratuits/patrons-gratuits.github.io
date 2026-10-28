@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Patron de poche plaquée, à soufflet ou à rabat, PDF à imprimer – Patrons gratuits</title><meta name="description" content="Créez votre patron de poche plaquée sur mesure : dimensions, forme du bas, marge de couture. PDF A4 gratuit à l'échelle 1:1.">
+<link rel="alternate" hreflang="en" href="en/poches.html"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="assistant.css"></head><body>
+<header><nav><b>Patrons gratuits</b><span class="lang" role="group" aria-label="Langue"><span class="cur" lang="fr">FR</span><a href="en/poches.html" hreflang="en-GB" lang="en" title="English version">EN</a></span><span class="brk"></span><a href="index.html">Accueil</a><a href="poches.html" class=on>Poches plaquées</a><a href="imprimer.html">Imprimer correctement</a><a href="options.html">Guide des options</a><a href="apropos.html">À propos</a><a id="fbn" href="#" hidden>Votre avis</a></nav></header>
+<main>
+<h1>Patron de poche plaquée</h1>
+<p class="sub">Saisissez vos mesures, téléchargez un PDF A4 à l'échelle 1:1. Tout est calculé dans votre navigateur ; rien n'est envoyé.</p>
+<div class="grid">
+<div class="card" id="form">
+<h2>Forme du bas de poche</h2>
+<div class="pieces" id="pieces"></div>
+<h2>Type de poche</h2><select id="type"></select><small id="typenote"></small>
+<h2>Dimensions</h2><div id="vars"></div>
+<h2>Rabat (facultatif)</h2>
+<div class="pieces" id="rabats"></div><div id="rvars"></div>
+<h2>Marge de couture</h2>
+<label for="v_seam">Marge de couture <small>(0 = sans marge)</small></label>
+<small id="seamnote"></small>
+<div class="row"><input type="number" id="v_seam" value="1" min="0" max="5" step="0.1"><span class="u">cm</span></div><div class="err" id="e_seam"></div>
+<div class="legend" id="seamleg"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="2"/></svg> Marge de couture (ligne continue rouge)</span></div>
+<h2>Étalonnage d'impression</h2>
+<label for="v_meas">Côté du carré de contrôle mesuré sur votre impression <small>(laisser 50 si exact)</small></label>
+<div class="row"><input type="number" id="v_meas" value="50" min="40" max="60" step="0.5"><span class="u">mm</span></div>
+<small>Si votre imprimante réduit malgré « 100 % » (ex. carré de 48 mm), saisissez la valeur mesurée : le PDF sera agrandi pour compenser.</small>
+<button id="dl">Télécharger le PDF</button>
+<div id="msg"></div>
+<p><small>Pour imprimer à la bonne échelle et contrôler le carré de 5 × 5 cm, voir la page <a href="imprimer.html">Imprimer correctement</a>.</small></p>
+</div>
+<div class="card"><svg id="prev" viewBox="0 0 10 10"></svg></div>
+</div>
+<p><small>Calcul indépendant de Seamly2D (reprogrammé à partir d'un patron paramétrique). Vérifiez toujours sur un essai en papier avant de couper le tissu.</small></p>
+</main>
+<footer>Patrons initialement conçus avec <a href="https://seamly.net">Seamly2D</a>, un logiciel gratuit de conception de patrons paramétriques · Gratuit · Faites toujours un essai en papier avant de couper le tissu. · <a href="apropos.html">À propos</a> · <a href="mentions.html">Mentions légales</a> · <a id="fb" href="#" hidden>Donner votre avis</a></footer>
+<script src="config.js"></script><script>(function(){var c=document.getElementById('contact');if(c){var u=['patrons.details','proton.me'].join(String.fromCharCode(64));c.href='mailto:'+u;c.textContent='Me contacter : '+u;}})();</script><script>(function(){var u=(window.SITE_CONFIG||{}).feedbackUrl;['fb','fbn'].forEach(function(i){var a=document.getElementById(i);if(u&&a){a.href=u;a.target='_blank';a.rel='noopener';a.hidden=false;}});})();</script>
+<script>(function(){try{var d=document,k='langbar_off';if(localStorage.getItem(k))return;var l=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();if(l.indexOf('en')!==0)return;var b=d.createElement('div');b.id='langbar';b.innerHTML='<span>This site is also available in English.</span><a href="en/poches.html" hreflang="en-GB">Switch to English</a><button type="button" aria-label="Close">×</button>';b.querySelector('button').onclick=function(){try{localStorage.setItem(k,1)}catch(e){}b.remove()};b.querySelector('a').onclick=function(){try{localStorage.setItem(k,1)}catch(e){}};d.body.insertBefore(b,d.body.firstChild)}catch(e){}})();</script><script src="data.js"></script><script src="engine.js"></script><script src="pdf.js"></script><script src="poches.js"></script></body></html>
