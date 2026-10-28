@@ -84,14 +84,14 @@
       if (pi === L.test.page) {
         const tx = L.test.x, ty = L.test.y;
         c += '0.5 w\n' + `${X(tx)} ${Y(ty + 5 * PT)} ${f(5 * PT)} ${f(5 * PT)} re S\n`;
-        const SQ = 5 * PT, tl = [['Square 5 x 5 cm', 8, 0], ['Print at 100 %', 8, 12], ['(no scaling)', 8, 22]];
+        const SQ = 5 * PT, tl = [['Square 5 x 5 cm (2 in)', 8, 0], ['Print at 100 %', 8, 12], ['(no scaling)', 8, 22]];
         const wl = []; (opts.lines || []).forEach(s => { let cur = ''; s.split(', ').forEach(part => { const t = cur ? cur + ', ' + part : part; if (cur && tw(t, 6.5) > SQ - 6) { wl.push(cur + ','); cur = part; } else cur = t; }); if (cur) wl.push(cur); });
         wl.forEach((s, i) => tl.push([s, 6.5, 40 + 9 * i]));
         const top = 12 - 5.8, bot = 12 + tl[tl.length - 1][2] + 1.5, sh = SQ / 2 - (top + bot) / 2;
         tl.forEach(t => { const w = tw(t[0], t[1]); text(t[0], tx + Math.max(2, (SQ - w) / 2), ty + 12 + t[2] + sh, t[1]); });
       }
       if (pi === 0 && !pg.items.length && L.tiled.length) { // page de contrôle seule : explication de l'assemblage
-        const msg = ['This pocket is too large for one A4 page: it is printed on several pages to be assembled.'].concat(L.tiled.map(t => '- ' + t.name + ': ' + t.cols + ' column(s) x ' + t.rows + ' row(s), i.e. ' + (t.cols * t.rows) + ' pages.'), ['Cut along the edge of the frames (crop marks at the 4 corners) and overlap the 1.5 cm overlap zones:', 'the lines of the piece must continue exactly from one page to the next. Glue or tape together.']);
+        const msg = ['This pocket is too large for one A4 page: it is printed on several pages to be assembled.'].concat(L.tiled.map(t => '- ' + t.name + ': ' + t.cols + ' column(s) x ' + t.rows + ' row(s), i.e. ' + (t.cols * t.rows) + ' pages.'), ['Cut along the edge of the frames (crop marks at the 4 corners) and overlap the 1.5 cm (0.6 in) overlap zones:', 'the lines of the piece must continue exactly from one page to the next. Glue or tape together.']);
         msg.forEach((m, i) => text(m, 0, 5 * PT + 40 + 12 * i, i ? 8 : 9));
       }
       for (const it of (pg.tile ? [pg.tile.it] : pg.items)) {

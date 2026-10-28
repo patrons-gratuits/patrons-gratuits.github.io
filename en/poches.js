@@ -31,6 +31,13 @@ const FIELDS=[
  ['Prop_rabat_angle_coupe','Flap bevelled corner size','',0.01,null,'rab'],['Prop_rabat_angle_arrondi','Flap corner radius','',0.01,null,'rab']];
 const RAB={rect:['Rabat rectangulaire','Rectangular'],cut:['Rabat chanfrein','Bevelled corners'],round:['Rabat arrondi','Rounded corners']};
 const fm=v=>String(Math.round(v*10)/10);
+const UNIT_SELECT=true;let U='cm';const K=2.54;
+const r2=x=>String(Math.round(x*100)/100);
+const toCm=x=>{if(U==='cm')return x;const c=x*K,s=Math.round(c*10)/10;return Math.abs(c-s)<0.03?s:c};/* snap : écarts < 0,3 mm dus à l'arrondi des pouces */
+const fromCm=x=>U==='cm'?x:parseFloat(r2(x/K));
+const stepOf=s=>U==='in'?(s>=1?0.5:0.05):s;
+function cmx(s){if(U==='cm'||s==null)return s;const f=n=>r2(parseFloat(n)/K);
+ return String(s).replace(/(\d+(?:\.\d+)?)(\s*(?:and|to|×|x)\s*)(\d+(?:\.\d+)?)(\s*)cm\b/g,(m,a,sep,b)=>f(a)+sep+f(b)+' in').replace(/(\d+(?:\.\d+)?)(\s*)cm\b/g,(m,a)=>f(a)+' in')}
 const def={};DATA.variables.forEach(v=>def[v.name]=parseFloat(v.formula));
 def.Prof_soufflet_lat=2;/* default value valid for the three shapes */
 const $=id=>document.getElementById(id);
@@ -51,8 +58,8 @@ function hintOf(n,ty){const s=ty!=='simple';
  case 'Prop_angle_coupe':return '(as a proportion of pocket height, from 0.02 to 0.45, up to a maximum of half the width)';
  case 'Prop_angle_arrondi':return ty==='lat'?'(as a proportion of pocket height, from 0.02 to 0.45, and radius ≤ 45 % of the width)':(ty==='cen'||ty==='dbl')?'(as a proportion of pocket height, from 0.02 to 0.45, and radius ≤ 30 % of the width)':'(as a proportion of pocket height, from 0.02 to 0.45, and radius ≤ half the width)';
  }return null}
-function fieldHtml(n,l,u,s){const h=hintOf(n,cur);return `<label for="v_${n}">${l}${h?(h[0]==='('?`<small class="hint"> ${h}</small>`:`<small class="hint"> — ${h}</small>`):''}</label><div class="row"><input type="number" id="v_${n}" value="${keep[n]!==undefined?keep[n]:def[n]}" step="${s}" min="0"><span class="u">${u}</span></div><div class="err" id="e_${n}"></div>${n==='Val_repli_poche'?`<div class="legend"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Fold line (blue dashed line)</span></div>`:''}`}
-function renderVars(){FIELDS.forEach(([n])=>{const e=$('v_'+n);if(e)keep[n]=e.value});
+function fieldHtml(n,l,u,s){const h0=hintOf(n,cur),h=h0&&cmx(h0),cm=u==='cm';return `<label for="v_${n}">${l}${h?(h[0]==='('?`<small class="hint"> ${h}</small>`:`<small class="hint"> — ${h}</small>`):''}</label><div class="row"><input type="number" id="v_${n}" value="${keep[n]!==undefined?keep[n]:(cm?r2(fromCm(def[n])):def[n])}" step="${cm?stepOf(s):s}" min="0"><span class="u${cm?' ucm':''}">${cm?U:u}</span></div>${cm?`<div class="frac" id="f_${n}"></div>`:''}<div class="err" id="e_${n}"></div>${n==='Val_repli_poche'?`<div class="legend"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Fold line (blue dashed line)</span></div>`:''}`}
+function renderVars(skip){if(!skip)FIELDS.forEach(([n])=>{const e=$('v_'+n);if(e)keep[n]=e.value});
  const ok=f=>f[5]!=='rab'&&(!f[5]||f[5].split(' ').includes(cur));
  $('vars').innerHTML=FIELDS.filter(ok).map(([n,l,u,s])=>fieldHtml(n,l,u,s)).join('');
  $('rvars').innerHTML=FIELDS.filter(f=>f[5]==='rab').map(([n,l,u,s])=>fieldHtml(n,l,u,s)).join('');
@@ -72,8 +79,8 @@ const f=document.querySelector('.pc:checked'),id=f?f.value:'rect';
 function setType(t){cur=t;renderVars();renderForms();$('typenote').textContent=t==='simple'?'':'For now: straight opening only.';draw()}
 $('type').innerHTML=Object.keys(TYPES).map(k=>`<option value="${k}">${TYPES[k].label}</option>`).join('');
 $('type').addEventListener('change',()=>setType($('type').value));
-function inputs(){const o={};FIELDS.forEach(([n])=>{const e=$('v_'+n);const v=e?parseFloat(e.value):NaN;o[n]=isNaN(v)?def[n]:v});
- const s=parseFloat($('v_seam').value);return{ov:o,seam:isNaN(s)?1:s}}
+function inputs(){const o={};FIELDS.forEach(([n,,u])=>{const e=$('v_'+n);const v=e?parseFloat(e.value):NaN;o[n]=isNaN(v)?def[n]:(u==='cm'?toCm(v):v)});
+ const s=parseFloat($('v_seam').value);return{ov:o,seam:isNaN(s)?1:toCm(s)}}
 function segX(a,b,c,d){const o=(p,q,r)=>(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);return o(a,b,c)*o(a,b,d)<-1e-9&&o(c,d,a)*o(c,d,b)<-1e-9}
 function selfX(P){const n=P.length;for(let i=0;i<n;i++)for(let j=i+2;j<n;j++){if(i===0&&j===n-1)continue;if(segX(P[i],P[(i+1)%n],P[j],P[(j+1)%n]))return true}return false}
 function cutOK(ov,seam){try{const bl=cur==='dbl'?[[1,['II.2.b','II.2.c']],[2,['III.2']]]:[[1,['II.2.a','II.2.b','II.2.c']]];return bl.every(([b,only])=>PatternEngine.computePieces(PatternEngine.computeBlock(DATA,b,ov),{seamWidth:seam,only}).every(p=>!selfX(p.poly)&&p.poly.every(q=>isFinite(q.x+q.y))&&(!p.sa||(!selfX(p.sa)&&p.sa.every(q=>isFinite(q.x+q.y))))))}catch(e){return false}}
@@ -111,7 +118,7 @@ function check(ov,seam,forms){const m={},H=ov.H_poche,L=ov.L_poche,ty=cur,s=ty!=
  if((ty==='lat'||ty==='dbl')&&ids.includes('cut')&&!Object.keys(m).length)cutFeasible(ov,seam,m);
  return m}
 function showErrors(m){document.querySelectorAll('.err').forEach(e=>{e.textContent='';});document.querySelectorAll('.row input').forEach(i=>i.classList.remove('bad'));
- Object.keys(m).forEach(k=>{const e=$('e_'+k),i=$('v_'+k);if(e)e.textContent=m[k];if(i)i.classList.add('bad')});return Object.keys(m).length>0}
+ Object.keys(m).forEach(k=>{const e=$('e_'+k),i=$('v_'+k);if(e)e.textContent=cmx(m[k]);if(i)i.classList.add('bad')});return Object.keys(m).length>0}
 function chosen(){const T=TYPES[cur];const forms=[...document.querySelectorAll('.pc:checked')].map(c=>T.forms.find(f=>f.id===c.value)).filter(Boolean);
  const list=[];forms.forEach(f=>f.pieces.forEach(([n,part,ann,blk])=>list.push({n,form:f.label.replace(/ \(.*\)$/,''),part,ann,blk:blk===undefined?T.block:blk})));
  if(forms.length)(T.common||[]).forEach(([n,part,ann])=>{if(!list.some(x=>x.n===n))list.push({n,form:'',part,ann,blk:T.block})});
@@ -129,7 +136,10 @@ function compute(){const {ov,seam}=inputs();const T=TYPES[cur];const {forms,list
   if(mx>=0)showErrors({seam:'Seam allowance too large for this pocket: '+fm(mx)+' cm at most.'});else $('msg').textContent='';
   const e=new Error(mx>=0?'':'This combination of values does not give a feasible pattern: change the dimensions.');e.fieldErrors=mx>=0;throw e}
  return{pcs,seam,ov,list,T}}
-function draw(){syncFields();let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':e.message;$('dl').disabled=true;return}
+function fracStr(x){if(!(x>=0))return '';const q=Math.round(x*16),w=Math.floor(q/16);let n=q%16,d=16;while(n&&n%2===0){n/=2;d/=2}
+ const f=n?n+'/'+d:'';const s=w&&f?w+' '+f:(f||String(w));return (Math.abs(x*16-q)<0.02?'= ':'≈ ')+s+' in'}
+function updateFracs(){document.querySelectorAll('.frac').forEach(e=>{if(U!=='in'){e.textContent='';return}const i=$('v_'+e.id.slice(2));const v=i?parseFloat(i.value):NaN;e.textContent=isNaN(v)?'':fracStr(v)})}
+function draw(){syncFields();updateFracs();let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':cmx(e.message);$('dl').disabled=true;return}
  $('dl').disabled=false;
  $('msg').textContent='';const svg=$('prev');let off=0,y1=-1e9,out='';
  r.pcs.forEach(p=>{const it=r.list.find(x=>x.n===p.name);const pts=(p.sa||p.poly);const b=PatternEngine.bbox(pts);const dx=off-b.x0,dy=-b.y0;
@@ -141,13 +151,26 @@ function draw(){syncFields();let r;try{r=compute()}catch(e){$('msg').textContent
   out+=`<text x="${off}" y="-.4" font-size=".8" fill="currentColor">${it?((it.form?it.form+' – ':'')+it.part):p.name}</text>`;
   off+=b.w+2;y1=Math.max(y1,b.h)});
  svg.setAttribute('viewBox',`-1 -2 ${Math.max(off,5)} ${Math.max(y1,5)+3}`);svg.innerHTML=out}
-function download(){let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':e.message;return}if(!r.pcs.length){$('msg').textContent='Please choose at least one shape.';return}
- const exl={Prof_soufflet_lat:'side gusset',Prof_pli_central:'centre pleat'};const ex=(r.T.extra||[]).map(k=>', '+exl[k]+' '+fm(r.ov[k])+' cm').join('');
- const info=['H '+r.ov.H_poche+' x W '+r.ov.L_poche+' cm'+ex+(r.pcs.some(p=>p.sa)?', seam allowance '+r.seam+' cm':', no seam allowance (fold-under)')];
- const m=parseFloat($('v_meas').value);const sc=(m>=40&&m<=60)?50/m:1;
+function download(){let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':cmx(e.message);return}if(!r.pcs.length){$('msg').textContent='Please choose at least one shape.';return}
+ const fu=v=>(U==='cm'?fm(v):r2(v/K))+' '+U;const exl={Prof_soufflet_lat:'side gusset',Prof_pli_central:'centre pleat'};const ex=(r.T.extra||[]).map(k=>', '+exl[k]+' '+fu(r.ov[k])).join('');
+ const info=['H '+fu(r.ov.H_poche)+' x W '+fu(r.ov.L_poche)+ex+(r.pcs.some(p=>p.sa)?', seam allowance '+fu(r.seam):', no seam allowance (fold-under)')];
+ let m=parseFloat($('v_meas').value);if(U==='in')m*=25.4;if(Math.abs(m-50)<0.2)m=50;const sc=(m>=40&&m<=60)?50/m:1;
  const d=new Date(),dt=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
  const named=r.pcs.map(p=>{const it=r.list.find(x=>x.n===p.name)||{};return Object.assign({},p,{name:r.T.title+' - '+(it.form?it.form+' - ':'')+(it.part||p.name),note:info[0],ann:it.ann||'',lbl:((it.form==='Flap'?it.form:it.part)||''),fold:!!p.onFold})});
  const o=PatternPDF.build(named,{title:'Pocket - A4 pattern 1:1',lines:info,scale:sc,date:dt});
  $('msg').textContent=o.warnings.join(' ');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o.bytes],{type:'application/pdf'}));a.download='pocket-pattern.pdf';a.click()}
-document.querySelectorAll('#v_seam,#v_meas').forEach(i=>i.addEventListener('input',draw));$('dl').onclick=download;renderRabats();setType('simple');
+document.querySelectorAll('#v_seam,#v_meas').forEach(i=>i.addEventListener('input',draw));$('dl').onclick=download;const MEAS0=$('meashint').textContent,CAL0=$('calnote').textContent;
+function updateUnitUi(init){const inch=U==='in';document.querySelectorAll('.ucm').forEach(e=>e.textContent=U);
+ const sv=$('v_seam');sv.step=inch?'0.05':'0.1';sv.max=inch?'1.97':'5';if(init&&inch)sv.value=r2(fromCm(parseFloat(sv.value)));
+ const mv=$('v_meas');mv.min=inch?'1.57':'40';mv.max=inch?'2.36':'60';mv.step=inch?'0.01':'0.5';if(init&&inch)mv.value='1.97';
+ $('u_meas').textContent=inch?'in':'mm';$('meashint').textContent=inch?MEAS0.replace('50','1.97'):MEAS0;$('calnote').textContent=inch?CAL0.replace('48 mm','1.89 in'):CAL0}
+function setUnit(nu){if(nu===U)return;
+ const cmv={};FIELDS.forEach(([n,,u])=>{if(u!=='cm')return;const e=$('v_'+n);const v=e?parseFloat(e.value):parseFloat(keep[n]);cmv[n]=isNaN(v)?undefined:toCm(v)});
+ const sv=parseFloat($('v_seam').value),seamCm=isNaN(sv)?NaN:toCm(sv);const mv=parseFloat($('v_meas').value),mm=isNaN(mv)?NaN:(U==='in'?mv*25.4:mv);
+ U=nu;FIELDS.forEach(([n,,u])=>{if(u==='cm')keep[n]=cmv[n]===undefined?undefined:r2(fromCm(cmv[n]))});
+ renderVars(true);updateUnitUi();
+ $('v_seam').value=isNaN(seamCm)?'':r2(fromCm(seamCm));$('v_meas').value=isNaN(mm)?'':(U==='in'?r2(mm/25.4):String(Math.round(mm*10)/10));draw()}
+if(UNIT_SELECT){$('unitbox').hidden=false;try{if(localStorage.getItem('unit')==='in')U='in'}catch(e){}
+ document.querySelectorAll('input[name=un]').forEach(i=>{i.checked=i.value===U;i.addEventListener('change',()=>{setUnit(i.value);try{localStorage.setItem('unit',U)}catch(e){}})});updateUnitUi(true)}
+renderRabats();setType('simple');
