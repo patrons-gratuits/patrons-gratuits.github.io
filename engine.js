@@ -199,6 +199,11 @@
             const ang = lineAngle(f, s) + 90 + add, u = dirOf(ang);
             p = { x: f.x + l * u.x, y: f.y + l * u.y }; break;
           }
+          case 'height': {
+            const b = P(e.basePoint), l1 = P(e.p1Line), l2 = P(e.p2Line);
+            const dx = l2.x - l1.x, dy = l2.y - l1.y, t = ((b.x - l1.x) * dx + (b.y - l1.y) * dy) / (dx * dx + dy * dy);
+            p = { x: l1.x + t * dx, y: l1.y + t * dy }; break;
+          }
           case 'intersectXY': p = { x: P(e.firstPoint).x, y: P(e.secondPoint).y }; break;
           case 'lineIntersectAxis': {
             const b = P(e.basePoint); const a = F(e.angle);
@@ -423,12 +428,12 @@
     for (const pc of res.block.pieces) {
       if (opts.only && !opts.only.includes(pc.name)) continue;
       const poly = buildPolyline(res, pc.nodes, opts.arcStep || 3);
-      const lines = [];
+      const lines = [], kinds = [];
       for (const pid of pc.iPaths) {
         const path = res.block.modeling[pid];
         const l = buildPolyline(res, path.nodes, opts.arcStep || 3);
         if (l.closed && l.length > 2) l.push({ x: l[0].x, y: l[0].y }); // chemin refermé dans Seamly2D (premier nœud = dernier)
-        if (l.length > 1) lines.push(l);
+        if (l.length > 1) { lines.push(l); kinds.push({ color: path.lineColor, type: path.lineType, weight: parseFloat(path.lineWeight) }); }
       }
       // la polyligne de chaque chemin interne est ouverte : buildPolyline ferme-t-elle ? non, dedupe retire seulement le doublon final
       let sa = null;
@@ -444,7 +449,7 @@
         const wl = typeof v.wb === 'number' ? v.wb : saw, wr = typeof v.wa === 'number' ? v.wa : saw;
         notches.push({ x: v.x, y: v.y, nx, ny, len: v.notch, w: Math.max(wl, wr) });
       });
-      out.push({ name: pc.name, poly, sa, notches, onFold: !!pc.onFold, internal: lines, quantity: pc.quantity, lines: pc.lines, grain: pc.grainline, annotation: pc.annotation });
+      out.push({ name: pc.name, poly, sa, notches, onFold: !!pc.onFold, internal: lines, internalKind: kinds, quantity: pc.quantity, lines: pc.lines, grain: pc.grainline, annotation: pc.annotation });
     }
     return out;
   }
