@@ -155,8 +155,12 @@
           }
         }
         // lignes internes
-        c += '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d\n';
-        for (const ln of (p.internal || [])) { path(ln, false, ox, oy, it.x0, it.y0); c += 'S\n'; }
+        (p.internal || []).forEach((ln, ii) => {
+          const kd = (p.internalKind || [])[ii];
+          if (kd && kd.color === 'darkRed') c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; // trait plein rouge (ex. boutonnières)
+          else c += '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
+          path(ln, false, ox, oy, it.x0, it.y0); c += 'S\n';
+        });
         c += '0 G [] 0 d\n';
         // fil droit
         let cx = 0, cy = 0; p.poly.forEach(q => { cx += q.x; cy += q.y; }); cx /= p.poly.length; cy /= p.poly.length;

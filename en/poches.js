@@ -58,7 +58,7 @@ function hintOf(n,ty){const s=ty!=='simple';
  case 'Prop_angle_coupe':return '(as a proportion of pocket height, from 0.02 to 0.45, up to a maximum of half the width)';
  case 'Prop_angle_arrondi':return ty==='lat'?'(as a proportion of pocket height, from 0.02 to 0.45, and radius ≤ 45 % of the width)':(ty==='cen'||ty==='dbl')?'(as a proportion of pocket height, from 0.02 to 0.45, and radius ≤ 30 % of the width)':'(as a proportion of pocket height, from 0.02 to 0.45, and radius ≤ half the width)';
  }return null}
-function fieldHtml(n,l,u,s){const h0=hintOf(n,cur),h=h0&&cmx(h0),cm=u==='cm';return `<label for="v_${n}">${l}${h?(h[0]==='('?`<small class="hint"> ${h}</small>`:`<small class="hint"> — ${h}</small>`):''}</label><div class="row"><input type="number" id="v_${n}" value="${keep[n]!==undefined?keep[n]:(cm?r2(fromCm(def[n])):def[n])}" step="${cm?stepOf(s):s}" min="0"><span class="u${cm?' ucm':''}">${cm?U:u}</span></div>${cm?`<div class="frac" id="f_${n}"></div>`:''}<div class="err" id="e_${n}"></div>${n==='Val_repli_poche'?`<div class="legend"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Fold line (blue dashed line)</span></div>`:''}`}
+function fieldHtml(n,l,u,s){const h0=hintOf(n,cur),h=h0&&cmx(h0),cm=u==='cm';return `<div class="fld" id="w_${n}"><label for="v_${n}">${l}${h?(h[0]==='('?`<small class="hint"> ${h}</small>`:`<small class="hint"> — ${h}</small>`):''}</label><div class="row"><input type="number" id="v_${n}" value="${keep[n]!==undefined?keep[n]:(cm?r2(fromCm(def[n])):def[n])}" step="${cm?stepOf(s):s}" min="0"><span class="u${cm?' ucm':''}">${cm?U:u}</span></div>${cm?`<div class="frac" id="f_${n}"></div>`:''}<div class="err" id="e_${n}"></div>${n==='Val_repli_poche'?`<div class="legend"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Fold line (blue dashed line)</span></div>`:''}</div>`}
 function renderVars(skip){if(!skip)FIELDS.forEach(([n])=>{const e=$('v_'+n);if(e)keep[n]=e.value});
  const ok=f=>f[5]!=='rab'&&(!f[5]||f[5].split(' ').includes(cur));
  $('vars').innerHTML=FIELDS.filter(ok).map(([n,l,u,s])=>fieldHtml(n,l,u,s)).join('');
@@ -71,11 +71,12 @@ function renderForms(){const T=TYPES[cur];const was=[...document.querySelectorAl
  const pick=T.forms.some(f=>f.id===was[0]&&!f.off)?was[0]:'rect';$('pieces').innerHTML=T.forms.map(f=>`<label><input type="radio" name="pc" class="pc" value="${f.id}" ${f.off?'disabled':''} ${f.id===pick?'checked':''}> ${f.label}</label>`).join('');
  document.querySelectorAll('.pc').forEach(i=>i.addEventListener('change',draw))}
 function hasSeam(){const {list}=chosen();return list.some(x=>{const p=DATA.blocks[x.blk].pieces.find(q=>q.name===x.n);return p&&p.seamAllowance})}
-function syncFields(){const on=hasSeam();$('v_seam').disabled=!on;$('v_seam').style.opacity=on?1:.45;document.querySelector('label[for=v_seam]').style.opacity=on?1:.45;$("seamleg").style.display=on?'':'none';
+function show(e,on){if(e)e.style.display=on?'':'none'}
+function syncFields(){const on=hasSeam();$('v_seam').disabled=!on;[document.querySelector('label[for=v_seam]'),$('r_seam'),$('f_seam'),$('e_seam')].forEach(e=>show(e,on));$("seamleg").style.display=on?'':'none';
  $('seamnote').textContent=on?'':'For this pocket, the fold-under allowance takes the place of a seam allowance: none is added.';if(!on){$('e_seam').textContent='';$('v_seam').classList.remove('bad')}
-const rbv=rabId();[['Prop_H_rabat',!!rbv],['Add_L_rabat',!!rbv],['Prop_rabat_angle_coupe',rbv==='cut'],['Prop_rabat_angle_arrondi',rbv==='round']].forEach(([n,on])=>{const i=$('v_'+n);if(!i)return;i.disabled=!on;const l=document.querySelector('label[for=v_'+n+']');if(l)l.style.opacity=on?1:.45;if(!on){const e=$('e_'+n);if(e)e.textContent='';i.classList.remove('bad')}});
+const rbv=rabId();[['Prop_H_rabat',!!rbv],['Add_L_rabat',!!rbv],['Prop_rabat_angle_coupe',rbv==='cut'],['Prop_rabat_angle_arrondi',rbv==='round']].forEach(([n,on])=>{const i=$('v_'+n);if(!i)return;i.disabled=!on;show($('w_'+n),on);if(!on){const e=$('e_'+n);if(e)e.textContent='';i.classList.remove('bad')}});
 const f=document.querySelector('.pc:checked'),id=f?f.value:'rect';
- [['Prop_angle_coupe','cut'],['Prop_angle_arrondi','round']].forEach(([n,want])=>{const i=$('v_'+n);if(!i)return;const off=id!==want;i.disabled=off;const l=document.querySelector('label[for=v_'+n+']');if(l)l.style.opacity=off?.45:1;if(off){const e=$('e_'+n);if(e)e.textContent='';i.classList.remove('bad')}})}
+ [['Prop_angle_coupe','cut'],['Prop_angle_arrondi','round']].forEach(([n,want])=>{const i=$('v_'+n);if(!i)return;const off=id!==want;i.disabled=off;show($('w_'+n),!off);if(off){const e=$('e_'+n);if(e)e.textContent='';i.classList.remove('bad')}})}
 function setType(t){cur=t;renderVars();renderForms();$('typenote').textContent=t==='simple'?'':'For now: straight opening only.';draw()}
 $('type').innerHTML=Object.keys(TYPES).map(k=>`<option value="${k}">${TYPES[k].label}</option>`).join('');
 $('type').addEventListener('change',()=>setType($('type').value));
@@ -88,9 +89,9 @@ function span(a){if(!a.length)return null;return[a[0],a[a.length-1]]}
 function cutFeasible(ov,seam,m){const L=ov.L_poche,H=ov.H_poche;
  if(cutOK(ov,seam))return;
  const ps=[];for(let p=0.5;p<=L/4+1e-9;p+=0.1){const q=Math.round(p*10)/10;if(cutOK(Object.assign({},ov,{Prof_soufflet_lat:q}),seam))ps.push(q)}
- if(ps.length){const [a,b]=span(ps);m.Prof_soufflet_lat='With these bevelled corners, the gusset depth must be between '+fm(a)+' and '+fm(b)+' cm (or reduce the bevel size).';return}
+ if(ps.length){const [a,b]=span(ps);m.Prof_soufflet_lat='With these bevelled corners, the gusset depth must be between '+fm(a)+' and '+fm(b)+' cm (or reduce the bevelled corners).';return}
  const cs=[];for(let c=0.02;c<=0.4501;c+=0.01){const q=Math.round(c*100)/100;if(q*H<=L/2&&cutOK(Object.assign({},ov,{Prop_angle_coupe:q}),seam))cs.push(q)}
- m.Prop_angle_coupe=cs.length?'With this gusset depth, the bevel size must be between '+fm(cs[0])+' and '+fm(cs[cs.length-1])+'.':'This combination of dimensions is not feasible: change the gusset depth, the fold-under allowance or the dimensions.'}
+ m.Prop_angle_coupe=cs.length?'With this gusset depth, the bevelled corner size must be between '+fm(cs[0])+' and '+fm(cs[cs.length-1])+'.':'This combination of dimensions is not feasible: change the gusset depth, the fold-under allowance or the dimensions.'}
 function check(ov,seam,forms){const m={},H=ov.H_poche,L=ov.L_poche,ty=cur,s=ty!=='simple',ids=forms.map(f=>f.id);
  const hmin=s?8:5,lmin=s?8:5;
  if(!(H>=hmin&&H<=50))m.H_poche='Between '+hmin+' and 50 cm.';
@@ -104,7 +105,7 @@ function check(ov,seam,forms){const m={},H=ov.H_poche,L=ov.L_poche,ty=cur,s=ty!=
   if(!(ov.H_revers>=lo-1e-9&&ov.H_revers<=hi+1e-9))m.H_revers=lo<=hi?'Between '+fm(Math.ceil(lo*10)/10)+' cm (fold-under allowance + 0.3 cm) and '+fm(hi)+' cm.':'Not possible with this fold-under allowance and height: reduce the allowance.'}
  else if(!(ov.H_revers>=1.5&&ov.H_revers<=H/2))m.H_revers='Between 1.5 cm and half the pocket height'+(H>=5?' (i.e. '+fm(H/2)+' cm at most).':'.');
  const rmax=ty==='lat'?0.45*L:(ty==='cen'||ty==='dbl')?0.3*L:L/2;
- if(ids.includes('cut')&&!(ov.Prop_angle_coupe>=0.02&&ov.Prop_angle_coupe<=0.45&&ov.Prop_angle_coupe*H<=L/2))m.Prop_angle_coupe='Between 0.02 and 0.45 (e.g. 0.25), and bevel size ≤ half the width.';
+ if(ids.includes('cut')&&!(ov.Prop_angle_coupe>=0.02&&ov.Prop_angle_coupe<=0.45&&ov.Prop_angle_coupe*H<=L/2))m.Prop_angle_coupe='Between 0.02 and 0.45 (e.g. 0.25), and bevelled corner size ≤ half the width.';
  if(ids.includes('round')&&!(ov.Prop_angle_arrondi>=0.02&&ov.Prop_angle_arrondi<=0.45&&ov.Prop_angle_arrondi*H<=rmax+1e-9))m.Prop_angle_arrondi='Between 0.02 and 0.45 (e.g. 0.2), and radius ≤ '+fm(rmax)+' cm ('+(ty==='lat'?'45 %':ty!=='simple'?'30 %':'50 %')+' of the width).';
  if(ty==='lat'||ty==='dbl'){const pm=L/4;let lim=pm;if(ids.includes('round'))lim=Math.min(lim,0.8*ov.Prop_angle_arrondi*H);
   if(!(ov.Prof_soufflet_lat>=0.5&&ov.Prof_soufflet_lat<=lim+1e-9))m.Prof_soufflet_lat=lim>=0.5?'Between 0.5 and '+fm(Math.floor(lim*10)/10)+' cm for this pocket.':'Not possible with this radius: increase the radius or the height.'}
