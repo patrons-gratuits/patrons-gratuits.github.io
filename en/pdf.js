@@ -119,8 +119,9 @@
         } else {
         // étiquette : nom de la pièce + date de création + paramètres
         const bh = p.ann ? 36 : 24;
-        c += '0.4 w [] 0 d\n' + `${X(ox)} ${Y(oy - 2)} ${f(Math.min(it.w, 15 * PT))} ${bh} re S\n`;
-        const bw = Math.min(it.w, 15 * PT), l2 = (opts.date ? 'Created on ' + opts.date : '') + (p.note ? '  -  ' + p.note : '');
+        const l2 = (opts.date ? 'Created on ' + opts.date : '') + (p.note ? '  -  ' + p.note : '');
+        const bw = Math.max(Math.min(it.w, 15 * PT), Math.max(tw(p.name, 10), tw(l2, 7), p.ann ? tw(p.ann, 7) : 0) + 8);
+        c += '0.4 w [] 0 d\n' + `${X(ox)} ${Y(oy - 2)} ${f(bw)} ${bh} re S\n`;
         text(p.name, ox + Math.max(2, (bw - tw(p.name, 10)) / 2), oy - (p.ann ? 28 : 17), 10);
         text(l2, ox + Math.max(2, (bw - tw(l2, 7)) / 2), oy - (p.ann ? 17 : 6), 7);
         if (p.ann) text(p.ann, ox + Math.max(2, (bw - tw(p.ann, 7)) / 2), oy - 6, 7);
@@ -182,9 +183,11 @@
         }
         const inWin = !T_ || (gx >= 0 && gx <= T_.winW && gy >= T_.TH && gy <= T_.TH + T_.winH);
         if (inWin) {
+        if (!p.nograin) {
         c += `0.6 w ${X(gx)} ${Y(gy - gl / 2)} m ${X(gx)} ${Y(gy + gl / 2)} l S\n`;
         c += `${X(gx)} ${Y(gy - gl / 2)} m ${X(gx - 3)} ${Y(gy - gl / 2 + 7)} l ${X(gx + 3)} ${Y(gy - gl / 2 + 7)} l h f\n`;
         text('Grainline', gx + 5, gy + 3, 7);
+        }
         if (p.lbl) { // nom court de la pièce, à l'intérieur de la pièce (sur 1 à 3 lignes selon la place)
           const xa = gx + 5, words = p.lbl.replace(/ (\d)$/, '\u00a0$1').split(' ');
           const split = n => { const ls = []; let k = 0; for (let r = 0; r < n; r++) { const rest = words.length - k, take = Math.ceil(rest / (n - r)); ls.push(words.slice(k, k + take).join(' ')); k += take; } return ls.filter(Boolean); };
