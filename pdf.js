@@ -4,7 +4,7 @@
   const f = n => (+n).toFixed(2);
   const HW = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
   function tw(s, size) { let w = 0; for (const ch of String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) { const k = ch.charCodeAt(0); w += (k >= 32 && k <= 126 ? HW[k - 32] : 556); } return w * size / 1000; }
-  function esc(s) { return String(s).replace(/[\\()]/g, '\\$&').replace(/[^\x20-\x7e\xa0-\xff]/g, '?'); }
+  function esc(s) { return String(s).replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/[\\()]/g, '\\$&').replace(/[^\x20-\x7e\xa0-\xff]/g, '?'); }
   function latin1(str) { const a = new Uint8Array(str.length); for (let i = 0; i < str.length; i++) a[i] = str.charCodeAt(i) & 255; return a; }
 
   /* Range les pièces en rayonnage sur des pages A4. pieces: [{name,poly,sa,internal,note}] (cm, y vers le bas) */
@@ -120,11 +120,13 @@
         // étiquette : nom de la pièce + date de création + paramètres
         const bh = p.ann ? 36 : 24;
         const l2 = (opts.date ? 'Créé le ' + opts.date : '') + (p.note ? '  -  ' + p.note : '');
-        const bw = Math.max(Math.min(it.w, 15 * PT), Math.max(tw(p.name, 10), tw(l2, 7), p.ann ? tw(p.ann, 7) : 0) + 8);
+        const maxW = PW / sc - 2 * MARGIN - ox - 8, fs = (str, sz) => { const w = tw(str, sz); return w > maxW && maxW > 60 ? Math.max(4.5, sz * maxW / w) : sz; };
+        const s1 = fs(p.name, 10), s2 = fs(l2, 7), s3 = p.ann ? fs(p.ann, 7) : 7;
+        const bw = Math.max(Math.min(it.w, 15 * PT), Math.max(tw(p.name, s1), tw(l2, s2), p.ann ? tw(p.ann, s3) : 0) + 8);
         c += '0.4 w [] 0 d\n' + `${X(ox)} ${Y(oy - 2)} ${f(bw)} ${bh} re S\n`;
-        text(p.name, ox + Math.max(2, (bw - tw(p.name, 10)) / 2), oy - (p.ann ? 28 : 17), 10);
-        text(l2, ox + Math.max(2, (bw - tw(l2, 7)) / 2), oy - (p.ann ? 17 : 6), 7);
-        if (p.ann) text(p.ann, ox + Math.max(2, (bw - tw(p.ann, 7)) / 2), oy - 6, 7);
+        text(p.name, ox + Math.max(2, (bw - tw(p.name, s1)) / 2), oy - (p.ann ? 28 : 17), s1);
+        text(l2, ox + Math.max(2, (bw - tw(l2, s2)) / 2), oy - (p.ann ? 17 : 6), s2);
+        if (p.ann) text(p.ann, ox + Math.max(2, (bw - tw(p.ann, s3)) / 2), oy - 6, s3);
         }
         // ligne de coupe
         if (p.sa) { c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; path(p.sa, true, ox, oy, it.x0, it.y0); c += 'S\n0 G\n'; }
@@ -199,6 +201,18 @@
         }
         }
         if (T_) c += 'Q\n';
+      }
+      { // légende des lignes, en pied de page, alignée à droite
+        const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Ligne de couture', 0]];
+        if (ps.some(p => p.sa)) E.push(['Ligne de coupe', 1]);
+        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed')))) E.push(['Repli', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push(['Boutonniere', 1]);
+        const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
+        let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
+        E.forEach(e => {
+          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d'][e[1]] + `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`;
+          text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
+        });
       }
       text(title + ' - page ' + (pi + 1) + '/' + L.pages.length + (sc !== 1 ? ' - compensation x' + sc.toFixed(3) : ''), 0, VH - 2 * MARGIN + 2, 7);
       objs.push(c);

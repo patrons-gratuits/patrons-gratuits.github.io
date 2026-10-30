@@ -63,7 +63,7 @@ function hintOf(n,ty){const s=ty!=='simple';
  case 'Prop_angle_coupe':return '(en proportion de la hauteur de poche, de 0,02 à 0,45 avec un maximum de la moitié de la largeur)';
  case 'Prop_angle_arrondi':return ty==='lat'?'(en proportion de la hauteur de poche, de 0,02 à 0,45, et rayon ≤ 45 % de la largeur)':(ty==='cen'||ty==='dbl')?'(en proportion de la hauteur de poche, de 0,02 à 0,45, et rayon ≤ 30 % de la largeur)':'(en proportion de la hauteur de poche, de 0,02 à 0,45, et rayon ≤ moitié de la largeur)';
  }return null}
-function fieldHtml(n,l,u,s){const h0=hintOf(n,cur),h=h0&&cmx(h0),cm=u==='cm';return `<div class="fld" id="w_${n}"><label for="v_${n}">${l}${h?(h[0]==='('?`<small class="hint"> ${h}</small>`:`<small class="hint"> — ${h}</small>`):''}</label><div class="row"><input type="number" id="v_${n}" value="${keep[n]!==undefined?keep[n]:(cm?r2(fromCm(dv(n))):dv(n))}" step="${cm?stepOf(s):s}" min="0"><span class="u${cm?' ucm':''}">${cm?U:u}</span></div>${cm?`<div class="frac" id="f_${n}"></div>`:''}<div class="err" id="e_${n}"></div>${n==='Val_repli_poche'?`<div class="legend"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Repli (ligne discontinue bleue)</span></div>`:''}</div>`}
+function fieldHtml(n,l,u,s){const h0=hintOf(n,cur),h=h0&&cmx(h0),cm=u==='cm';return `<div class="fld" id="w_${n}"><label for="v_${n}">${l}${h?(h[0]==='('?`<small class="hint"> ${h}</small>`:`<small class="hint"> — ${h}</small>`):''}</label><div class="row"><input type="number" id="v_${n}" value="${keep[n]!==undefined?keep[n]:(cm?r2(fromCm(dv(n))):dv(n))}" step="${cm?stepOf(s):s}" min="0"><span class="u${cm?' ucm':''}">${cm?U:u}</span></div>${cm?`<div class="frac" id="f_${n}"></div>`:''}<div class="err" id="e_${n}"></div></div>`}
 function renderVars(skip){if(!skip)FIELDS.forEach(([n])=>{const e=$('v_'+n);if(e)keep[n]=e.value});
  const ok=f=>f[5]!=='rab'&&(!f[5]||f[5].split(' ').includes(cur));
  $('vars').innerHTML=FIELDS.filter(ok).map(([n,l,u,s])=>fieldHtml(n,l,u,s)).join('');
@@ -77,7 +77,7 @@ function renderForms(){const T=TYPES[cur];const was=[...document.querySelectorAl
  document.querySelectorAll('.pc').forEach(i=>i.addEventListener('change',draw))}
 function hasSeam(){const {list}=chosen();return list.some(x=>{const p=DATA.blocks[x.blk].pieces.find(q=>q.name===x.n);return p&&p.seamAllowance})}
 function show(e,on){if(e)e.style.display=on?'':'none'}
-function syncFields(){const on=hasSeam();$('v_seam').disabled=!on;[document.querySelector('label[for=v_seam]'),$('r_seam'),$('f_seam'),$('e_seam')].forEach(e=>show(e,on));$("seamleg").style.display=on?'':'none';
+function syncFields(){const on=hasSeam();$('v_seam').disabled=!on;[document.querySelector('label[for=v_seam]'),$('r_seam'),$('f_seam'),$('e_seam')].forEach(e=>show(e,on));
  $('seamnote').textContent=on?'':'Pour cette poche, le rempli (replis) tient lieu de marge de couture : aucune marge n\u2019est ajoutée.';if(!on){$('e_seam').textContent='';$('v_seam').classList.remove('bad')}
 const rbv=rabId();[['Prop_H_rabat',!!rbv],['Add_L_rabat',!!rbv],['Prop_rabat_angle_coupe',rbv==='cut'],['Prop_rabat_angle_arrondi',rbv==='round']].forEach(([n,on])=>{const i=$('v_'+n);if(!i)return;i.disabled=!on;show($('w_'+n),on);if(!on){const e=$('e_'+n);if(e)e.textContent='';i.classList.remove('bad')}});
 const f=document.querySelector('.pc:checked'),id=f?f.value:'rect';
@@ -160,7 +160,7 @@ function draw(){syncFields();updateFracs();let r;try{r=compute()}catch(e){$('msg
   (p.internal||[]).forEach(l=>out+=`<polyline points="${P(l)}" fill="none" stroke="var(--fold)" stroke-width="2" stroke-dasharray="7 5" vector-effect="non-scaling-stroke"/>`);
   out+=`<text x="${off}" y="-.4" font-size=".8" fill="currentColor">${it?((it.form?it.form+' – ':'')+it.part):p.name}</text>`;
   off+=Math.max(b.w,(it?((it.form?it.form+' – ':'')+it.part):p.name).length*0.46)+2;y1=Math.max(y1,b.h)});
- svg.setAttribute('viewBox',`-1 -2 ${Math.max(off,5)} ${Math.max(y1,5)+3}`);svg.innerHTML=out}
+ $('lg_s').style.display=r.pcs.some(p=>p.sa)?'':'none';$('lg_f').style.display=r.pcs.some(p=>(p.internal||[]).length)?'':'none';svg.setAttribute('viewBox',`-1 -2 ${Math.max(off,5)} ${Math.max(y1,5)+3}`);svg.innerHTML=out}
 function download(){let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Corrigez les valeurs signalées en rouge.':cmx(e.message);return}if(!r.pcs.length){$('msg').textContent='Choisissez au moins une forme.';return}
  const fu=v=>(U==='cm'?fm(v):r2(v/K))+' '+U;const exl={Prof_soufflet_lat:'soufflet latéral',Prof_pli_central:'pli central'};const ex=(r.T.extra||[]).map(k=>', '+exl[k]+' '+fu(r.ov[k])).join('');
  const info=['H '+fu(r.ov.H_poche)+' x L '+fu(r.ov.L_poche)+ex+(r.pcs.some(p=>p.sa)?', marge '+fu(r.seam):', sans marge (rempli)')];

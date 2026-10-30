@@ -14,7 +14,6 @@
 <h2>Marge de couture</h2>
 <label for="v_seam">Marge de couture <small>(0 = sans marge)</small></label>
 <div class="row"><input type="number" id="v_seam" value="1" min="0" max="3" step="0.1"><span class="u ucm" id="u_seam">cm</span></div><div class="frac" id="f_seam"></div><div class="err" id="e_seam"></div>
-<div class="legend"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="2"/></svg> Marge de couture (ligne continue rouge)</span></div>
 <h2>Étalonnage d'impression</h2>
 <label for="v_meas">Côté du carré de contrôle mesuré sur votre impression <small id="meashint">(laisser 50 si exact)</small></label>
 <div class="row"><input type="number" id="v_meas" value="50" min="40" max="60" step="0.5"><span class="u" id="u_meas">mm</span></div>
@@ -24,7 +23,7 @@
 <div id="msg"></div>
 <p><small>Pour imprimer à la bonne échelle et contrôler le carré de 5 × 5 cm, voir la page <a href="imprimer.html">Imprimer correctement</a>.</small></p>
 </div>
-<div class="card"><svg id="prev" viewBox="0 0 10 10"></svg></div>
+<div class="card"><svg id="prev" viewBox="0 0 10 10"></svg><div class="legend plg"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="2"/></svg> Ligne de couture (trait noir)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="3"/></svg> Ligne de coupe, marge de couture comprise (trait rouge)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Repli (tirets bleus)</span></div></div>
 </div>
 <p>Voir le <a href="epaulettes-options.html">guide des options</a> pour le détail des formes et des conseils de couture.</p>
 <p><small>Calcul indépendant de Seamly2D (reprogrammé à partir d'un patron paramétrique). Vérifiez toujours sur un essai en papier avant de couper le tissu.</small></p></main>
