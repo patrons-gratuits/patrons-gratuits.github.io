@@ -10,7 +10,7 @@
 
   // ------------------------------------------------------------------ formules
   function tokenize(s) {
-    const re = /\s*(?:(\d+(?:\.\d+)?|\.\d+)|([A-Za-z_#][A-Za-z0-9_#]*)|(.))/g;
+    const re = /\s*(?:(\d+(?:\.\d+)?|\.\d+)|([\p{L}_#][\p{L}0-9_#]*)|(.))/gu;
     const out = [];
     let m;
     while ((m = re.exec(s)) !== null) {
@@ -205,6 +205,12 @@
             p = { x: l1.x + t * dx, y: l1.y + t * dy }; break;
           }
           case 'intersectXY': p = { x: P(e.firstPoint).x, y: P(e.secondPoint).y }; break;
+          case 'lineIntersect': {
+            const a1 = P(e.p1Line1), a2 = P(e.p1Line2);
+            const d = { x: a2.x - a1.x, y: a2.y - a1.y }, n = Math.hypot(d.x, d.y);
+            if (n < 1e-12) throw new Error('Droites parallèles');
+            p = intersectLines(a1, { x: d.x / n, y: d.y / n }, P(e.p2Line1), P(e.p2Line2)); break;
+          }
           case 'lineIntersectAxis': {
             const b = P(e.basePoint); const a = F(e.angle);
             p = intersectLines(b, dirOf(a), P(e.p1Line), P(e.p2Line)); break;
