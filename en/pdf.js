@@ -204,7 +204,7 @@
       }
       { // légende des lignes, en pied de page, alignée à droite
         const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Sewing line', 0]];
-        if (ps.some(p => p.sa)) E.push(['Cutting line', 1]);
+        if (ps.some(p => p.sa)) E.push(['Seam allowance', 1]);
         if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed')))) E.push(['Fold-under', 2]);
         if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push(['Buttonhole', 1]);
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
