@@ -18,13 +18,20 @@
 <div id="ga"><h2 class="ver">Cartridge holder with pocket</h2><p>It includes the bottom pocket, which holds the pens and stops them from slipping. Finished size: 12 × 12 cm (4.72 × 4.72 in).</p>
 <div class="card"><svg class="cprev" viewBox="0 0 10 10" style="width:100%;height:auto;max-height:70vh"></svg><div class="legend plg"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="2"/></svg> Sewing line (black line)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="3"/></svg> Buttonhole (red line)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Fold-under (blue dashes)</span></div></div>
 <table class="ct"><thead><tr><th>Piece</th><th>Dimensions</th><th>Fabric</th></tr></thead><tbody><tr data-p="Principale"><td>Main piece</td><td class="dm"></td><td>Main or fancy fabric</td></tr><tr data-p="Poche"><td>Pocket</td><td class="dm"></td><td>Main or fancy fabric</td></tr><tr data-p="Ruban"><td>Ribbon strip</td><td class="dm"></td><td>Main or fancy fabric</td></tr><tr data-p="Thermocollant pièce principale"><td>Fusible interfacing</td><td class="dm"></td><td>Fusible interfacing (iron onto the wrong side of the Main piece)</td></tr></tbody></table>
+<h3>Print calibration</h3>
+<label for="ccal_a">Side of the test square measured on your printout <small>(leave 50 if exact)</small></label>
+<div class="row" style="max-width:260px"><input type="number" class="ccal" id="ccal_a" value="50" min="40" max="60" step="0.1"><span class="u">mm</span></div>
+<small>If your printer shrinks the pattern despite “100 %” (e.g. a 48 mm square), enter the measured value: the PDF will be enlarged to compensate.</small>
 <p><button class="btn cdl" style="width:auto">Download the PDF</button></p><p class="mut cmsg"></p></div>
 <div id="gb"><h2 class="ver">Simplified cartridge holder</h2><p>The same holder without the pocket. Finished size: 12 × 5 cm (4.72 × 1.97 in). The sewing steps are the same as the version with a pocket, minus the pocket (see the instructions below).</p>
 <div class="card"><svg class="cprev" viewBox="0 0 10 10" style="width:100%;height:auto;max-height:70vh"></svg><div class="legend plg"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="2"/></svg> Sewing line (black line)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="3"/></svg> Buttonhole (red line)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Fold-under (blue dashes)</span></div></div>
 <table class="ct"><thead><tr><th>Piece</th><th>Dimensions</th><th>Fabric</th></tr></thead><tbody><tr data-p="Cartouchière simplifiée"><td>Main piece</td><td class="dm"></td><td>Main or fancy fabric</td></tr><tr data-p="Ruban"><td>Ribbon strip</td><td class="dm"></td><td>Main or fancy fabric</td></tr><tr data-p="Thermo cartou simplifiée"><td>Fusible interfacing</td><td class="dm"></td><td>Fusible interfacing (iron onto the wrong side of the Main piece)</td></tr></tbody></table>
+<h3>Print calibration</h3>
+<label for="ccal_b">Side of the test square measured on your printout <small>(leave 50 if exact)</small></label>
+<div class="row" style="max-width:260px"><input type="number" class="ccal" id="ccal_b" value="50" min="40" max="60" step="0.1"><span class="u">mm</span></div>
+<small>If your printer shrinks the pattern despite “100 %” (e.g. a 48 mm square), enter the measured value: the PDF will be enlarged to compensate.</small>
 <p><button class="btn cdl" style="width:auto">Download the PDF</button></p><p class="mut cmsg"></p></div>
 <p>The <b>8 red lines</b> on the Main piece are buttonholes: the ribbon passes through them to hold the pens and the glasses. The <b>blue dashes</b> are fold lines. There is no seam allowance: the 1.5 cm (0.6 in) fold-under allowance takes its place.</p>
-<h2>Print calibration</h2><p><label for="ccal">Side of the test square measured on your printout <small>(leave 50 if exact)</small></label><br><input type="number" id="ccal" value="50" min="40" max="60" step="0.1" style="width:6rem;padding:6px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--fg);font:inherit"> mm</p><p class="mut"><small>If your printer shrinks the pattern despite “100 %” (e.g. a 48 mm square), enter the measured value: the PDF will be enlarged to compensate.</small></p>
 <p class="mut"><small>To print at the right scale and check the 5 × 5 cm square, see the <a href="imprimer.html">Printing correctly</a> page.</small></p>
 <h2>Illustrated instructions</h2><p>Sewing and assembly in 10 steps, with photos: buttonholes, ribbon, pocket and topstitching.</p><p><b><a href="cartouchiere-mode-emploi.html">See the illustrated instructions</a></b></p>
 <h2>Other cartridge holders</h2>
@@ -52,7 +59,7 @@ Object.keys(G).forEach(function(g){
  svg.setAttribute('viewBox',`-0.5 -1.2 ${W+1} ${y+1.2}`);svg.innerHTML=out;
  root.querySelector('.cdl').onclick=function(){const d=new Date(),dt=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
   const named=pcs.map(p=>Object.assign({},p,{name:cf.title+' - '+(cf.names[p.name]||p.name),note:cf.info,ann:cf.ann[p.name]||'',fold:false}));
-  let m=parseFloat(document.getElementById('ccal').value);if(Math.abs(m-50)<0.2)m=50;const sc=(m>=40&&m<=60)?50/m:1;
+  let m=parseFloat(root.querySelector('.ccal').value);if(Math.abs(m-50)<0.2)m=50;const sc=(m>=40&&m<=60)?50/m:1;
   const o=PatternPDF.build(named,{title:cf.pdf,lines:[cf.info],scale:sc,date:dt});
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o.bytes],{type:'application/pdf'}));a.download=cf.file;a.click()}});
 })();</script><script data-goatcounter="https://patrons-gratuits.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script></body></html>
