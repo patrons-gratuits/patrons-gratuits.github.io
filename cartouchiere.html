@@ -18,13 +18,20 @@
 <div id="ga"><h2 class="ver">Cartouchière avec poche</h2><p>Elle comprend la poche du bas, qui retient les stylos et les empêche de glisser. Dimensions finies : 12 × 12 cm.</p>
 <div class="card"><svg class="cprev" viewBox="0 0 10 10" style="width:100%;height:auto;max-height:70vh"></svg><div class="legend plg"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="2"/></svg> Ligne de couture (trait noir)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="3"/></svg> Boutonnière (trait rouge)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Repli (tirets bleus)</span></div></div>
 <table class="ct"><thead><tr><th>Pièce</th><th>Dimensions</th><th>Tissu</th></tr></thead><tbody><tr data-p="Principale"><td>Principale</td><td class="dm"></td><td>Tissu principal ou fantaisie</td></tr><tr data-p="Poche"><td>Poche</td><td class="dm"></td><td>Tissu principal ou fantaisie</td></tr><tr data-p="Ruban"><td>Ruban</td><td class="dm"></td><td>Tissu principal ou fantaisie</td></tr><tr data-p="Thermocollant pièce principale"><td>Thermocollant</td><td class="dm"></td><td>Thermocollant (à repasser sur l'envers de la pièce Principale)</td></tr></tbody></table>
+<h3>Étalonnage d'impression</h3>
+<label for="ccal_a">Côté du carré de contrôle mesuré sur votre impression <small>(laisser 50 si exact)</small></label>
+<div class="row" style="max-width:260px"><input type="number" class="ccal" id="ccal_a" value="50" min="40" max="60" step="0.1"><span class="u">mm</span></div>
+<small>Si votre imprimante réduit malgré « 100 % » (ex. carré de 48 mm), saisissez la valeur mesurée : le PDF sera agrandi pour compenser.</small>
 <p><button class="btn cdl" style="width:auto">Télécharger le PDF</button></p><p class="mut cmsg"></p></div>
 <div id="gb"><h2 class="ver">Cartouchière simplifiée</h2><p>La même cartouchière sans poche. Dimensions finies : 12 × 5 cm. Mêmes étapes de couture que la version avec poche, sans la poche (voir le mode d'emploi plus bas).</p>
 <div class="card"><svg class="cprev" viewBox="0 0 10 10" style="width:100%;height:auto;max-height:70vh"></svg><div class="legend plg"><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="2"/></svg> Ligne de couture (trait noir)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--cut)" stroke-width="3"/></svg> Boutonnière (trait rouge)</span><span><svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="var(--fold)" stroke-width="2" stroke-dasharray="6 4"/></svg> Repli (tirets bleus)</span></div></div>
 <table class="ct"><thead><tr><th>Pièce</th><th>Dimensions</th><th>Tissu</th></tr></thead><tbody><tr data-p="Cartouchière simplifiée"><td>Principale</td><td class="dm"></td><td>Tissu principal ou fantaisie</td></tr><tr data-p="Ruban"><td>Ruban</td><td class="dm"></td><td>Tissu principal ou fantaisie</td></tr><tr data-p="Thermo cartou simplifiée"><td>Thermocollant</td><td class="dm"></td><td>Thermocollant (à repasser sur l'envers de la pièce Principale)</td></tr></tbody></table>
+<h3>Étalonnage d'impression</h3>
+<label for="ccal_b">Côté du carré de contrôle mesuré sur votre impression <small>(laisser 50 si exact)</small></label>
+<div class="row" style="max-width:260px"><input type="number" class="ccal" id="ccal_b" value="50" min="40" max="60" step="0.1"><span class="u">mm</span></div>
+<small>Si votre imprimante réduit malgré « 100 % » (ex. carré de 48 mm), saisissez la valeur mesurée : le PDF sera agrandi pour compenser.</small>
 <p><button class="btn cdl" style="width:auto">Télécharger le PDF</button></p><p class="mut cmsg"></p></div>
 <p>Les <b>8 traits rouges</b> de la pièce Principale sont des boutonnières : le ruban y passe pour retenir les stylos et la paire de lunettes. Les <b>tirets bleus</b> sont les lignes de repli. Il n'y a pas de marge de couture : le rempli de 1,5 cm en tient lieu.</p>
-<h2>Étalonnage d'impression</h2><p><label for="ccal">Côté du carré de contrôle mesuré sur votre impression <small>(laisser 50 si exact)</small></label><br><input type="number" id="ccal" value="50" min="40" max="60" step="0.1" style="width:6rem;padding:6px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--fg);font:inherit"> mm</p><p class="mut"><small>Si votre imprimante réduit malgré « 100 % » (ex. carré de 48 mm), saisissez la valeur mesurée : le PDF sera agrandi pour compenser.</small></p>
 <p class="mut"><small>Pour imprimer à la bonne échelle et contrôler le carré de 5 × 5 cm, voir la page <a href="imprimer.html">Imprimer correctement</a>.</small></p>
 <h2>Mode d'emploi illustré</h2><p>La couture et l'assemblage en 10 étapes, avec photos : boutonnières, ruban, poche et surpiqûre.</p><p><b><a href="cartouchiere-mode-emploi.html">Voir le mode d'emploi illustré</a></b></p>
 <h2>D'autres cartouchières</h2>
@@ -52,7 +59,7 @@ Object.keys(G).forEach(function(g){
  svg.setAttribute('viewBox',`-0.5 -1.2 ${W+1} ${y+1.2}`);svg.innerHTML=out;
  root.querySelector('.cdl').onclick=function(){const d=new Date(),dt=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
   const named=pcs.map(p=>Object.assign({},p,{name:cf.title+' - '+(cf.names[p.name]||p.name),note:cf.info,ann:cf.ann[p.name]||'',fold:false}));
-  let m=parseFloat(document.getElementById('ccal').value);if(Math.abs(m-50)<0.2)m=50;const sc=(m>=40&&m<=60)?50/m:1;
+  let m=parseFloat(root.querySelector('.ccal').value);if(Math.abs(m-50)<0.2)m=50;const sc=(m>=40&&m<=60)?50/m:1;
   const o=PatternPDF.build(named,{title:cf.pdf,lines:[cf.info],scale:sc,date:dt});
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o.bytes],{type:'application/pdf'}));a.download=cf.file;a.click()}});
 })();</script><script data-goatcounter="https://patrons-gratuits.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script></body></html>
