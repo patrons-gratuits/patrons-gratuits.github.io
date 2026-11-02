@@ -178,6 +178,7 @@
         (p.internal || []).forEach((ln, ii) => {
           const kd = (p.internalKind || [])[ii];
           if (kd && kd.color === 'darkRed') c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; // trait plein rouge (ex. boutonnières)
+          else if (kd && kd.place) c += '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d\n'; // emplacement (ex. poche) : tirets orange
           else c += '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
           path(ln, false, ox, oy, it.x0, it.y0); c += 'S\n';
         });
@@ -222,12 +223,14 @@
       { // légende des lignes, en pied de page, alignée à droite
         const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Sewing line', 0]];
         if (ps.some(p => p.sa)) E.push(['Seam allowance', 1]);
-        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed')))) E.push(['Fold-under', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].place))))) E.push(['Fold-under', 2]);
+        if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Pocket position', 3]);
+        if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Tab position', 3]);
         if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push(['Buttonhole', 1]);
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
-          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d'][e[1]] + `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`;
+          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d'][e[1]] + `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`;
           text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
         });
       }

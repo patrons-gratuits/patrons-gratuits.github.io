@@ -1,11 +1,10 @@
 <!doctype html>
 <html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bucket hat: free made-to-measure PDF pattern – Free patterns</title><meta name="description" content="Free made-to-measure bucket hat pattern: head circumference, ease, sidewall and brim shape, A4 PDF at 1:1 scale or a one-page PDF for video projection.">
-<link rel="alternate" hreflang="fr" href="../bob.html"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../assistant.css"></head><body>
+<link rel="alternate" hreflang="fr" href="../bob.html"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../assistant.css"><link rel="canonical" href="https://patrons-gratuits.github.io/en/bob.html"><link rel="alternate" hreflang="fr" href="https://patrons-gratuits.github.io/bob.html"><link rel="alternate" hreflang="en-GB" href="https://patrons-gratuits.github.io/en/bob.html"><link rel="alternate" hreflang="x-default" href="https://patrons-gratuits.github.io/bob.html"><meta property="og:type" content="website"><meta property="og:title" content="Bucket hat: free made-to-measure PDF pattern – Free patterns"><meta property="og:description" content="Free made-to-measure bucket hat pattern: head circumference, ease, sidewall and brim shape, A4 PDF at 1:1 scale or a one-page PDF for video projection."><meta property="og:url" content="https://patrons-gratuits.github.io/en/bob.html"><meta property="og:locale" content="en_GB"><meta property="og:image" content="https://patrons-gratuits.github.io/en/images/patch-pocket-centre-pleat-added-cuff-facing-beige.jpg"><meta name="twitter:card" content="summary_large_image"></head><body>
 <header><nav><b>Free patterns</b><span class="lang" role="group" aria-label="Language"><a href="../bob.html" hreflang="fr" lang="fr" title="Version française">FR</a><span class="cur" lang="en">EN</span></span><span class="brk"></span><a href="index.html">Home</a><a href="saharienne.html">Safari jacket</a><a href="bob.html" class=on>Hats</a><details class="dd"><summary>Small parts</summary><div class="dm"><a href="poches.html">Patch pockets</a><a href="epaulettes.html">Epaulettes</a><a href="pattes-manches.html">Sleeve tabs</a><a href="cartouchiere.html">Cartridge holders</a></div></details><a href="imprimer.html">Help</a><a href="apropos.html">About</a><a id="fbn" href="#" hidden>Your feedback</a></nav></header>
 <main><div class="tabs" role="navigation" aria-label="Sections"><a href="bob.html" class=on aria-current="page">Bucket hat</a><a href="bob-guide.html">Bucket hat guide</a><a href="beret.html">Beret</a><a href="beret-guide.html">Beret guide</a></div><h1>Bucket hat</h1>
 <p class="sub">Enter your head circumference and the hat settings: the cross-section next to it adapts live. Then download the pattern as A4 pages at 1:1 scale, or as a single page for video projection. Everything is calculated in your browser; nothing is sent.</p>
-<p><small><b>Draft under test</b>: this page is not announced on the site yet.</small></p>
 <div class="grid">
 <div class="card" id="form">
 <h2>Settings</h2>
@@ -58,18 +57,27 @@ function pieces(M,np,seam){const out=[],add=(name,o,q,extra)=>{const sa=seam>0?E
  add(C.bo,sector(M.R3,M.R3-M.EB,th3,fr1),2*np);
  return out}
 function section(M){ // demi-coupe : axe vertical à gauche, couronne en haut, calotte, bord ; l'intérieur de la tête en pointillés
- const k=8,H=M.H,run1=(M.B-M.A)/2,dropx=M.EB*Math.cos(M.b),X=(M.Cd/2),pad=14;
+ const k=8,H=M.H,run1=(M.B-M.A)/2,dropx=M.EB*Math.cos(M.b),X=(M.Cd/2),pad=24;
  const P=(x,y)=>[(pad+x*k).toFixed(1),(pad+(H-y)*k).toFixed(1)];  // y vers le haut ; origine = base de la calotte
  const c0=P(0,H),c1=P(M.A/2,H),b0=P(M.B/2,0),e0=P(M.Cd/2,-M.drop);
  const w=pad*2+X*k+40,hh=pad*2+(H+M.drop)*k+30;
  const txt=(x,y,s,a)=>'<text x="'+x+'" y="'+y+'" font-size="12" text-anchor="'+(a||'start')+'" fill="currentColor">'+s+'</text>';
+ const nb=v=>String(r2(v)).replace('.',C.dec),nbm=nb,B0x0=+b0[0];
  let o='<line x1="'+c0[0]+'" y1="'+(+c0[1]-6)+'" x2="'+c0[0]+'" y2="'+P(0,-M.drop-1)[1]+'" stroke="currentColor" stroke-dasharray="4 4" opacity=".4"/>';
  o+='<polyline points="'+c0+' '+c1+' '+b0+' '+e0+'" fill="none" stroke="var(--ac)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>';
  o+='<line x1="'+c0[0]+'" y1="'+P(0,0)[1]+'" x2="'+b0[0]+'" y2="'+b0[1]+'" stroke="currentColor" stroke-dasharray="3 4" opacity=".5"/>';
  o+=txt((+c0[0]+(+c1[0]-+c0[0])/2).toFixed(1),(+c0[1]-7).toFixed(1),C.cr,'middle');
- const m1=[(+c1[0]+ +b0[0])/2,(+c1[1]+ +b0[1])/2];o+=txt((m1[0]+8).toFixed(1),(m1[1]).toFixed(1),C.ca);
- const m2=[(+b0[0]+ +e0[0])/2,(+b0[1]+ +e0[1])/2];o+=txt((m2[0]+6).toFixed(1),(m2[1]+14).toFixed(1),C.bo);
- o+=txt((+c0[0]+4).toFixed(1),(+P(0,0)[1]+14).toFixed(1),C.head+' ⌀ '+r2(M.B)+' cm');
+ const AR='fill="none" stroke="currentColor" stroke-width="1.5"';
+ // largeurs (mesurées le long de la pente) : cotes parallèles aux segments, décalées vers l'extérieur
+ const dim=(p,q,off,label)=>{const dx=q[0]-p[0],dy=q[1]-p[1],l=Math.hypot(dx,dy)||1,nx=off*dy/l,ny=-off*dx/l,x1=p[0]+nx,y1=p[1]+ny,x2=q[0]+nx,y2=q[1]+ny,mx=(x1+x2)/2,my=(y1+y2)/2;let ang=Math.atan2(dy,dx)*180/Math.PI;if(ang>90||ang<-90)ang+=180;
+  return '<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="currentColor" stroke-width="1.2" opacity=".7"/><line x1="'+p[0].toFixed(1)+'" y1="'+p[1].toFixed(1)+'" x2="'+x1.toFixed(1)+'" y2="'+y1.toFixed(1)+'" stroke="currentColor" stroke-width=".8" opacity=".5"/><line x1="'+q[0].toFixed(1)+'" y1="'+q[1].toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="currentColor" stroke-width=".8" opacity=".5"/><text x="'+mx.toFixed(1)+'" y="'+my.toFixed(1)+'" font-size="10" text-anchor="middle" fill="currentColor" transform="rotate('+ang.toFixed(1)+' '+mx.toFixed(1)+' '+my.toFixed(1)+') translate(0 '+(off>0?-4:13)+')">'+label+'</text>'};
+ const B0=[+b0[0],+b0[1]],C1=[+c1[0],+c1[1]],E0=[+e0[0],+e0[1]];
+ o+=dim(C1,B0,14,C.ca+' '+nb(M.D)+' cm');o+=dim(B0,E0,-14,C.bo+' '+nb(M.EB)+' cm');
+ // angles par rapport à l'horizontale
+ const ra=34,rb=44,ar=(r,t1,t2)=>{const f=t=>[(B0[0]+r*Math.cos(t)).toFixed(1),(B0[1]-r*Math.sin(t)).toFixed(1)];return '<path d="M'+f(t1)+' A'+r+' '+r+' 0 0 '+(t2>t1?0:1)+' '+f(t2)+'" '+AR+'/>'};
+ o+=ar(ra,Math.PI,Math.PI-M.a);o+=txt((B0[0]-ra-6-34).toFixed(1),(B0[1]-12).toFixed(1),nb(val('ANA'))+'°');
+ o+=ar(rb,0,-M.b);o+=txt((B0[0]+rb+4).toFixed(1),(B0[1]+Math.max(8,rb*Math.sin(M.b)/2+4)).toFixed(1),nb(val('ANB'))+'°');
+ o+=txt((+c0[0]+4).toFixed(1),(+P(0,0)[1]+18).toFixed(1),C.head+' ⌀')+txt((+c0[0]+4).toFixed(1),(+P(0,0)[1]+33).toFixed(1),nbm(M.B)+' cm');
  $('sec').setAttribute('viewBox','0 0 '+w.toFixed(0)+' '+hh.toFixed(0));$('sec').innerHTML=o}
 function draw(){const bad=check();if(showErrors(bad)){$('msg').textContent=C.err_fix;$('dl').disabled=$('dl1').disabled=true;return null}
  const M=model();if(!ok(M)){$('msg').textContent=C.err_bad;$('dl').disabled=$('dl1').disabled=true;return null}
