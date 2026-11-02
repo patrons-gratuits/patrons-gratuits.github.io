@@ -1,6 +1,7 @@
 /* Générateur PDF vectoriel minimal (A4, échelle 1:1). UMD : window.PatternPDF / module.exports */
 (function () {
-  const PT = 72 / 2.54, PW = 595.276, PH = 841.89, MARGIN = 10 / 25.4 * 72;
+  const PT = 72 / 2.54, MARGIN = 10 / 25.4 * 72;
+  let PW = 595.276, PH = 841.89, NOVC = false;
   const f = n => (+n).toFixed(2);
   const HW = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
   function tw(s, size) { let w = 0; for (const ch of String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) { const k = ch.charCodeAt(0); w += (k >= 32 && k <= 126 ? HW[k - 32] : 556); } return w * size / 1000; }
@@ -41,7 +42,7 @@
       let bx0 = 1e9, by0 = 1e9, bx1 = -1e9, by1 = -1e9;
       for (const it of pg.items) { bx0 = Math.min(bx0, it.px); by0 = Math.min(by0, it.py); bx1 = Math.max(bx1, it.px + it.w); by1 = Math.max(by1, it.py + it.h + head); }
       const dx = (usableW - (bx1 - bx0)) / 2 - bx0, dy = (usableH - (by1 - by0)) / 2 - by0;
-      for (const it of pg.items) { it.px += Math.max(dx, -it.px); it.py += Math.max(dy, -it.py); }
+      for (const it of pg.items) { it.px += Math.max(dx, -it.px); if (!NOVC) it.py += Math.max(dy, -it.py); }
     }
     // carré d'essai : premier coin libre de la page 1, sinon page supplémentaire
     const S = 5 * PT, T = { page: 0, x: 0, y: 0 };
@@ -66,8 +67,24 @@
     return { pages, warnings, test: T, head, tiled };
   }
 
+  /* Une seule page, à la taille du patron (1:1), pour la vidéoprojection : pas de découpage en A4. */
   function build(pieces, opts) {
     opts = opts || {};
+    if (!opts.single) return build1(pieces, opts);
+    const A = 595.276, B = 841.89;
+    try {
+      let area = 0, wmax = 0;
+      pieces.forEach(p => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; (p.sa || p.poly).forEach(q => { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }); area += (x1 - x0) * (y1 - y0) * PT * PT; wmax = Math.max(wmax, (x1 - x0) * PT); });
+      PW = Math.max(wmax + 2 * MARGIN + 20, Math.sqrt(area * 1.35 * 1.5) + 2 * MARGIN);
+      PH = 1e5; NOVC = true;
+      const L1 = layout(pieces, 1);
+      let ymax = 0; L1.pages.forEach(pg => pg.items.forEach(it => { ymax = Math.max(ymax, it.py + it.h + L1.head); }));
+      ymax = Math.max(ymax, 5 * PT + 40);
+      NOVC = false; PH = ymax + 2 * MARGIN + 24;
+      return build1(pieces, Object.assign({}, opts, { single: false, scale: 1 }));
+    } finally { PW = A; PH = B; NOVC = false; }
+  }
+  function build1(pieces, opts) {
     const sc = opts.scale && opts.scale > 0.5 && opts.scale < 2 ? opts.scale : 1, VH = PH / sc;
     const L = layout(pieces, sc);
     const objs = [];            // chaînes de contenu des pages
@@ -141,9 +158,9 @@
             if (p.sa && nt.w > 0) { path([{ x: nt.x + nt.nx * nt.w, y: nt.y + nt.ny * nt.w }, { x: nt.x + nt.nx * (nt.w - nt.len), y: nt.y + nt.ny * (nt.w - nt.len) }], false, ox, oy, it.x0, it.y0); c += 'S\n'; }
           });
         }
-        // pièce coupée sur le pli du tissu (bord = 1er côté du contour) : symbole « placer sur le pli »
+        // pièce coupée sur le pli du tissu (bord = 1er côté du contour, ou côté p.foldEdge → foldEdge+1) : symbole « placer sur le pli »
         if (p.fold && p.poly.length > 1) {
-          const A = p.poly[0], B = p.poly[1], el = Math.hypot(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / el, uy = (B.y - A.y) / el;
+          const fk = p.foldEdge || 0, A = p.poly[fk % p.poly.length], B = p.poly[(fk + 1) % p.poly.length], el = Math.hypot(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / el, uy = (B.y - A.y) / el;
           let sgn = 0; for (let i = 0; i < p.poly.length; i++) { const u = p.poly[i], v = p.poly[(i + 1) % p.poly.length]; sgn += u.x * v.y - v.x * u.y; }
           const nx = (sgn > 0 ? 1 : -1) * uy, ny = -(sgn > 0 ? 1 : -1) * ux; // normale extérieure ; le symbole va vers l'intérieur
           const inset = 1.5, depth = 1.0, hd = 0.35;
