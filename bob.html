@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bob (bucket hat) : patron gratuit en PDF, sur mesure – Patrons gratuits</title><meta name="description" content="Patron de bob (bucket hat) gratuit, sur mesure : tour de tête, aisance, forme de la calotte et du bord, PDF A4 à l'échelle 1:1 ou en une page pour la vidéoprojection.">
+<link rel="alternate" hreflang="en" href="en/bob.html"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="assistant.css"></head><body>
+<header><nav><b>Patrons gratuits</b><span class="lang" role="group" aria-label="Langue"><span class="cur" lang="fr">FR</span><a href="en/bob.html" hreflang="en-GB" lang="en" title="English version">EN</a></span><span class="brk"></span><a href="index.html">Accueil</a><a href="saharienne.html">Saharienne</a><a href="bob.html" class=on>Chapeaux</a><details class="dd"><summary>Petites pièces</summary><div class="dm"><a href="poches.html">Poches plaquées</a><a href="epaulettes.html">Épaulettes</a><a href="pattes-manches.html">Pattes de manches</a><a href="cartouchiere.html">Cartouchières</a></div></details><a href="imprimer.html">Aide</a><a href="apropos.html">À propos</a><a id="fbn" href="#" hidden>Votre avis</a></nav></header>
+<main><div class="tabs" role="navigation" aria-label="Rubriques"><a href="bob.html" class=on aria-current="page">Bob</a><a href="bob-guide.html">Guide du bob</a><a href="beret.html">Béret</a><a href="beret-guide.html">Guide du béret</a></div><h1>Bob (bucket hat)</h1>
+<p class="sub">Saisissez votre tour de tête et les réglages du chapeau : la coupe ci-contre s'adapte en direct. Téléchargez ensuite le patron au format A4 à l'échelle 1:1, ou en une seule page pour la vidéoprojection. Tout est calculé dans votre navigateur ; rien n'est envoyé.</p>
+<p><small><b>Brouillon en cours de test</b> : cette page n’est pas encore annoncée sur le site.</small></p>
+<div class="grid">
+<div class="card" id="form">
+<h2>Réglages</h2>
+<div class="fld" id="w_TT"><label for="v_TT">Tour de tête <small class="hint">(de 43 à 61 cm) — mesuré autour de la tête, au-dessus des oreilles</small></label><div class="row"><input type="number" id="v_TT" value="58" step="0.5" min="43" max="61"><span class="u">cm</span></div><div class="err" id="e_TT"></div></div><div class="fld" id="w_EASE"><label for="v_EASE">Aisance <small class="hint">(de 0 à 4 cm) — 2 cm conseillés, 4 cm au maximum (selon la coiffure portée dessous)</small></label><div class="row"><input type="number" id="v_EASE" value="2" step="0.5" min="0" max="4"><span class="u">cm</span></div><div class="err" id="e_EASE"></div></div><div class="fld" id="w_DC"><label for="v_DC">Largeur de la calotte <small class="hint">(de 10 à 15 cm) — mesurée le long de la pente ; la couronne s’en déduit</small></label><div class="row"><input type="number" id="v_DC" value="12" step="0.5" min="10" max="15"><span class="u">cm</span></div><div class="err" id="e_DC"></div></div><div class="fld" id="w_ANA"><label for="v_ANA">Angle de la calotte <small class="hint">(de 70 à 80 °) — inclinaison des côtés par rapport à l’horizontale : plus l’angle est grand, plus les côtés sont droits</small></label><div class="row"><input type="number" id="v_ANA" value="76" step="1" min="70" max="80"><span class="u">°</span></div><div class="err" id="e_ANA"></div></div><div class="fld" id="w_ANB"><label for="v_ANB">Angle du bord <small class="hint">(de 30 à 60 °) — inclinaison du bord par rapport à l’horizontale : plus l’angle est grand, plus le bord retombe</small></label><div class="row"><input type="number" id="v_ANB" value="53" step="1" min="30" max="60"><span class="u">°</span></div><div class="err" id="e_ANB"></div></div><div class="fld" id="w_EB"><label for="v_EB">Largeur du bord <small class="hint">(de 5 à 9 cm) — mesurée le long du bord</small></label><div class="row"><input type="number" id="v_EB" value="6.2" step="0.5" min="5" max="9"><span class="u">cm</span></div><div class="err" id="e_EB"></div></div>
+<h2>Nombre de pièces</h2>
+<div class="pieces"><label><input type="radio" name="np" value="1" checked> 1 pièce par couche (une couture dans le dos)</label><label><input type="radio" name="np" value="2"> 2 pièces par couche (coutures sur les côtés)</label></div>
+<h2>Marge de couture</h2>
+<label for="v_seam">Marge de couture <small>(0 = sans marge)</small></label>
+<div class="row"><input type="number" id="v_seam" value="1" min="0" max="3" step="0.1"><span class="u">cm</span></div><div class="err" id="e_seam"></div>
+<h2>Étalonnage d'impression</h2>
+<label for="v_meas">Côté du carré de contrôle mesuré sur votre impression <small>(laisser 50 si exact)</small></label>
+<div class="row"><input type="number" id="v_meas" value="50" min="40" max="60" step="0.5"><span class="u">mm</span></div>
+<small>Si votre imprimante réduit malgré « 100 % » (ex. carré de 48 mm), saisissez la valeur mesurée : le PDF sera agrandi pour compenser.</small>
+<p><button id="dl">Télécharger le PDF A4</button></p>
+<p><button id="dl1">PDF d’une page pour vidéoprojection</button><br><small>Le PDF d’une page contient toutes les pièces à l’échelle 1:1, sans découpage en feuilles A4, pour être projeté sur le tissu (par exemple avec Pattern Projector). Le carré de 5 × 5 cm sert à calibrer la projection.</small></p>
+<div id="msg"></div>
+<p><small>Pour imprimer à la bonne échelle et contrôler le carré de 5 × 5 cm, voir la page <a href="imprimer.html">Imprimer correctement</a>.</small></p>
+</div>
+<div class="card"><h2 style="margin-top:0">Votre bob</h2><svg id="sec" style="width:100%;max-width:440px;height:auto;display:block" viewBox="0 0 10 10" role="img" aria-label="Votre bob"></svg><p id="facts"><small></small></p><svg id="prev" style="width:100%;height:auto;display:block" viewBox="0 0 10 10"></svg></div>
+</div>
+<p><small>Calcul indépendant de Seamly2D (formules de développement d'un cône tronqué). Faites toujours un essai en papier avant de couper le tissu.</small></p><p class="note"><b>Un problème avec un patron ?</b> Laissez un message via « Donner votre avis » en bas de page. Ce formulaire est anonyme : indiquez votre adresse e-mail dans votre message si vous souhaitez une réponse.</p></main>
+<footer>Patrons initialement conçus avec <a href="https://seamly.net">Seamly2D</a>, un logiciel gratuit de conception de patrons paramétriques · Gratuit · Faites toujours un essai en papier avant de couper le tissu. · <a href="apropos.html">À propos</a> · <a href="mentions.html">Mentions légales</a> · <a href="glossaire.html">Glossaire</a> · <a id="fb" href="#" hidden>Donner votre avis</a></footer>
+<script src="config.js"></script><script>(function(){var c=document.getElementById('contact');if(c){var u=['patrons.details','proton.me'].join(String.fromCharCode(64));c.href='mailto:'+u;c.textContent='Me contacter : '+u;}})();</script><script>(function(){var u=(window.SITE_CONFIG||{}).feedbackUrl;['fb','fbn'].forEach(function(i){var a=document.getElementById(i);if(u&&a){a.href=u;a.target='_blank';a.rel='noopener';a.hidden=false;}});})();</script>
+<script>(function(){try{var d=document,k='langbar_off';if(localStorage.getItem(k))return;var l=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();if(l.indexOf('en')!==0)return;var b=d.createElement('div');b.id='langbar';b.innerHTML='<span>This site is also available in English.</span><a href="en/bob.html" hreflang="en-GB">Switch to English</a><button type="button" aria-label="Close">×</button>';b.querySelector('button').onclick=function(){try{localStorage.setItem(k,1)}catch(e){}b.remove()};b.querySelector('a').onclick=function(){try{localStorage.setItem(k,1)}catch(e){}};d.body.insertBefore(b,d.body.firstChild)}catch(e){}})();</script><script src="engine.js"></script><script src="pdf.js"></script><script>(function(){const C={"h1": "Bob (bucket hat)", "sub": "Saisissez votre tour de tête et les réglages du chapeau : la coupe ci-contre s'adapte en direct. Téléchargez ensuite le patron au format A4 à l'échelle 1:1, ou en une seule page pour la vidéoprojection. Tout est calculé dans votre navigateur ; rien n'est envoyé.", "draft": "<b>Brouillon en cours de test</b> : cette page n’est pas encore annoncée sur le site.", "hs": "Votre bob", "hr": "Réglages", "hf": "Nombre de pièces", "f1": "1 pièce par couche (une couture dans le dos)", "f2": "2 pièces par couche (coutures sur les côtés)", "hseam": "Marge de couture", "seam": "Marge de couture", "seamhint": "(0 = sans marge)", "hcal": "Étalonnage d'impression", "cal": "Côté du carré de contrôle mesuré sur votre impression", "calh": "(laisser 50 si exact)", "caln": "Si votre imprimante réduit malgré « 100 % » (ex. carré de 48 mm), saisissez la valeur mesurée : le PDF sera agrandi pour compenser.", "dl": "Télécharger le PDF A4", "dl1": "PDF d’une page pour vidéoprojection", "note1": "Le PDF d’une page contient toutes les pièces à l’échelle 1:1, sans découpage en feuilles A4, pour être projeté sur le tissu (par exemple avec Pattern Projector). Le carré de 5 × 5 cm sert à calibrer la projection.", "print_": "Pour imprimer à la bonne échelle et contrôler le carré de 5 × 5 cm, voir la page <a href=\"imprimer.html\">Imprimer correctement</a>.", "foot": "Calcul indépendant de Seamly2D (formules de développement d'un cône tronqué). Faites toujours un essai en papier avant de couper le tissu.", "err_range": "Entre %a et %b%u.", "err_bad": "Cette combinaison ne donne pas un chapeau réalisable : la calotte est trop large pour cet angle et ce tour de tête, la couronne devient trop petite. Réduisez la largeur de la calotte ou augmentez l’angle.", "err_fix": "Corrigez les valeurs signalées en rouge.", "cr": "Couronne", "ca": "Calotte", "bo": "Bord", "head": "Tête", "title": "Bob", "pdf": "Bob - patron A4 1:1", "pdf1": "Bob - patron en une page 1:1", "file": "patron-bob.pdf", "file1": "patron-bob-une-page.pdf", "ann": "Couper %n : %t", "lay": "tissu principal et doublure", "lay2": "tissu principal et doublure, %n au total", "info0": "Diamètre de la couronne", "info1": "Hauteur de la calotte", "info2": "Diamètre extérieur du bord", "dec": ",", "fields": [["TT", "Tour de tête", "cm", 43, 61, 58], ["EASE", "Aisance", "cm", 0, 4, 2], ["DC", "Largeur de la calotte", "cm", 10, 15, 12], ["ANA", "Angle de la calotte", "°", 70, 80, 76], ["ANB", "Angle du bord", "°", 30, 60, 53], ["EB", "Largeur du bord", "cm", 5, 9, 6.2]]};
+const $=id=>document.getElementById(id),E=PatternEngine,r2=v=>Math.round(v*100)/100,dec=s=>String(s).replace('.',C.dec),RAD=Math.PI/180;
+function val(n){const e=$('v_'+n);return e?parseFloat(e.value):NaN}
+function check(){const m={};C.fields.forEach(([n,,u,lo,hi])=>{const v=val(n);if(!(v>=lo-1e-9&&v<=hi+1e-9))m[n]=C.err_range.replace('%a',dec(lo)).replace('%b',dec(hi)).replace('%u',u?' '+u:'')});
+ const s=val('seam');if(!(s>=0&&s<=3))m.seam=C.err_range.replace('%a','0').replace('%b','3').replace('%u',' cm');return m}
+function showErrors(m){document.querySelectorAll('.err').forEach(e=>e.textContent='');document.querySelectorAll('.row input').forEach(i=>i.classList.remove('bad'));
+ Object.keys(m).forEach(k=>{const e=$('e_'+k),i=$('v_'+k);if(e)e.textContent=m[k];if(i)i.classList.add('bad')});return Object.keys(m).length>0}
+// géométrie : B = diamètre de la tête avec aisance ; A = couronne ; calotte = cône tronqué (D = génératrice) ; bord = cône tronqué (EB)
+function model(){const TT=val('TT'),B=(TT+val('EASE'))/Math.PI,a=val('ANA')*RAD,b=val('ANB')*RAD,EB=val('EB'),D=val('DC');
+ const A=B-2*D*Math.cos(a),Cd=B+2*EB*Math.cos(b);
+ return {TT,B,A,a,b,EB,D,Cd,H:D*Math.sin(a),drop:EB*Math.sin(b),R1:B/(2*Math.cos(a)),R3:B/(2*Math.cos(b)),th1:360*Math.cos(a),th3:360*Math.cos(b)}}
+function ok(M){return isFinite(M.D)&&M.D>0.5&&M.H>0.5&&M.A>4&&M.R1-M.D>0.5&&M.R3-M.EB>0.5}
+// secteur d'anneau (rayons R extérieur, r intérieur, angle th en degrés, pointe en haut, y vers le bas)
+function sector(R,r,th,notchFr){const n=Math.max(8,Math.ceil(th/2)),pts=[],h=th/2;
+ for(let i=0;i<=n;i++){const f=-h+th*i/n;pts.push({x:R*Math.sin(f*RAD),y:R*Math.cos(f*RAD),wa:null,wb:null})}
+ for(let i=n;i>=0;i--){const f=-h+th*i/n;pts.push({x:r*Math.sin(f*RAD),y:r*Math.cos(f*RAD),wa:null,wb:null})}
+ const nt=[];notchFr.forEach(fr=>{const f=(-h+th*fr)*RAD,s=Math.sin(f),c=Math.cos(f);nt.push({x:R*s,y:R*c,nx:s,ny:c,len:0.8,w:1});nt.push({x:r*s,y:r*c,nx:-s,ny:-c,len:0.8,w:1})});
+ return {poly:pts,notches:nt}}
+function circle(R){const pts=[];for(let i=0;i<180;i++){const f=2*Math.PI*i/180;pts.push({x:R*Math.cos(f),y:R*Math.sin(f),wa:null,wb:null})}
+ const nt=[];for(let k=0;k<4;k++){const f=k*Math.PI/2,c=Math.cos(f),s=Math.sin(f);nt.push({x:R*c,y:R*s,nx:c,ny:s,len:0.8,w:1})}return {poly:pts,notches:nt}}
+function pieces(M,np,seam){const out=[],add=(name,o,q,extra)=>{const sa=seam>0?E.offsetPolygon(o.poly,seam):null;
+  const nt=o.notches.map(n=>Object.assign({},n,{w:seam}));out.push({name,lbl:name,poly:o.poly,sa,notches:seam>0?nt:nt.map(n=>Object.assign(n,{w:0})),internal:[],quantity:q,ann:C.ann.replace('%n',q).replace('%t',q>2?C.lay2.replace('%n',q):C.lay),onFold:false,note:''})};
+ // sens : on place le sommet des secteurs vers le haut ; la couture éventuelle (pièce unique) est au milieu du dos
+ add(C.cr,circle(M.A/2),2);
+ const fr1=np===1?[0.25,0.5,0.75]:[0.5],th1=M.th1/np,th3=M.th3/np;
+ add(C.ca,sector(M.R1,M.R1-M.D,th1,fr1),2*np);
+ add(C.bo,sector(M.R3,M.R3-M.EB,th3,fr1),2*np);
+ return out}
+function section(M){ // demi-coupe : axe vertical à gauche, couronne en haut, calotte, bord ; l'intérieur de la tête en pointillés
+ const k=8,H=M.H,run1=(M.B-M.A)/2,dropx=M.EB*Math.cos(M.b),X=(M.Cd/2),pad=14;
+ const P=(x,y)=>[(pad+x*k).toFixed(1),(pad+(H-y)*k).toFixed(1)];  // y vers le haut ; origine = base de la calotte
+ const c0=P(0,H),c1=P(M.A/2,H),b0=P(M.B/2,0),e0=P(M.Cd/2,-M.drop);
+ const w=pad*2+X*k+40,hh=pad*2+(H+M.drop)*k+30;
+ const txt=(x,y,s,a)=>'<text x="'+x+'" y="'+y+'" font-size="12" text-anchor="'+(a||'start')+'" fill="currentColor">'+s+'</text>';
+ let o='<line x1="'+c0[0]+'" y1="'+(+c0[1]-6)+'" x2="'+c0[0]+'" y2="'+P(0,-M.drop-1)[1]+'" stroke="currentColor" stroke-dasharray="4 4" opacity=".4"/>';
+ o+='<polyline points="'+c0+' '+c1+' '+b0+' '+e0+'" fill="none" stroke="var(--ac)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>';
+ o+='<line x1="'+c0[0]+'" y1="'+P(0,0)[1]+'" x2="'+b0[0]+'" y2="'+b0[1]+'" stroke="currentColor" stroke-dasharray="3 4" opacity=".5"/>';
+ o+=txt((+c0[0]+(+c1[0]-+c0[0])/2).toFixed(1),(+c0[1]-7).toFixed(1),C.cr,'middle');
+ const m1=[(+c1[0]+ +b0[0])/2,(+c1[1]+ +b0[1])/2];o+=txt((m1[0]+8).toFixed(1),(m1[1]).toFixed(1),C.ca);
+ const m2=[(+b0[0]+ +e0[0])/2,(+b0[1]+ +e0[1])/2];o+=txt((m2[0]+6).toFixed(1),(m2[1]+14).toFixed(1),C.bo);
+ o+=txt((+c0[0]+4).toFixed(1),(+P(0,0)[1]+14).toFixed(1),C.head+' ⌀ '+r2(M.B)+' cm');
+ $('sec').setAttribute('viewBox','0 0 '+w.toFixed(0)+' '+hh.toFixed(0));$('sec').innerHTML=o}
+function draw(){const bad=check();if(showErrors(bad)){$('msg').textContent=C.err_fix;$('dl').disabled=$('dl1').disabled=true;return null}
+ const M=model();if(!ok(M)){$('msg').textContent=C.err_bad;$('dl').disabled=$('dl1').disabled=true;return null}
+ $('msg').textContent='';$('dl').disabled=$('dl1').disabled=false;section(M);
+ $('facts').firstChild.innerHTML=C.info0+' : '+r2(M.A)+' cm · '+C.info1+' : '+r2(M.H)+' cm · '+C.info2+' : '+r2(M.Cd)+' cm';
+ const np=+document.querySelector('input[name=np]:checked').value,ps=pieces(M,np,val('seam'));
+ let x=0,y=0,rowH=0,out='',W=100;const G=3;
+ ps.forEach(p=>{const b=E.bbox(p.sa||p.poly);if(x>0&&x+b.w>W){x=0;y+=rowH+G;rowH=0}const dx=x-b.x0,dy=y-b.y0,P=a=>a.map(q=>(q.x+dx).toFixed(2)+','+(q.y+dy).toFixed(2)).join(' ');
+  out+='<polygon points="'+P(p.poly)+'" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>';
+  if(p.sa)out+='<polygon points="'+P(p.sa)+'" fill="none" stroke="var(--cut)" stroke-width="2" vector-effect="non-scaling-stroke"/>';
+  p.notches.forEach(n=>{out+='<line x1="'+(n.x+dx).toFixed(2)+'" y1="'+(n.y+dy).toFixed(2)+'" x2="'+(n.x-n.nx*n.len+dx).toFixed(2)+'" y2="'+(n.y-n.ny*n.len+dy).toFixed(2)+'" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>'});
+  out+='<text x="'+(x+b.w/2).toFixed(1)+'" y="'+(y+b.h+2.4).toFixed(1)+'" font-size="2.4" text-anchor="middle" fill="currentColor">'+p.name+'</text>';x+=b.w+G;rowH=Math.max(rowH,b.h+4)});
+ $('prev').setAttribute('viewBox','-1 -1 '+(W+2)+' '+(y+rowH+2).toFixed(1));$('prev').innerHTML=out;return {M,ps,np}}
+function build(single){const r=draw();if(!r)return;
+ let m=val('meas');if(Math.abs(m-50)<0.2)m=50;const sc=(!single&&m>=40&&m<=60)?50/m:1;
+ const d=new Date(),dt=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+ const M=r.M,info=C.fields.map(q=>q[1].toLowerCase()+' '+dec(r2(val(q[0])))).join(', ');
+ const res=PatternPDF.build(r.ps,{title:single?C.pdf1:C.pdf,lines:[info],scale:sc,date:dt,single:single});$('msg').textContent=res.warnings.join(' ');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([res.bytes],{type:'application/pdf'}));a.download=single?C.file1:C.file;a.click()}
+document.querySelectorAll('.fld input,#v_seam,input[name=np]').forEach(i=>i.addEventListener('input',draw));document.querySelectorAll('input[name=np]').forEach(i=>i.addEventListener('change',draw));
+$('dl').onclick=()=>build(false);$('dl1').onclick=()=>build(true);draw();
+})();</script><script data-goatcounter="https://patrons-gratuits.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script></body></html>

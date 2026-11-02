@@ -148,8 +148,91 @@
     return pick.p;
   }
 
+
+  // ------------------------------------------------------------------ courbes de Bézier (splines Seamly2D)
+  // courbe = { segs: [[P0,C1,C2,P3], ...] }
+  const bezAt = (g, t) => { const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+    return { x: a * g[0].x + b * g[1].x + c * g[2].x + d * g[3].x, y: a * g[0].y + b * g[1].y + c * g[2].y + d * g[3].y }; };
+  function bezSplit(g, t) {
+    const L = (p, q) => ({ x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t });
+    const a = L(g[0], g[1]), b = L(g[1], g[2]), c = L(g[2], g[3]), d = L(a, b), e = L(b, c), f = L(d, e);
+    return [[g[0], a, d, f], [f, e, c, g[3]]];
+  }
+  // échantillonnage fin d'une courbe : tableau de {x,y,s (abscisse curviligne), seg, t}
+  function sampleCurve(cv, perSeg) {
+    const out = []; let s = 0;
+    cv.segs.forEach((g, si) => {
+      const n = perSeg || 200;
+      for (let k = (si === 0 ? 0 : 1); k <= n; k++) {
+        const t = k / n, p = bezAt(g, t), l = out[out.length - 1];
+        if (l) s += Math.hypot(p.x - l.x, p.y - l.y);
+        out.push({ x: p.x, y: p.y, s, seg: si, t });
+      }
+    });
+    return out;
+  }
+  const curveLength = (cv) => { const a = sampleCurve(cv, 400); return a[a.length - 1].s; };
+  // coupe la courbe à l'abscisse curviligne L -> { point, first, second }
+  function cutCurveAt(cv, L) {
+    const smp = sampleCurve(cv, 400), tot = smp[smp.length - 1].s;
+    if (L < 0 || L > tot + 1e-9) throw new Error('Longueur de coupe hors de la courbe');
+    let i = 1; while (i < smp.length - 1 && smp[i].s < L) i++;
+    const a = smp[i - 1], b = smp[i], f = b.s > a.s ? (L - a.s) / (b.s - a.s) : 0;
+    let seg = b.seg, t;
+    if (a.seg === b.seg) t = a.t + f * (b.t - a.t); else { seg = a.seg; t = a.t + f * (1 - a.t); }
+    const [g1, g2] = bezSplit(cv.segs[seg], t);
+    const point = g1[3];
+    return { point: { x: point.x, y: point.y }, first: { segs: cv.segs.slice(0, seg).concat([g1]) }, second: { segs: [g2].concat(cv.segs.slice(seg + 1)) } };
+  }
+  const curveMap = (cv, f) => ({ segs: cv.segs.map((g) => g.map(f)) });
+  // polyligne pour dessin (pas ~ step cm)
+  function curvePolyline(cv, step) {
+    const out = []; const st = step || 0.25;
+    cv.segs.forEach((g, si) => {
+      const ctl = Math.hypot(g[1].x - g[0].x, g[1].y - g[0].y) + Math.hypot(g[2].x - g[1].x, g[2].y - g[1].y) + Math.hypot(g[3].x - g[2].x, g[3].y - g[2].y);
+      const n = Math.max(8, Math.ceil(ctl / st));
+      for (let k = (si === 0 ? 0 : 1); k <= n; k++) out.push(bezAt(g, k / n));
+    });
+    return out;
+  }
+  // intersection d'une demi-droite (base, angle) avec une courbe : point le plus proche de la base
+  function rayCurve(base, angle, cv) {
+    const u = dirOf(norm360(angle)), smp = sampleCurve(cv, 300); let best = null;
+    for (let i = 1; i < smp.length; i++) {
+      const a = smp[i - 1], b = smp[i];
+      const sa = (a.x - base.x) * u.y - (a.y - base.y) * u.x, sb = (b.x - base.x) * u.y - (b.y - base.y) * u.x;
+      if (sa === 0 && sb === 0) continue;
+      if ((sa <= 0 && sb >= 0) || (sa >= 0 && sb <= 0)) {
+        const f = sa === sb ? 0 : sa / (sa - sb), p = { x: a.x + f * (b.x - a.x), y: a.y + f * (b.y - a.y) };
+        const t = (p.x - base.x) * u.x + (p.y - base.y) * u.y;
+        const key = Math.abs(t) + (t < -1e-9 ? 1e-3 : 0); // demi-droite d'abord (à égalité), sinon l'autre sens : l'axe de Seamly2D est une droite
+        if (!best || key < best.key) best = { t, p, key };
+      }
+    }
+    if (!best) throw new Error('Intersection droite-courbe introuvable');
+    return best.p;
+  }
+  // sous-courbe entre deux points proches de la courbe (comme Seamly2D pour une courbe insérée entre deux nœuds)
+  function trimPolyline(a, p, q, tol) {
+    if (a.length < 2) return a;
+    const near = (z) => { let bi = -1, bd = Infinity, bt = 0;
+      for (let i = 0; i < a.length - 1; i++) { const dx = a[i + 1].x - a[i].x, dy = a[i + 1].y - a[i].y, l2 = dx * dx + dy * dy || 1e-18;
+        let t = ((z.x - a[i].x) * dx + (z.y - a[i].y) * dy) / l2; t = Math.max(0, Math.min(1, t));
+        const d = Math.hypot(a[i].x + t * dx - z.x, a[i].y + t * dy - z.y); if (d < bd) { bd = d; bi = i; bt = t; } }
+      return { d: bd, pos: bi + bt }; };
+    const np = p ? near(p) : null, nq = q ? near(q) : null;
+    const okP = np && np.d < tol, okQ = nq && nq.d < tol;
+    const at = (pos) => { const i = Math.min(a.length - 2, Math.floor(pos)), t = pos - i; return { x: a[i].x + t * (a[i + 1].x - a[i].x), y: a[i].y + t * (a[i + 1].y - a[i].y) }; };
+    const lo = okP ? np.pos : 0, hi = okQ ? nq.pos : a.length - 1;
+    const out = [];
+    if (okP) out.push(at(lo));
+    for (let i = Math.floor(lo) + 1; i <= Math.ceil(hi) - 1; i++) if (i > lo && i < hi) out.push(a[i]);
+    if (!okP && out.length === 0) out.push(a[0]);
+    if (okQ) out.push(at(hi)); else out.push(a[a.length - 1]);
+    return out;
+  }
   // ------------------------------------------------------------------ construction
-  function computeBlockRaw(data, blockIndex, overrides) {
+  function computeBlockRaw(data, blockIndex, overrides, inherit) {
     const block = data.blocks[blockIndex];
     const vars = {};
     for (const v of data.variables) vars[v.name] = evalFormula(v.formula, (n) => { if (n in vars) return vars[n]; throw new Error('Variable inconnue ' + n); });
@@ -157,13 +240,16 @@
 
     const pts = {};      // id -> {x,y,name}
     const arcs = {};     // id -> {cx,cy,r,a1,a2}
-    const names = new Map(); // nom -> point
+    const curves = {};   // id -> {segs} (splines)
+    const curveLen = Object.assign({}, inherit ? inherit.curveLen : {}); // nom (Spl_A_B, SplPath_A_B) -> longueur
+    const names = new Map(inherit ? inherit.names : []); // nom -> point
     const warnings = [];
     let current = 0;
 
     const resolve = (n) => {
       if (n in vars) return vars[n];
       if (n === 'CurrentLength') return current;
+      if (n in curveLen) return curveLen[n];
       const m = /^(AngleLine|Line)_(.+)$/.exec(n);
       if (m) {
         const rest = m[2];
@@ -181,7 +267,7 @@
 
     for (const e of block.calc) {
       if (e.tag === 'point') {
-        let p;
+        let p, post = null;
         switch (e.type) {
           case 'single': p = { x: Number(e.x), y: Number(e.y) }; break;
           case 'endLine': {
@@ -217,18 +303,59 @@
           }
           case 'curveIntersectAxis': {
             const b = P(e.basePoint); const a = F(e.angle);
+            if (curves[e.curve]) { try { p = rayCurve(b, a, curves[e.curve]); } catch (er) { throw new Error(er.message + ' (' + e.name + ', angle ' + a + ')'); } break; }
             const arc = arcs[e.curve]; if (!arc) throw new Error('Arc introuvable ' + e.curve);
             p = rayArc(b, a, arc, warnings); break;
+          }
+          case 'cutArc': {
+            const arc = arcs[e.arc]; if (!arc) throw new Error('Arc introuvable ' + e.arc);
+            const sp = arcSpan(arc), tot = arc.r * (sp[1] - sp[0]) * DEG; let L = F(e.length); if (e.direction === 'backward') L = tot - L;
+            p = arcPoint(arc, sp[0] + (L / arc.r) / DEG); break;
+          }
+          case 'cutSpline': case 'cutSplinePath': {
+            const cv = curves[e.type === 'cutSpline' ? e.spline : e.splinePath];
+            if (!cv) throw new Error('Courbe introuvable pour ' + e.name);
+            const tot = curveLength(cv); let L = F(e.length); if (e.direction === 'backward') L = tot - L;
+            const r = cutCurveAt(cv, L); p = { x: r.point.x, y: r.point.y };
+            post = () => { if (cv.meta && e.name) { const m = cv.meta;
+              curveLen[m.prefix + '_' + m.a + '_' + e.name] = curveLength(r.first); curveLen[m.prefix + '_' + e.name + '_' + m.b] = curveLength(r.second); } };
+            break;
           }
           default: throw new Error('Type de point non géré : ' + e.type);
         }
         reg(e.id, p, e.name);
+        if (post) { post(); post = null; }
+      } else if (e.tag === 'spline') {
+        let cv, prefix, a, b;
+        if (e.type === 'simpleInteractive') {
+          const P0 = P(e.point1), P3 = P(e.point4);
+          const u1 = dirOf(F(e.angle1)), u2 = dirOf(F(e.angle2)), l1 = F(e.length1), l2 = F(e.length2);
+          cv = { segs: [[{ x: P0.x, y: P0.y }, { x: P0.x + l1 * u1.x, y: P0.y + l1 * u1.y }, { x: P3.x + l2 * u2.x, y: P3.y + l2 * u2.y }, { x: P3.x, y: P3.y }]] };
+          prefix = 'Spl'; a = P0.name; b = P3.name;
+        } else if (e.type === 'pathInteractive') {
+          const pp = e.pathPoints.map((q) => ({ P: P(q.pSpline), a1: F(q.angle1), a2: F(q.angle2), l1: F(q.length1), l2: F(q.length2) }));
+          const segs = [];
+          for (let i = 0; i + 1 < pp.length; i++) {
+            const A = pp[i], B = pp[i + 1], ua = dirOf(A.a2), ub = dirOf(B.a1);
+            segs.push([{ x: A.P.x, y: A.P.y }, { x: A.P.x + A.l2 * ua.x, y: A.P.y + A.l2 * ua.y }, { x: B.P.x + B.l1 * ub.x, y: B.P.y + B.l1 * ub.y }, { x: B.P.x, y: B.P.y }]);
+          }
+          cv = { segs }; prefix = 'SplPath'; a = pp[0].P.name; b = pp[pp.length - 1].P.name;
+        } else throw new Error('Type de courbe non géré : ' + e.type);
+        cv.meta = { prefix, a, b };
+        curves[e.id] = cv;
+        if (a && b) curveLen[prefix + '_' + a + '_' + b] = curveLength(cv);
       } else if (e.tag === 'arc') {
         const c = P(e.center);
         arcs[e.id] = { cx: c.x, cy: c.y, r: F(e.radius), a1: F(e.angle1), a2: F(e.angle2), id: e.id };
+        if (c.name) { const sp = arcSpan(arcs[e.id]); curveLen['Arc_' + c.name + '_' + e.id] = arcs[e.id].r * (sp[1] - sp[0]) * DEG; }
       } else if (e.tag === 'operation') {
-        let reflectPt, reflectAng;
-        if (e.type === 'flippingByAxis') {
+        let reflectPt, reflectAng, moving = false;
+        if (e.type === 'moving') {
+          const rot = F(e.rotationAngle || 0);
+          if (Math.abs(rot) > 1e-12) throw new Error('Rotation non gérée dans le déplacement');
+          const u = dirOf(F(e.angle)), l = F(e.length); moving = true;
+          reflectPt = (p) => ({ x: p.x + l * u.x, y: p.y + l * u.y });
+        } else if (e.type === 'flippingByAxis') {
           if (String(e.axisType) !== '1') throw new Error('Axe de symétrie non géré');
           const cx = P(e.center).x;
           reflectPt = (p) => ({ x: 2 * cx - p.x, y: p.y });
@@ -249,15 +376,18 @@
           if (pts[sid]) {
             const s = pts[sid]; const q = reflectPt(s);
             reg(did, q, s.name ? s.name + e.suffix : null);
+          } else if (curves[sid]) {
+            curves[did] = curveMap(curves[sid], reflectPt);
           } else if (arcs[sid]) {
             const s = arcs[sid]; const c = reflectPt({ x: s.cx, y: s.cy });
-            arcs[did] = { cx: c.x, cy: c.y, r: s.r, a1: norm360(reflectAng(s.a2)), a2: norm360(reflectAng(s.a1)), id: did };
+            arcs[did] = moving ? { cx: c.x, cy: c.y, r: s.r, a1: s.a1, a2: s.a2, id: did }
+              : { cx: c.x, cy: c.y, r: s.r, a1: norm360(reflectAng(s.a2)), a2: norm360(reflectAng(s.a1)), id: did };
           } else throw new Error('Objet source introuvable ' + sid);
         });
       }
       // les éléments « line » ne servent qu'à l'affichage dans Seamly2D
     }
-    return { block, vars, pts, arcs, names, warnings };
+    return { block, vars, pts, arcs, curves, curveLen, names, warnings };
   }
 
   // ------------------------------------------------------------------ pièces
@@ -267,6 +397,7 @@
       const l = out[out.length - 1];
       if (!l || Math.hypot(p.x - l.x, p.y - l.y) > e) out.push(p);
       else {
+        if (p.miter) l.miter = true; if (p.bevel) l.bevel = true;
         if (p.notch && !l.notch) l.notch = p.notch; // point confondu : une largeur explicite (nombre) l'emporte
         l.wb = num(l.wb) ? l.wb : (num(p.wb) ? p.wb : (l.wb != null ? l.wb : (p.wb != null ? p.wb : null)));
         l.wa = num(p.wa) ? p.wa : (num(l.wa) ? l.wa : (p.wa != null ? p.wa : (l.wa != null ? l.wa : null)));
@@ -274,6 +405,7 @@
     }
     if (out.length > 1 && Math.hypot(out[0].x - out[out.length - 1].x, out[0].y - out[out.length - 1].y) <= e) {
       const last = out.pop();
+      if (last.miter) out[0].miter = true; if (last.bevel) out[0].bevel = true; if (last.notch && !out[0].notch) out[0].notch = last.notch;
       if (num(last.wb) || out[0].wb == null) out[0].wb = last.wb != null ? last.wb : out[0].wb;
       if (out[0].wa == null && last.wa != null) out[0].wa = last.wa;
     }
@@ -284,6 +416,7 @@
     const m = res.block.modeling[modId];
     if (!m) throw new Error('Élément de modélisation introuvable ' + modId);
     if (m.tag === 'arc') return { kind: 'arc', arc: res.arcs[m.idObject] };
+    if (m.tag === 'spline') { const cv = res.curves[m.idObject]; if (!cv) throw new Error('Courbe introuvable ' + m.idObject); return { kind: 'curve', curve: cv }; }
     return { kind: 'pt', p: res.pts[m.idObject], mod: m };
   }
 
@@ -320,7 +453,17 @@
   }
 
   // Valeurs singulières (ex. revers = rempli : droites confondues) : on réessaie avec un écart de 0,01 mm
-  function computeBlock(data, blockIndex, overrides) {
+  // opts.chain : les blocs précédents sont calculés d'abord et leurs noms / longueurs de courbes sont visibles (comme dans Seamly2D)
+  function computeBlock(data, blockIndex, overrides, opts) {
+    let inherit;
+    if (opts && opts.chain && blockIndex > 0) {
+      inherit = { curveLen: {}, names: new Map() };
+      for (let i = 0; i < blockIndex; i++) {
+        const r = computeBlockRaw(data, i, overrides, inherit);
+        Object.assign(inherit.curveLen, r.curveLen); r.names.forEach((v, k) => inherit.names.set(k, v));
+      }
+    }
+    if (inherit) return computeBlockRaw(data, blockIndex, overrides, inherit);
     try { return computeBlockRaw(data, blockIndex, overrides); } catch (e) {
       if (!/parall/i.test(e.message)) throw e;
       for (const k of [1, -1, 2, -2]) {
@@ -332,15 +475,15 @@
     }
   }
 
-  function buildPolyline(res, nodeList, arcStep) {
+  function buildPolyline(res, nodeList, arcStep, bevelNames) {
     const poly = [];
     for (const n of nodeList) {
       if (n.excluded === 'true') continue;
       const o = resolveNode(res, n.idObject);
       if (o.kind === 'pt') {
-        poly.push({ x: o.p.x, y: o.p.y, wb: n.before !== undefined ? +n.before : null, wa: n.after !== undefined ? +n.after : null, notch: n.notch === 'true' ? (n.notchLength !== undefined ? +n.notchLength : 1.25) : 0 });
+        poly.push({ x: o.p.x, y: o.p.y, wb: n.before !== undefined ? +n.before : null, wa: n.after !== undefined ? +n.after : null, notch: n.notch === 'true' ? (n.notchLength !== undefined ? +n.notchLength : 1.25) : 0, miter: n.angle === '1', bevel: !!(bevelNames && o.p.name && bevelNames.indexOf(o.p.name) >= 0) });
       } else {
-        let a = arcPolyline(o.arc, arcStep);
+        let a = o.kind === 'curve' ? curvePolyline(o.curve, 0.2) : arcPolyline(o.arc, arcStep);
         const last = poly[poly.length - 1];
         // comme Seamly2D : un arc inséré entre deux points n'est tracé que d'un point à l'autre
         let nxt = null;
@@ -348,9 +491,9 @@
         if (last) {
           const dS = Math.hypot(a[0].x - last.x, a[0].y - last.y);
           const dE = Math.hypot(a[a.length - 1].x - last.x, a[a.length - 1].y - last.y);
-          if (dE < dS) a = a.slice().reverse();
-          if (nxt) a = cutArc(a, o.arc, last, nxt);
-        } else if (n.reverse === '1') a = a.slice().reverse();
+          if (o.kind === 'curve') { if (n.reverse === '1') a = a.slice().reverse(); a = trimPolyline(a, last, nxt, 0.02); }
+          else { if (dE < dS) a = a.slice().reverse(); if (nxt) a = cutArc(a, o.arc, last, nxt); }
+        } else { if (n.reverse === '1') a = a.slice().reverse(); if (o.kind === 'curve' && nxt) a = trimPolyline(a, null, nxt, 0.02); }
         // largeur de marge le long de l'arc : de la largeur « après » du point précédent à la largeur « avant » du point suivant
         const ws = last ? last.wa : null, we = nxt ? nodeBefore(nodeList, n, res) : null;
         a.forEach((q, k) => {
@@ -373,6 +516,9 @@
 
   // décalage d'un polygone : marge w par défaut ; chaque sommet peut porter sa propre largeur avant (wb) / après (wa),
   // comme les nœuds d'une pièce Seamly2D (0 = pas de marge ; la largeur varie alors linéairement le long du segment)
+  let BEVEL_DOT = 0.25; // seuil de coin « biseau » (1 + cos de l'angle de virage) ; réglable par patron
+  let FLAG_BEVEL = false;
+  function setBevel(v, flagBevel) { BEVEL_DOT = v; FLAG_BEVEL = !!flagBevel; }
   function offsetPolygon(poly, w) {
     const n = poly.length;
     const sgn = signedArea(poly) > 0 ? 1 : -1; // normale extérieure = (sgn*dy, -sgn*dx)
@@ -385,13 +531,14 @@
       const nx = (sgn * dy) / l, ny = (-sgn * dx) / l, ws = W(p1.wa), we = W(p2.wb);
       seg.push({ nx, ny, a: { x: p1.x + nx * ws, y: p1.y + ny * ws }, b: { x: p2.x + nx * we, y: p2.y + ny * we } });
     }
-    const res = [];
+    const res = [], fst = new Array(n), lst = new Array(n);
     for (let i = 0; i < n; i++) {
+      fst[i] = res.length;
       const sp = seg[(i + n - 1) % n], sn = seg[i];
       if (!sp || !sn) continue;
       const p = poly[i];
       const dot = 1 + sp.nx * sn.nx + sp.ny * sn.ny;
-      if (dot < 0.25) { res.push({ x: sp.b.x, y: sp.b.y }, { x: sn.a.x, y: sn.a.y }); continue; } // coin très aigu : biseau
+      if (p.bevel || (p.miter && FLAG_BEVEL) || (dot < BEVEL_DOT && !p.miter)) { res.push({ x: sp.b.x, y: sp.b.y }, { x: sn.a.x, y: sn.a.y }); continue; } // coin très aigu : biseau
       const d1 = { x: sp.b.x - sp.a.x, y: sp.b.y - sp.a.y }, d2 = { x: sn.b.x - sn.a.x, y: sn.b.y - sn.a.y };
       const cr = d1.x * d2.y - d1.y * d2.x;
       if (Math.abs(cr) < 1e-12 * Math.hypot(d1.x, d1.y) * Math.hypot(d2.x, d2.y)) { // segments alignés
@@ -404,13 +551,14 @@
     }
     // arête devenue inversée (petit segment « absorbé » par la marge, ex. fond d'un V étroit) : on la supprime
     // et on remplace ses deux coins par l'intersection des deux droites voisines
-    if (res.length === n && seg.every(Boolean)) {
+    for (let i = 0; i < n; i++) lst[i] = (i + 1 < n ? fst[i + 1] : res.length) - 1;
+    if (seg.every(Boolean) && fst.every((f, i) => lst[i] >= f)) {
       for (let pass = 0; pass < 3; pass++) {
         let changed = false;
-        for (let k = 0; k < res.length; k++) {
-          const k2 = (k + 1) % res.length, sk = seg[k];
+        for (let k = 0; k < n; k++) {
+          const kk = lst[k], k2 = fst[(k + 1) % n], sk = seg[k];
           const d = { x: sk.b.x - sk.a.x, y: sk.b.y - sk.a.y };
-          const e = { x: res[k2].x - res[k].x, y: res[k2].y - res[k].y };
+          const e = { x: res[k2].x - res[kk].x, y: res[k2].y - res[kk].y };
           if (d.x * e.x + d.y * e.y >= 0) continue;
           const sp = seg[(k + n - 1) % n], sn = seg[(k + 1) % n];
           const d1 = { x: sp.b.x - sp.a.x, y: sp.b.y - sp.a.y }, d2 = { x: sn.b.x - sn.a.x, y: sn.b.y - sn.a.y };
@@ -418,7 +566,7 @@
           if (Math.abs(cr) < 1e-9) continue;
           const t = ((sn.a.x - sp.a.x) * d2.y - (sn.a.y - sp.a.y) * d2.x) / cr;
           const q = { x: sp.a.x + t * d1.x, y: sp.a.y + t * d1.y };
-          res[k] = q; res[k2] = { x: q.x, y: q.y }; changed = true;
+          res[kk] = q; res[k2] = { x: q.x, y: q.y }; changed = true;
         }
         if (!changed) break;
       }
@@ -433,7 +581,7 @@
     const out = [];
     for (const pc of res.block.pieces) {
       if (opts.only && !opts.only.includes(pc.name)) continue;
-      const poly = buildPolyline(res, pc.nodes, opts.arcStep || 3);
+      const poly = buildPolyline(res, pc.nodes, opts.arcStep || 3, opts.bevel && opts.bevel[pc.name]);
       const lines = [], kinds = [];
       for (const pid of pc.iPaths) {
         const path = res.block.modeling[pid];
@@ -466,7 +614,7 @@
     return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 };
   }
 
-  const api = { evalFormula, computeBlock, computePieces, bbox, offsetPolygon, signedArea };
+  const api = { setBevel, evalFormula, computeBlock, computePieces, bbox, offsetPolygon, signedArea };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PatternEngine = api;
 })(typeof window !== 'undefined' ? window : globalThis);
