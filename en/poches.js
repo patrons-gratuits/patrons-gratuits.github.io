@@ -149,8 +149,8 @@ function compute(){const {ov,seam}=inputs();const T=TYPES[cur];const {forms,list
 function fracStr(x){if(!(x>=0))return '';const q=Math.round(x*16),w=Math.floor(q/16);let n=q%16,d=16;while(n&&n%2===0){n/=2;d/=2}
  const f=n?n+'/'+d:'';const s=w&&f?w+' '+f:(f||String(w));return (Math.abs(x*16-q)<0.02?'= ':'≈ ')+s+' in'}
 function updateFracs(){document.querySelectorAll('.frac').forEach(e=>{if(U!=='in'){e.textContent='';return}const i=$('v_'+e.id.slice(2));const v=i?parseFloat(i.value):NaN;e.textContent=isNaN(v)?'':fracStr(v)})}
-function draw(){syncFields();updateFracs();let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':cmx(e.message);$('dl').disabled=true;return}
- $('dl').disabled=false;
+function draw(){syncFields();updateFracs();let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':cmx(e.message);$('dl').disabled=$('dl1').disabled=true;return}
+ $('dl').disabled=$('dl1').disabled=false;
  $('msg').textContent='';const svg=$('prev');let off=0,y1=-1e9,out='';
  r.pcs.forEach(p=>{const it=r.list.find(x=>x.n===p.name);const pts=(p.sa||p.poly).concat(...(p.internal||[]));const b=PatternEngine.bbox(pts);const dx=off-b.x0,dy=-b.y0;
   const P=a=>a.map(q=>(q.x+dx).toFixed(3)+','+(q.y+dy).toFixed(3)).join(' ');
@@ -161,16 +161,16 @@ function draw(){syncFields();updateFracs();let r;try{r=compute()}catch(e){$('msg
   out+=`<text x="${off}" y="-.4" font-size=".8" fill="currentColor">${it?((it.form?it.form+' – ':'')+it.part):p.name}</text>`;
   off+=Math.max(b.w,(it?((it.form?it.form+' – ':'')+it.part):p.name).length*0.46)+2;y1=Math.max(y1,b.h)});
  $('lg_s').style.display=r.pcs.some(p=>p.sa)?'':'none';$('lg_f').style.display=r.pcs.some(p=>(p.internal||[]).length)?'':'none';svg.setAttribute('viewBox',`-1 -2 ${Math.max(off,5)} ${Math.max(y1,5)+3}`);svg.innerHTML=out}
-function download(){let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':cmx(e.message);return}if(!r.pcs.length){$('msg').textContent='Please choose at least one shape.';return}
+function download(single){let r;try{r=compute()}catch(e){$('msg').textContent=e.fieldErrors?'Please correct the values marked in red.':cmx(e.message);return}if(!r.pcs.length){$('msg').textContent='Please choose at least one shape.';return}
  const fu=v=>(U==='cm'?fm(v):r2(v/K))+' '+U;const exl={Prof_soufflet_lat:'side gusset',Prof_pli_central:'centre pleat'};const ex=(r.T.extra||[]).map(k=>', '+exl[k]+' '+fu(r.ov[k])).join('');
  const info=['H '+fu(r.ov.H_poche)+' x W '+fu(r.ov.L_poche)+ex+(r.pcs.some(p=>p.sa)?', seam allowance '+fu(r.seam):', no seam allowance (fold-under)')];
- let m=parseFloat($('v_meas').value);if(U==='in')m*=25.4;if(Math.abs(m-50)<0.2)m=50;const sc=(m>=40&&m<=60)?50/m:1;
+ let m=parseFloat($('v_meas').value);if(U==='in')m*=25.4;if(Math.abs(m-50)<0.2)m=50;const sc=(!single&&m>=40&&m<=60)?50/m:1;
  const d=new Date(),dt=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
  const named=r.pcs.map(p=>{const it=r.list.find(x=>x.n===p.name)||{};return Object.assign({},p,{name:r.T.title+' - '+(it.form?it.form+' - ':'')+(it.part||p.name),note:info[0],ann:it.ann||'',lbl:((it.form==='Flap'?it.form:it.part)||''),fold:!!p.onFold,nograin:!(/^(Face avant|Poche|Devant)/.test(it.part||'')&&it.form!=='Rabat')})});
- const o=PatternPDF.build(named,{title:'Pocket - A4 pattern 1:1',lines:info,scale:sc,date:dt});
+ const o=PatternPDF.build(named,{title:single?'Pocket - one-page pattern 1:1':'Pocket - A4 pattern 1:1',lines:info,scale:sc,date:dt,single:!!single});
  $('msg').textContent=o.warnings.join(' ');
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o.bytes],{type:'application/pdf'}));a.download='pocket-pattern.pdf';a.click()}
-document.querySelectorAll('#v_seam,#v_meas').forEach(i=>i.addEventListener('input',draw));$('dl').onclick=download;const MEAS0=$('meashint').textContent,CAL0=$('calnote').textContent;
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o.bytes],{type:'application/pdf'}));a.download=single?'pocket-pattern-one-page.pdf':'pocket-pattern.pdf';a.click()}
+document.querySelectorAll('#v_seam,#v_meas').forEach(i=>i.addEventListener('input',draw));$('dl').onclick=()=>download(false);$('dl1').onclick=()=>download(true);const MEAS0=$('meashint').textContent,CAL0=$('calnote').textContent;
 function updateUnitUi(init){const inch=U==='in';document.querySelectorAll('.ucm').forEach(e=>e.textContent=U);
  const sv=$('v_seam');sv.step=inch?'0.05':'0.1';sv.max=inch?'1.97':'5';if(init&&inch)sv.value=r2(fromCm(parseFloat(sv.value)));
  const mv=$('v_meas');mv.min=inch?'1.57':'40';mv.max=inch?'2.36':'60';mv.step=inch?'0.01':'0.5';if(init&&inch)mv.value='1.97';
