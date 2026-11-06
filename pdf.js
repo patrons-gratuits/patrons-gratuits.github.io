@@ -12,7 +12,7 @@
   function layout(pieces, sc) {
     sc = sc || 1;
     const usableW = PW / sc - 2 * MARGIN, usableH = PH / sc - 2 * MARGIN;
-    const gap = 0.8 * PT, head = pieces.some(p => p.ann) ? 40 : 28;
+    const gap = 0.8 * PT, head = pieces.some(p => p.ann) ? 46 : 34;
     const items = pieces.map(p => {
       const outline = p.sa || p.poly;
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
@@ -81,10 +81,14 @@
       let ymax = 0; L1.pages.forEach(pg => pg.items.forEach(it => { ymax = Math.max(ymax, it.py + it.h + L1.head); }));
       ymax = Math.max(ymax, 5 * PT + 40);
       NOVC = false; PH = ymax + 2 * MARGIN + 24;
-      return build1(pieces, Object.assign({}, opts, { single: false, scale: 1 }));
+      return build1(pieces, Object.assign({}, opts, { single: false, scale: 1, proj: true }));
     } finally { PW = A; PH = B; NOVC = false; }
   }
   function build1(pieces, opts) {
+    /* Vidéoprojection : traits plus épais et pointillés plus longs, pour rester visibles à distance. */
+    const thick = str => str.replace(/(\d*\.?\d+) w\b/g, (m, v) => { v = parseFloat(v); return f2(v <= 0.6 ? v * 3.2 : v * 1.9) + ' w'; })
+      .replace(/\[([\d. ]+)\] 0 d/g, (m, d) => '[' + d.trim().split(/\s+/).map(x => f2(parseFloat(x) * 2)).join(' ') + '] 0 d');
+    const f2 = v => (Math.round(v * 100) / 100).toString();
     const sc = opts.scale && opts.scale > 0.5 && opts.scale < 2 ? opts.scale : 1, VH = PH / sc;
     const L = layout(pieces, sc);
     const objs = [];            // chaînes de contenu des pages
@@ -135,13 +139,13 @@
           c += `q ${X(0)} ${Y(y1)} ${f(x1)} ${f(T_.winH)} re W n\n`;
         } else {
         // étiquette : nom de la pièce + date de création + paramètres
-        const bh = p.ann ? 36 : 24;
+        const bh = p.ann ? 42 : 30;
         const l2 = (opts.date ? 'Créé le ' + opts.date : '') + (p.note ? '  -  ' + p.note : '');
         const maxW = PW / sc - 2 * MARGIN - ox - 8, fs = (str, sz) => { const w = tw(str, sz); return w > maxW && maxW > 60 ? Math.max(4.5, sz * maxW / w) : sz; };
-        const s1 = fs(p.name, 10), s2 = fs(l2, 7), s3 = p.ann ? fs(p.ann, 7) : 7;
+        const s1 = fs(p.name, 14), s2 = fs(l2, 7), s3 = p.ann ? fs(p.ann, 7) : 7;
         const bw = Math.max(Math.min(it.w, 15 * PT), Math.max(tw(p.name, s1), tw(l2, s2), p.ann ? tw(p.ann, s3) : 0) + 8);
         c += '0.4 w [] 0 d\n' + `${X(ox)} ${Y(oy - 2)} ${f(bw)} ${bh} re S\n`;
-        text(p.name, ox + Math.max(2, (bw - tw(p.name, s1)) / 2), oy - (p.ann ? 28 : 17), s1);
+        text(p.name, ox + Math.max(2, (bw - tw(p.name, s1)) / 2), oy - (p.ann ? 31 : 19), s1);
         text(l2, ox + Math.max(2, (bw - tw(l2, s2)) / 2), oy - (p.ann ? 17 : 6), s2);
         if (p.ann) text(p.ann, ox + Math.max(2, (bw - tw(p.ann, s3)) / 2), oy - 6, s3);
         }
@@ -149,6 +153,12 @@
         if (p.sa) { c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; path(p.sa, true, ox, oy, it.x0, it.y0); c += 'S\n0 G\n'; }
         // ligne de couture
         c += '0.4 w [] 0 d\n'; path(p.poly, true, ox, oy, it.x0, it.y0); c += 'S\n';
+        // point rouge : fin de la ligne de coupe (prolongée jusqu'au rempli)
+        if (p.dot) {
+          const rr = 0.4 * PT, kk = 0.5523 * rr, cx = ox + (p.dot.x - it.x0) * PT, cy = oy + (p.dot.y - it.y0) * PT, U = (x, y) => `${X(x)} ${Y(y)}`;
+          c += '0.84 0.16 0.16 rg\n';
+          c += `${U(cx + rr, cy)} m\n${U(cx + rr, cy + kk)} ${U(cx + kk, cy + rr)} ${U(cx, cy + rr)} c\n${U(cx - kk, cy + rr)} ${U(cx - rr, cy + kk)} ${U(cx - rr, cy)} c\n${U(cx - rr, cy - kk)} ${U(cx - kk, cy - rr)} ${U(cx, cy - rr)} c\n${U(cx + kk, cy - rr)} ${U(cx + rr, cy - kk)} ${U(cx + rr, cy)} c\nf\n0 g\n`;
+        }
         // crans : trait vers l'intérieur depuis la ligne de couture (+ trait depuis la ligne de coupe s'il y a une marge)
         if (p.notches && p.notches.length) {
           c += '0.4 w [] 0 d\n';
@@ -184,12 +194,24 @@
         });
         c += '0 G [] 0 d\n';
         // fil droit
-        let cx = 0, cy = 0; p.poly.forEach(q => { cx += q.x; cy += q.y; }); cx /= p.poly.length; cy /= p.poly.length;
+        let cx = (Math.min(...p.poly.map(q => q.x)) + Math.max(...p.poly.map(q => q.x))) / 2, cy = (Math.min(...p.poly.map(q => q.y)) + Math.max(...p.poly.map(q => q.y))) / 2; // centre de la boîte englobante : flèche centrée à la verticale et à l'horizontale
         let gx = ox + (cx - it.x0) * PT, gy = oy + (cy - it.y0) * PT, gl = Math.min(it.h * 0.5, 6 * PT);
         // pièce non convexe (ex. bande en U) : on cherche une position où le fil droit reste dans la matière
         const inPoly = (q, x, y) => { let c = false; for (let i = 0, j = q.length - 1; i < q.length; j = i++) { if ((q[i].y > y) !== (q[j].y > y) && x < ((q[j].x - q[i].x) * (y - q[i].y)) / (q[j].y - q[i].y) + q[i].x) c = !c; } return c; };
         const okAt = (xcm, ycm, lcm) => { for (let k = 0; k <= 8; k++) if (!inPoly(p.poly, xcm, ycm - lcm / 2 + (lcm * k) / 8)) return false; return true; };
         if (p.fold) { cy = Math.min(...p.poly.map(q => q.y)) + 2.6; gl = Math.min(gl, 1.6 * PT); gy = oy + (cy - it.y0) * PT; }
+        else if (p.grainTop) { // flèche courte en haut de la pièce, comme sur une pièce au pli : sous le bord supérieur de la matière, à l'abscisse du centre
+          let yt = Infinity; for (let i = 0, n = p.poly.length; i < n; i++) { const u = p.poly[i], v = p.poly[(i + 1) % n]; if ((u.x - cx) * (v.x - cx) <= 0 && u.x !== v.x) { const yy = u.y + (v.y - u.y) * (cx - u.x) / (v.x - u.x); if (yy < yt) yt = yy; } }
+          if (isFinite(yt)) { cy = yt + 2.6; gl = Math.min(gl, 1.6 * PT); gy = oy + (cy - it.y0) * PT; }
+        }
+        if (T_ && T_.tmode !== 0) { // pièce découpée en pages A4 : la flèche et son nom restent entiers sur une seule page (hors des bandes de recouvrement)
+          const adj = (v, lo, hi, step, win, n) => { const m = 4; let best = null;
+            for (let k = 0; k < n; k++) { const a0 = (k ? k * step + T_.OV : 0) + m - lo, a1 = (k < n - 1 ? (k + 1) * step : k * step + win) - m - hi; if (a0 > a1) continue; const w = Math.min(Math.max(v, a0), a1); if (best === null || Math.abs(w - v) < Math.abs(best - v)) best = w; }
+            return best === null ? v : best; };
+          const vx = (cx - it.x0) * PT, vy = (cy - it.y0) * PT;
+          const nx2 = adj(vx, -4, 5 + 70, T_.winW - T_.OV, T_.winW, T_.cols), ny2 = (p.fold || p.grainTop) ? vy : adj(vy, -gl / 2 - 8, gl / 2 + 8, T_.winH - T_.OV, T_.winH, T_.rows);
+          cx += (nx2 - vx) / PT; cy += (ny2 - vy) / PT; gx = ox + (cx - it.x0) * PT; gy = oy + (cy - it.y0) * PT;
+        }
         let placed = false;
         if (L.test.host === it && pi === L.test.page) { // carré au-dessus, flèche centrée sous le carré (si elle reste dans la matière)
           const t = it.h * 0.38 + 2.5 * PT + 0.8 * PT, b = it.h - 0.8 * PT, glh = Math.max(2 * PT, Math.min(6 * PT, b - t));
@@ -213,29 +235,31 @@
           const split = n => { const ls = []; let k = 0; for (let r = 0; r < n; r++) { const rest = words.length - k, take = Math.ceil(rest / (n - r)); ls.push(words.slice(k, k + take).join(' ')); k += take; } return ls.filter(Boolean); };
           const fits = (ls, s) => ls.every((l, i) => { const w = tw(l, s) / PT, y = gy - 7 - (ls.length - 1 - i) * (s + 1.5); return [0, w / 2, w].every(dx => [0, -s * 0.7].every(dy => inPoly(p.poly, it.x0 + (xa - ox) / PT + dx, it.y0 + (y + dy - oy) / PT))); });
           let best = null;
-          outer2: for (const s of [9, 8, 7, 6.5, 6, 5.5]) for (const n of [1, 2, 3]) { const ls = split(n); if (fits(ls, s)) { best = { ls, s }; break outer2; } }
+          outer2: for (const s of [14, 12, 11, 10, 9, 8, 7, 6.5, 6, 5.5]) for (const n of [1, 2, 3]) { const ls = split(n); if (fits(ls, s)) { best = { ls, s }; break outer2; } }
           if (!best) best = { ls: split(Math.min(3, words.length)), s: 5.5 };
           best.ls.forEach((l, i) => text(l, xa, gy - 7 - (best.ls.length - 1 - i) * (best.s + 1.5), best.s));
         }
         }
+        (p.marks || []).forEach(m => { const t = '(' + m.t + ')', s = 9; text(t, ox + (m.x - it.x0) * PT - tw(t, s) / 2, oy + (m.y - it.y0) * PT + s * 0.35, s); });
         if (T_) c += 'Q\n';
       }
       { // légende des lignes, en pied de page, alignée à droite
         const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Ligne de couture', 0]];
         if (ps.some(p => p.sa)) E.push(['Marge de couture', 1]);
         if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].place))))) E.push(['Repli', 2]);
+        if (ps.some(p => p.dot)) E.push(['Fin de la ligne de coupe', 4]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Emplacement poche', 3]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Emplacement patte', 3]);
         if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push(['Boutonniere', 1]);
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
-          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d'][e[1]] + `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`;
+          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d', '0.84 0.16 0.16 rg'][e[1]] + (e[1] === 4 ? (() => { const r = 3, k = 1.65, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n${U(cx + r, cy)} m ${U(cx + r, cy + k)} ${U(cx + k, cy + r)} ${U(cx, cy + r)} c ${U(cx - k, cy + r)} ${U(cx - r, cy + k)} ${U(cx - r, cy)} c ${U(cx - r, cy - k)} ${U(cx - k, cy - r)} ${U(cx, cy - r)} c ${U(cx + k, cy - r)} ${U(cx + r, cy - k)} ${U(cx + r, cy)} c f\n0 g\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
           text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
         });
       }
       text(title + ' - page ' + (pi + 1) + '/' + L.pages.length + (sc !== 1 ? ' - compensation x' + sc.toFixed(3) : ''), 0, VH - 2 * MARGIN + 2, 7);
-      objs.push(c);
+      objs.push(opts.proj ? thick(c) : c);
     });
     // assemblage PDF
     const parts = []; const offs = []; let len = 0;

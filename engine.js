@@ -397,7 +397,7 @@
       const l = out[out.length - 1];
       if (!l || Math.hypot(p.x - l.x, p.y - l.y) > e) out.push(p);
       else {
-        if (p.miter) l.miter = true; if (p.bevel) l.bevel = true;
+        if (p.miter) l.miter = true; if (p.bevel) l.bevel = true; if (p.fmiter) l.fmiter = true;
         if (p.notch && !l.notch) l.notch = p.notch; // point confondu : une largeur explicite (nombre) l'emporte
         l.wb = num(l.wb) ? l.wb : (num(p.wb) ? p.wb : (l.wb != null ? l.wb : (p.wb != null ? p.wb : null)));
         l.wa = num(p.wa) ? p.wa : (num(l.wa) ? l.wa : (p.wa != null ? p.wa : (l.wa != null ? l.wa : null)));
@@ -405,7 +405,7 @@
     }
     if (out.length > 1 && Math.hypot(out[0].x - out[out.length - 1].x, out[0].y - out[out.length - 1].y) <= e) {
       const last = out.pop();
-      if (last.miter) out[0].miter = true; if (last.bevel) out[0].bevel = true; if (last.notch && !out[0].notch) out[0].notch = last.notch;
+      if (last.miter) out[0].miter = true; if (last.bevel) out[0].bevel = true; if (last.fmiter) out[0].fmiter = true; if (last.notch && !out[0].notch) out[0].notch = last.notch;
       if (num(last.wb) || out[0].wb == null) out[0].wb = last.wb != null ? last.wb : out[0].wb;
       if (out[0].wa == null && last.wa != null) out[0].wa = last.wa;
     }
@@ -475,13 +475,13 @@
     }
   }
 
-  function buildPolyline(res, nodeList, arcStep, bevelNames) {
+  function buildPolyline(res, nodeList, arcStep, bevelNames, miterNames) {
     const poly = [];
     for (const n of nodeList) {
       if (n.excluded === 'true') continue;
       const o = resolveNode(res, n.idObject);
       if (o.kind === 'pt') {
-        poly.push({ x: o.p.x, y: o.p.y, wb: n.before !== undefined ? +n.before : null, wa: n.after !== undefined ? +n.after : null, notch: n.notch === 'true' ? (n.notchLength !== undefined ? +n.notchLength : 1.25) : 0, miter: n.angle === '1', bevel: !!(bevelNames && o.p.name && bevelNames.indexOf(o.p.name) >= 0) });
+        poly.push({ x: o.p.x, y: o.p.y, wb: n.before !== undefined ? +n.before : null, wa: n.after !== undefined ? +n.after : null, notch: n.notch === 'true' ? (n.notchLength !== undefined ? +n.notchLength : 1.25) : 0, miter: n.angle === '1', bevel: !!(bevelNames && o.p.name && bevelNames.indexOf(o.p.name) >= 0), fmiter: !!(miterNames && o.p.name && miterNames.indexOf(o.p.name) >= 0) });
       } else {
         let a = o.kind === 'curve' ? curvePolyline(o.curve, 0.2) : arcPolyline(o.arc, arcStep);
         const last = poly[poly.length - 1];
@@ -538,7 +538,7 @@
       if (!sp || !sn) continue;
       const p = poly[i];
       const dot = 1 + sp.nx * sn.nx + sp.ny * sn.ny;
-      if (p.bevel || (p.miter && FLAG_BEVEL) || (dot < BEVEL_DOT && !p.miter)) { res.push({ x: sp.b.x, y: sp.b.y }, { x: sn.a.x, y: sn.a.y }); continue; } // coin très aigu : biseau
+      if (!p.fmiter && (p.bevel || (p.miter && FLAG_BEVEL) || (dot < BEVEL_DOT && !p.miter))) { res.push({ x: sp.b.x, y: sp.b.y }, { x: sn.a.x, y: sn.a.y }); continue; } // coin très aigu : biseau
       const d1 = { x: sp.b.x - sp.a.x, y: sp.b.y - sp.a.y }, d2 = { x: sn.b.x - sn.a.x, y: sn.b.y - sn.a.y };
       const cr = d1.x * d2.y - d1.y * d2.x;
       if (Math.abs(cr) < 1e-12 * Math.hypot(d1.x, d1.y) * Math.hypot(d2.x, d2.y)) { // segments alignés
@@ -581,7 +581,7 @@
     const out = [];
     for (const pc of res.block.pieces) {
       if (opts.only && !opts.only.includes(pc.name)) continue;
-      const poly = buildPolyline(res, pc.nodes, opts.arcStep || 3, opts.bevel && opts.bevel[pc.name]);
+      const poly = buildPolyline(res, pc.nodes, opts.arcStep || 3, opts.bevel && opts.bevel[pc.name], opts.miter && opts.miter[pc.name]);
       const lines = [], kinds = [];
       for (const pid of pc.iPaths) {
         const path = res.block.modeling[pid];
@@ -597,7 +597,11 @@
       const notches = [], sg = signedArea(poly) > 0 ? 1 : -1, np = poly.length;
       poly.forEach((v, i) => {
         if (!v.notch) return;
-        const a = poly[(i + np - 1) % np], b = poly[(i + 1) % np];
+        // voisins éloignés d'au moins 0,05 cm : un point quasi confondu (doublon) donnerait une direction arbitraire et un cran incliné
+        let ia = (i + np - 1) % np, ib = (i + 1) % np, g = 0;
+        while (g++ < np && Math.hypot(v.x - poly[ia].x, v.y - poly[ia].y) < 0.05) ia = (ia + np - 1) % np;
+        g = 0; while (g++ < np && Math.hypot(poly[ib].x - v.x, poly[ib].y - v.y) < 0.05) ib = (ib + 1) % np;
+        const a = poly[ia], b = poly[ib];
         const e1 = { x: v.x - a.x, y: v.y - a.y }, e2 = { x: b.x - v.x, y: b.y - v.y }, l1 = Math.hypot(e1.x, e1.y) || 1, l2 = Math.hypot(e2.x, e2.y) || 1;
         let nx = sg * (e1.y / l1 + e2.y / l2), ny = -sg * (e1.x / l1 + e2.x / l2); const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl;
         const wl = typeof v.wb === 'number' ? v.wb : saw, wr = typeof v.wa === 'number' ? v.wa : saw;
