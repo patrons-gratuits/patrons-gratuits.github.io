@@ -5,27 +5,42 @@
   const f = n => (+n).toFixed(2);
   const HW = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
   function tw(s, size) { let w = 0; for (const ch of String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) { const k = ch.charCodeAt(0); w += (k >= 32 && k <= 126 ? HW[k - 32] : 556); } return w * size / 1000; }
-  function esc(s) { return String(s).replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/[\\()]/g, '\\$&').replace(/[^\x20-\x7e\xa0-\xff]/g, '?'); }
+  function esc(s) { return String(s).replace(/[\u2013\u2014]/g, '-').replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/[\\()]/g, '\\$&').replace(/[^\x20-\x7e\xa0-\xff]/g, '?'); }
   function latin1(str) { const a = new Uint8Array(str.length); for (let i = 0; i < str.length; i++) a[i] = str.charCodeAt(i) & 255; return a; }
 
   /* Range les pièces en rayonnage sur des pages A4. pieces: [{name,poly,sa,internal,note}] (cm, y vers le bas) */
-  function layout(pieces, sc) {
-    sc = sc || 1;
+  const HMIN = 8 * PT;
+  /* en-tête d'une pièce : nom, date/paramètres, annotation, sur plusieurs lignes dans la largeur bw (pt) */
+  function hdr(p, bw, date) {
+    const wrap = (str, sz, maxw) => { const out = []; let cur = ''; String(str || '').split(' ').forEach(wd => { const t = cur ? cur + ' ' + wd : wd; if (cur && tw(t, sz) > maxw) { out.push(cur); cur = wd; } else cur = t; }); if (cur) out.push(cur); return out; };
+    const mw = bw - 8, lines = [];
+    let sz = 10, nl = wrap(p.name, sz, mw);
+    while (nl.length > 3 && sz > 6) { sz -= 1; nl = wrap(p.name, sz, mw); }
+    nl.forEach(t => lines.push([t, sz]));
+    const l2 = (date ? 'Created on ' + date : '') + (p.note ? '  -  ' + p.note : '');
+    wrap(l2, 6, mw).forEach(t => lines.push([t, 6]));
+    if (p.ann) wrap(p.ann, 6, mw).forEach(t => lines.push([t, 6]));
+    return { lines, h: lines.reduce((a, l) => a + l[1] * 1.2, 0) + 6 };
+  }
+  function layout(pieces, sc, band) {
+    sc = sc || 1; band = band || 0;
     const usableW = PW / sc - 2 * MARGIN, usableH = PH / sc - 2 * MARGIN;
-    const gap = 0.8 * PT, head = pieces.some(p => p.ann) ? 46 : 34;
+    const gap = 0.8 * PT;
     const items = pieces.map(p => {
       const outline = p.sa || p.poly;
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
       for (const q of outline) { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }
       for (const l of (p.internal || [])) for (const q of l) { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }
       for (const q of p.poly) { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }
-      return { p, x0, y0, w: (x1 - x0) * PT, h: (y1 - y0) * PT };
+      const pw = (x1 - x0) * PT;
+      return { p, x0, y0, pw, w: Math.max(pw, HMIN), h: (y1 - y0) * PT };
     });
+    const head = items.reduce((m, it) => Math.max(m, hdr(it.p, Math.min(it.w, 15 * PT), '00/00/0000').h), 30);
     items.sort((a, b) => b.h - a.h);
     const pages = [], warnings = [];
     let page = null, x = 0, y = 0, rowH = 0;
     const newPage = () => { page = { items: [] }; pages.push(page); x = 0; y = 0; rowH = 0; };
-    newPage();
+    newPage(); y = band;
     // le carré d'essai 5x5 cm occupe l'angle haut-gauche de la page 1 : on le réserve en haut
     const big = items.filter(it => it.w > usableW || it.h + head > usableH);
     for (const it of items) {
@@ -41,12 +56,12 @@
       if (!pg.items.length) continue;
       let bx0 = 1e9, by0 = 1e9, bx1 = -1e9, by1 = -1e9;
       for (const it of pg.items) { bx0 = Math.min(bx0, it.px); by0 = Math.min(by0, it.py); bx1 = Math.max(bx1, it.px + it.w); by1 = Math.max(by1, it.py + it.h + head); }
-      const dx = (usableW - (bx1 - bx0)) / 2 - bx0, dy = (usableH - (by1 - by0)) / 2 - by0;
-      for (const it of pg.items) { it.px += Math.max(dx, -it.px); if (!NOVC) it.py += Math.max(dy, -it.py); }
+      const top = pg === pages[0] ? band : 0, dx = (usableW - (bx1 - bx0)) / 2 - bx0, dy = top + (usableH - top - (by1 - by0)) / 2 - by0;
+      for (const it of pg.items) { it.px += Math.max(dx, -it.px); if (!NOVC) it.py += Math.max(dy, top - it.py); }
     }
     // carré d'essai : premier coin libre de la page 1, sinon page supplémentaire
     const S = 5 * PT, T = { page: 0, x: 0, y: 0 };
-    const cand = [[usableW - S, 0], [usableW - S, usableH - S - 12], [0, usableH - S - 12], [0, 0]];
+    const cand = [[usableW - S, band], [usableW - S, usableH - S - 12], [0, usableH - S - 12], [0, band]];
     const free = cand.find(([cx, cy]) => pages[0].items.every(it => {
       const ix = it.px, iy = it.py, iw = it.w, ih = it.h + head;
       return cx + S <= ix || cx >= ix + iw || cy + S + 12 <= iy || cy >= iy + ih;
@@ -74,8 +89,9 @@
     const A = 595.276, B = 841.89;
     try {
       let area = 0, wmax = 0;
-      pieces.forEach(p => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; (p.sa || p.poly).forEach(q => { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }); area += (x1 - x0) * (y1 - y0) * PT * PT; wmax = Math.max(wmax, (x1 - x0) * PT); });
+      pieces.forEach(p => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; (p.sa || p.poly).concat(p.poly, ...(p.internal || [])).forEach(q => { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }); area += (x1 - x0) * (y1 - y0) * PT * PT; wmax = Math.max(wmax, (x1 - x0) * PT); });
       PW = Math.max(wmax + 2 * MARGIN + 20, Math.sqrt(area * 1.35 * 1.5) + 2 * MARGIN);
+      PW = Math.max(PW, Math.max(wmax, HMIN) + 2 * (5 * PT + 6) + 2 * MARGIN); // place pour le carré d'essai à côté d'une petite pièce
       PH = 1e5; NOVC = true;
       const L1 = layout(pieces, 1);
       let ymax = 0; L1.pages.forEach(pg => pg.items.forEach(it => { ymax = Math.max(ymax, it.py + it.h + L1.head); }));
@@ -84,13 +100,87 @@
       return build1(pieces, Object.assign({}, opts, { single: false, scale: 1, proj: true }));
     } finally { PW = A; PH = B; NOVC = false; }
   }
+  /* Tissu d'une pièce, déduit de sa consigne (« Couper 2 : tissu principal et doublure », « Tissu principal ou fantaisie - … »), sinon de ses lignes. */
+  function fabOf(q) {
+    if (q.rfab !== undefined) return q.rfab;
+    const ann = q.ann || '', dflt = (q.lines && q.lines[0] && q.lines[0] !== 'Tissu principal' ? q.lines[0] : 'Main fabric');
+    let m = /\s?: (.+)$/.exec(ann);
+    if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1);
+    if (!ann || /^(Couper|Cut)\b/.test(ann)) return dflt;
+    return ann.split(' - ')[0].replace(/\s*\(.*$/, '') || dflt;
+  }
+  /* Vignette récapitulative (en haut de la page 1) : modèle de mise en page. */
+  function vigModel(rc, pieces, wA) {
+    const wrap = (str, sz, maxw) => { const out = []; let cur = ''; String(str || '').split(' ').forEach(wd => { const t = cur ? cur + ' ' + wd : wd; if (cur && tw(t, sz) > maxw) { out.push(cur); cur = wd; } else cur = t; }); if (cur) out.push(cur); return out.length ? out : ['']; };
+    const rows = pieces.map(q => ({ name: q.rlabel || q.name, qty: q.rqty || q.quantity || 1, fab: fabOf(q) }));
+    const pl = wrap((rc.params || []).map(([k, v]) => k ? k + ':' + ' ' + v : v).join('  |  '), 7.5, wA);
+    const nl = rows.length <= 3 ? rows.length : Math.ceil(rows.length / 2), h = 14 + 9 * pl.length + 5 + 10 * nl + 14;
+    return { rows, pl, nl, h, wrap, total: rows.reduce((t, r) => t + r.qty, 0) };
+  }
+  function vigDraw(vg, rc, text, wA, line) {
+    let y = 9; text('Summary: ' + rc.title, 0, y, 8.5); y += 4;
+    vg.pl.forEach(l => { y += 9; text(l, 0, y, 7.5); });
+    y += 3; line(y); y += 1;
+    const one = vg.nl === vg.rows.length, colW = wA / 2, xq = one ? 170 : 92, xf = one ? 195 : 112, nmW = xq - 8, fbW = (one ? wA : colW) - xf - 8;
+    vg.rows.forEach((r, i) => {
+      const col = i < vg.nl ? 0 : 1, ln = i < vg.nl ? i : i - vg.nl, x = col * colW, yy = y + 10 * (ln + 1) - 2;
+      const cut = (s, w) => { let t = s; while (t.length > 4 && tw(t, 7.5) > w) t = t.slice(0, -1); return t !== s ? t + '...' : t; };
+      text(cut(r.name, nmW), x, yy, 7.5); text('x' + r.qty, x + xq, yy, 7.5); text(cut(r.fab, fbW), x + xf, yy, 7.5);
+    });
+    text('Total: ' + vg.total + ' piece' + (vg.total > 1 ? 's' : '') + ' to cut.', wA - 95, y + 10 * vg.nl + 8, 7.5);
+  }
+  /* Page de récapitulatif : paramètres choisis + tableau des pièces (quantité, tissu, consigne, page). rc = {title, params:[[libellé, valeur]]} ; chaque pièce porte rlabel, rqty. */
+  function recapPage(rc, pieces, L, title, opts) {
+    const VH = 841.89, wA = 595.276 - 2 * MARGIN;
+    let c = '0 G 0 g\n', y = 0;
+    const X = v => f(MARGIN + v), Y = v => f(VH - MARGIN - v);
+    const text = (s, x, yy, size) => { c += `BT /F1 ${size} Tf ${X(x)} ${Y(yy)} Td (${esc(s)}) Tj ET\n`; };
+    const wrap = (str, sz, maxw) => { const out = []; let cur = ''; String(str || '').split(' ').forEach(wd => { const t = cur ? cur + ' ' + wd : wd; if (cur && tw(t, sz) > maxw) { out.push(cur); cur = wd; } else cur = t; }); if (cur) out.push(cur); return out.length ? out : ['']; };
+    const rule = (yy, w) => { c += `0.4 w [] 0 d ${X(0)} ${Y(yy)} m ${X(wA)} ${Y(yy)} l S\n`; };
+    y += 14; text('Pattern summary', 0, y, 16); y += 14;
+    text(rc.title + (opts.date ? '  -  created on ' + opts.date : ''), 0, y, 9); y += 8; rule(y, wA); y += 14;
+    // paramètres
+    (rc.params || []).forEach(([k, v]) => { const ls = wrap(v, 8.5, wA - 120); if (k) text(k + ':', 0, y, 8.5); ls.forEach((l, i) => { text(l, k ? 120 : 0, y + i * 11, 8.5); }); y += ls.length * 11 + 2; });
+    y += 4; rule(y, wA); y += 6;
+    // pages de chaque pièce
+    const pg = new Map();
+    L.pages.forEach((pgx, i) => { const ps = pgx.tile ? [pgx.tile.it.p] : pgx.items.map(it => it.p); ps.forEach(q => { if (!pg.has(q)) pg.set(q, []); pg.get(q).push(i + 2); }); });
+    const rng = a => { const u = [...new Set(a)].sort((x, z) => x - z), o = []; for (let i = 0; i < u.length;) { let j = i; while (j + 1 < u.length && u[j + 1] === u[j] + 1) j++; o.push(j > i ? u[i] + '-' + u[j] : String(u[i])); i = j + 1; } return o.join(', '); };
+    const rows = pieces.map(q => ({ name: q.rlabel || q.name, qty: q.rqty || q.quantity || 1, fab: fabOf(q), ann: (q.ann || '').replace(/^[^-]*? - /, (m) => fabOf(q) + ' - ' === m ? '' : m), pg: rng(pg.get(q) || []) }));
+    const total = rows.reduce((t, r) => t + r.qty, 0);
+    const cx = [0, 190, 225, 305, wA - 52], cw = [186, 30, 76, cx[4] - cx[3] - 6, 52];
+    let sz = 8.5;
+    const rh = (r, s) => Math.max(wrap(r.name, s, cw[0]).length, wrap(r.fab, s, cw[2]).length, wrap(r.ann, s, cw[3]).length) * (s + 2.5) + 5;
+    const avail = (VH - 2 * MARGIN) - y - 60;
+    while (sz > 6 && rows.reduce((t, r) => t + rh(r, sz), 18) > avail) sz -= 0.5;
+    y += 12; ['Piece', 'Qty', 'Fabric', 'Instructions', 'Page'].forEach((h, i) => text(h, cx[i], y, 8)); y += 4; rule(y, wA);
+    rows.forEach(r => {
+      y += sz + 3;
+      wrap(r.name, sz, cw[0]).forEach((l, i) => text(l, cx[0], y + i * (sz + 2.5), sz));
+      text(String(r.qty), cx[1] + 8, y, sz);
+      wrap(r.fab, sz, cw[2]).forEach((l, i) => text(l, cx[2], y + i * (sz + 2.5), sz));
+      wrap(r.ann, sz, cw[3]).forEach((l, i) => text(l, cx[3], y + i * (sz + 2.5), sz));
+      text(r.pg, cx[4], y, sz);
+      y += rh(r, sz) - sz - 3; rule(y - 1, wA);
+    });
+    y += 14; text('Total: ' + total + ' piece' + (total > 1 ? 's' : '') + ' to cut.', 0, y, 9);
+    y += 16; text('Print at 100 % (no scaling) and check the 5 x 5 cm (2 in) test square, on page ' + (L.test.page + 2) + '.', 0, y, 8);
+    return c;
+  }
   function build1(pieces, opts) {
     /* Vidéoprojection : traits plus épais et pointillés plus longs, pour rester visibles à distance. */
     const thick = str => str.replace(/(\d*\.?\d+) w\b/g, (m, v) => { v = parseFloat(v); return f2(v <= 0.6 ? v * 3.2 : v * 1.9) + ' w'; })
       .replace(/\[([\d. ]+)\] 0 d/g, (m, d) => '[' + d.trim().split(/\s+/).map(x => f2(parseFloat(x) * 2)).join(' ') + '] 0 d');
     const f2 = v => (Math.round(v * 100) / 100).toString();
     const sc = opts.scale && opts.scale > 0.5 && opts.scale < 2 ? opts.scale : 1, VH = PH / sc;
-    const L = layout(pieces, sc);
+    let L = layout(pieces, sc);
+    const RC = opts.recap || null;
+    let VIG = null;
+    if (RC && !opts.proj && RC.mode === 'auto') {
+      const vg = vigModel(RC, pieces, PW / sc - 2 * MARGIN);
+      if (vg.rows.length <= 6) { const L1 = layout(pieces, sc, vg.h); if (L1.pages.length === L.pages.length && L1.test.page === L.test.page && !(L1.test.host && !L.test.host)) { L = L1; VIG = vg; } }
+    }
+    const OFF = RC && !VIG ? 1 : 0;
     const objs = [];            // chaînes de contenu des pages
     const title = opts.title || 'Pocket pattern';
     L.pages.forEach((pg, pi) => {
@@ -102,6 +192,7 @@
         if (close) c += 'h\n';
       };
       c += '0 G 0 g\n';
+      if (VIG && pi === 0) { c += '0.4 w\n'; vigDraw(VIG, RC, text, PW / sc - 2 * MARGIN, yy => { c += `${X(0)} ${Y(yy)} m ${X(PW / sc - 2 * MARGIN)} ${Y(yy)} l S\n`; }); }
       if (pi === L.test.page) {
         const tx = L.test.x, ty = L.test.y;
         c += '0.5 w\n' + `${X(tx)} ${Y(ty + 5 * PT)} ${f(5 * PT)} ${f(5 * PT)} re S\n`;
@@ -112,8 +203,8 @@
         tl.forEach(t => { const w = tw(t[0], t[1]); text(t[0], tx + Math.max(2, (SQ - w) / 2), ty + 12 + t[2] + sh, t[1]); });
       }
       if (pi === 0 && !pg.items.length && L.tiled.length) { // page de contrôle seule : explication de l'assemblage
-        const msg = ['This pocket is too large for one A4 page: it is printed on several pages to be assembled.'].concat(L.tiled.map(t => '- ' + t.name + ': ' + t.cols + ' column(s) x ' + t.rows + ' row(s), i.e. ' + (t.cols * t.rows) + ' pages.'), ['Cut along the edge of the frames (crop marks at the 4 corners) and overlap the 1.5 cm (0.6 in) overlap zones:', 'the lines of the piece must continue exactly from one page to the next. Glue or tape together.']);
-        msg.forEach((m, i) => text(m, 0, 5 * PT + 40 + 12 * i, i ? 8 : 9));
+        const msg = ['Some pieces are too large for one A4 page: they are printed on several pages to be assembled.'].concat(L.tiled.map(t => '- ' + t.name + ': ' + t.cols + ' column(s) x ' + t.rows + ' row(s), i.e. ' + (t.cols * t.rows) + ' pages.'), ['Cut along the edge of the frames (crop marks at the 4 corners) and overlap the 1.5 cm (0.6 in) overlap zones:', 'the lines of the piece must continue exactly from one page to the next. Glue or tape together.']);
+        msg.forEach((m, i) => text(m, 0, (L.test.y || 0) + 5 * PT + 40 + 12 * i, i ? 8 : 9));
       }
       for (const it of (pg.tile ? [pg.tile.it] : pg.items)) {
         const p = it.p, T_ = pg.tile;
@@ -138,26 +229,20 @@
           c += '[] 0 d\n';
           c += `q ${X(0)} ${Y(y1)} ${f(x1)} ${f(T_.winH)} re W n\n`;
         } else {
-        // étiquette : nom de la pièce + date de création + paramètres
-        const bh = p.ann ? 42 : 30;
-        const l2 = (opts.date ? 'Created on ' + opts.date : '') + (p.note ? '  -  ' + p.note : '');
-        const maxW = PW / sc - 2 * MARGIN - ox - 8, fs = (str, sz) => { const w = tw(str, sz); return w > maxW && maxW > 60 ? Math.max(4.5, sz * maxW / w) : sz; };
-        const s1 = fs(p.name, 14), s2 = fs(l2, 7), s3 = p.ann ? fs(p.ann, 7) : 7;
-        const bw = Math.max(Math.min(it.w, 15 * PT), Math.max(tw(p.name, s1), tw(l2, s2), p.ann ? tw(p.ann, s3) : 0) + 8);
-        c += '0.4 w [] 0 d\n' + `${X(ox)} ${Y(oy - 2)} ${f(bw)} ${bh} re S\n`;
-        text(p.name, ox + Math.max(2, (bw - tw(p.name, s1)) / 2), oy - (p.ann ? 31 : 19), s1);
-        text(l2, ox + Math.max(2, (bw - tw(l2, s2)) / 2), oy - (p.ann ? 17 : 6), s2);
-        if (p.ann) text(p.ann, ox + Math.max(2, (bw - tw(p.ann, s3)) / 2), oy - 6, s3);
+        // étiquette : nom de la pièce + date de création + paramètres, sur plusieurs lignes si besoin
+        const bw = Math.min(it.w, 15 * PT), H = hdr(p, bw, opts.date);
+        c += '0.4 w [] 0 d\n' + `${X(ox)} ${Y(oy - 2)} ${f(bw)} ${f(H.h)} re S\n`;
+        { let yy = oy - 2 - H.h + 3; H.lines.forEach(([t, sz]) => { yy += sz * 1.2; text(t, ox + Math.max(2, (bw - tw(t, sz)) / 2), yy - sz * 0.25, sz); }); }
         }
         // ligne de coupe
         if (p.sa) { c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; path(p.sa, true, ox, oy, it.x0, it.y0); c += 'S\n0 G\n'; }
         // ligne de couture
-        c += '0.4 w [] 0 d\n'; path(p.poly, true, ox, oy, it.x0, it.y0); c += 'S\n';
-        // point rouge : fin de la ligne de coupe (prolongée jusqu'au rempli)
+        c += '0.4 w [] 0 d\n'; if (p.seamRuns) p.seamRuns.forEach(rn => { path(rn, false, ox, oy, it.x0, it.y0); c += 'S\n'; }); else { path(p.poly, true, ox, oy, it.x0, it.y0); c += 'S\n'; }
+        // croix rouge : fin de la ligne de coupe (prolongée jusqu'au rempli)
         if (p.dot) {
-          const rr = 0.4 * PT, kk = 0.5523 * rr, cx = ox + (p.dot.x - it.x0) * PT, cy = oy + (p.dot.y - it.y0) * PT, U = (x, y) => `${X(x)} ${Y(y)}`;
-          c += '0.84 0.16 0.16 rg\n';
-          c += `${U(cx + rr, cy)} m\n${U(cx + rr, cy + kk)} ${U(cx + kk, cy + rr)} ${U(cx, cy + rr)} c\n${U(cx - kk, cy + rr)} ${U(cx - rr, cy + kk)} ${U(cx - rr, cy)} c\n${U(cx - rr, cy - kk)} ${U(cx - kk, cy - rr)} ${U(cx, cy - rr)} c\n${U(cx + kk, cy - rr)} ${U(cx + rr, cy - kk)} ${U(cx + rr, cy)} c\nf\n0 g\n`;
+          const hh = 0.35 * PT, cx = ox + (p.dot.x - it.x0) * PT, cy = oy + (p.dot.y - it.y0) * PT, U = (x, y) => `${X(x)} ${Y(y)}`;
+          c += '0.84 0.16 0.16 RG 1.1 w [] 0 d 1 J\n';
+          c += `${U(cx - hh, cy - hh)} m ${U(cx + hh, cy + hh)} l S\n${U(cx - hh, cy + hh)} m ${U(cx + hh, cy - hh)} l S\n0 G 0 J\n`;
         }
         // crans : trait vers l'intérieur depuis la ligne de couture (+ trait depuis la ligne de coupe s'il y a une marge)
         if (p.notches && p.notches.length) {
@@ -254,24 +339,25 @@
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
-          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d', '0.84 0.16 0.16 rg'][e[1]] + (e[1] === 4 ? (() => { const r = 3, k = 1.65, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n${U(cx + r, cy)} m ${U(cx + r, cy + k)} ${U(cx + k, cy + r)} ${U(cx, cy + r)} c ${U(cx - k, cy + r)} ${U(cx - r, cy + k)} ${U(cx - r, cy)} c ${U(cx - r, cy - k)} ${U(cx - k, cy - r)} ${U(cx, cy - r)} c ${U(cx + k, cy - r)} ${U(cx + r, cy - k)} ${U(cx + r, cy)} c f\n0 g\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
+          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d', '0.84 0.16 0.16 RG 1.1 w [] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
           text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
         });
       }
-      text(title + ' - page ' + (pi + 1) + '/' + L.pages.length + (sc !== 1 ? ' - scale compensation x' + sc.toFixed(3) : ''), 0, VH - 2 * MARGIN + 2, 7);
+      text(title + ' - page ' + (pi + 1 + OFF) + '/' + (L.pages.length + OFF) + (sc !== 1 ? ' - scale compensation x' + sc.toFixed(3) : ''), 0, VH - 2 * MARGIN + 2, 7);
       objs.push(opts.proj ? thick(c) : c);
     });
+    if (RC && !VIG) objs.unshift(recapPage(RC, pieces, L, title, opts));
     // assemblage PDF
     const parts = []; const offs = []; let len = 0;
     const emit = s => { const b = latin1(s); parts.push(b); len += b.length; };
     emit('%PDF-1.4\n');
-    const n = L.pages.length;
+    const n = L.pages.length + OFF;
     const obj = (i, body) => { offs[i] = len; emit(`${i} 0 obj\n${body}\nendobj\n`); };
     obj(1, '<< /Type /Catalog /Pages 2 0 R /ViewerPreferences << /PrintScaling /None >> >>');
     obj(2, `<< /Type /Pages /Count ${n} /Kids [${objs.map((_, i) => (4 + 2 * i) + ' 0 R').join(' ')}] >>`);
     obj(3, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
     objs.forEach((c, i) => {
-      obj(4 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${f(PW)} ${f(PH)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + 2 * i} 0 R >>`);
+      obj(4 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${RC && i === 0 ? '595.28 841.89' : f(PW) + ' ' + f(PH)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + 2 * i} 0 R >>`);
       obj(5 + 2 * i, `<< /Length ${c.length} >>\nstream\n${c}endstream`);
     });
     const total = 4 + 2 * n, xr = len;

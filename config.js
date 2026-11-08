@@ -6,7 +6,7 @@ document.addEventListener("click",function(e){document.querySelectorAll("details
 var EN=/^en/i.test(document.documentElement.lang||'');
 var T=EN?{ok:'Settings copied. Paste them into your message.',ko:'Copy failed: select and copy the text below.',pg:'Page',dt:'Date',ur:'Address',cf:'Settings',br:'Browser',ver:'Site version',yes:'yes',no:'no',head:'Settings for my pattern'}
 :{ok:'Réglages copiés. Collez-les dans votre message.',ko:'Copie impossible : sélectionnez et copiez le texte ci-dessous.',pg:'Page',dt:'Date',ur:'Adresse',cf:'Réglages',br:'Navigateur',ver:'Version du site',yes:'oui',no:'non',head:'Réglages de mon patron'};
-var VER='2026-11-06';
+var VER='2026-11-08';
 function txt(n){return (n.textContent||'').replace(/\s+/g,' ').trim();}
 function lab(e){
  var l=null;
