@@ -125,7 +125,7 @@
     vg.rows.forEach((r, i) => {
       const col = i < vg.nl ? 0 : 1, ln = i < vg.nl ? i : i - vg.nl, x = col * colW, yy = y + 10 * (ln + 1) - 2;
       const cut = (s, w) => { let t = s; while (t.length > 4 && tw(t, 7.5) > w) t = t.slice(0, -1); return t !== s ? t + '...' : t; };
-      text(cut(r.name, nmW), x, yy, 7.5); text('x' + r.qty, x + xq, yy, 7.5); text(cut(r.fab, fbW), x + xf, yy, 7.5);
+      text(cut(r.name, nmW), x, yy, 7.5); text('x' + r.qty, x + xq, yy, 7.5); if (!rc.nofab) text(cut(r.fab, fbW), x + xf, yy, 7.5);
     });
     text('Total : ' + vg.total + ' pièce' + (vg.total > 1 ? 's' : '') + ' à couper.', wA - 95, y + 10 * vg.nl + 8, 7.5);
   }
@@ -147,13 +147,14 @@
     L.pages.forEach((pgx, i) => { const ps = pgx.tile ? [pgx.tile.it.p] : pgx.items.map(it => it.p); ps.forEach(q => { if (!pg.has(q)) pg.set(q, []); pg.get(q).push(i + 2); }); });
     const rng = a => { const u = [...new Set(a)].sort((x, z) => x - z), o = []; for (let i = 0; i < u.length;) { let j = i; while (j + 1 < u.length && u[j + 1] === u[j] + 1) j++; o.push(j > i ? u[i] + '-' + u[j] : String(u[i])); i = j + 1; } return o.join(', '); };
     const rows = pieces.map(q => ({ name: q.rlabel || q.name, qty: q.rqty || q.quantity || 1, fab: fabOf(q), ann: (q.ann || '').replace(/^[^-]*? - /, (m) => fabOf(q) + ' - ' === m ? '' : m), pg: rng(pg.get(q) || []) }));
+    if (rc.nofab) rows.forEach((r, i) => { r.fab = ''; r.ann = pieces[i].ann || ''; });
     const total = rows.reduce((t, r) => t + r.qty, 0);
-    const cx = [0, 190, 225, 305, wA - 52], cw = [186, 30, 76, cx[4] - cx[3] - 6, 52];
+    const cx = rc.nofab ? [0, 190, 225, 225, wA - 52] : [0, 190, 225, 305, wA - 52], cw = [186, 30, rc.nofab ? 0 : 76, cx[4] - cx[3] - 6, 52];
     let sz = 8.5;
     const rh = (r, s) => Math.max(wrap(r.name, s, cw[0]).length, wrap(r.fab, s, cw[2]).length, wrap(r.ann, s, cw[3]).length) * (s + 2.5) + 5;
     const avail = (VH - 2 * MARGIN) - y - 60;
     while (sz > 6 && rows.reduce((t, r) => t + rh(r, sz), 18) > avail) sz -= 0.5;
-    y += 12; ['Pièce', 'Qté', 'Tissu', 'Consigne', 'Page'].forEach((h, i) => text(h, cx[i], y, 8)); y += 4; rule(y, wA);
+    y += 12; ['Pièce', 'Qté', rc.nofab ? '' : 'Tissu', 'Consigne', 'Page'].forEach((h, i) => text(h, cx[i], y, 8)); y += 4; rule(y, wA);
     rows.forEach(r => {
       y += sz + 3;
       wrap(r.name, sz, cw[0]).forEach((l, i) => text(l, cx[0], y + i * (sz + 2.5), sz));
@@ -180,7 +181,7 @@
       const vg = vigModel(RC, pieces, PW / sc - 2 * MARGIN);
       if (vg.rows.length <= 6) { const L1 = layout(pieces, sc, vg.h); if (L1.pages.length === L.pages.length && L1.test.page === L.test.page && !(L1.test.host && !L.test.host)) { L = L1; VIG = vg; } }
     }
-    const OFF = RC && !VIG ? 1 : 0;
+    const OFF = RC && !VIG && !opts.proj ? 1 : 0;
     const objs = [];            // chaînes de contenu des pages
     const title = opts.title || 'Patron de poche';
     L.pages.forEach((pg, pi) => {
@@ -273,6 +274,7 @@
         (p.internal || []).forEach((ln, ii) => {
           const kd = (p.internalKind || [])[ii];
           if (kd && kd.color === 'darkRed') c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; // trait plein rouge (ex. boutonnières)
+          else if (kd && kd.color === 'green') c += '0.10 0.55 0.25 RG 1.2 w [] 0 d\n'; // trait plein vert (repère)
           else if (kd && kd.place) c += '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d\n'; // emplacement (ex. poche) : tirets orange
           else c += '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
           path(ln, false, ox, oy, it.x0, it.y0); c += 'S\n';
@@ -331,7 +333,8 @@
       { // légende des lignes, en pied de page, alignée à droite
         const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Ligne de couture', 0]];
         if (ps.some(p => p.sa)) E.push(['Marge de couture', 1]);
-        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].place))))) E.push(['Repli', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].color === 'green' || p.internalKind[k].place))))) E.push(['Repli', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'green'))) E.push(['Repere', 5]);
         if (ps.some(p => p.dot)) E.push(['Fin de la ligne de coupe', 4]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Emplacement poche', 3]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Emplacement patte', 3]);
@@ -339,14 +342,14 @@
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
-          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d', '0.84 0.16 0.16 RG 1.1 w [] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
+          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d', '0.84 0.16 0.16 RG 1.1 w [] 0 d', '0.10 0.55 0.25 RG 1.2 w [] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
           text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
         });
       }
       text(title + ' - page ' + (pi + 1 + OFF) + '/' + (L.pages.length + OFF) + (sc !== 1 ? ' - compensation x' + sc.toFixed(3) : ''), 0, VH - 2 * MARGIN + 2, 7);
       objs.push(opts.proj ? thick(c) : c);
     });
-    if (RC && !VIG) objs.unshift(recapPage(RC, pieces, L, title, opts));
+    if (RC && !VIG && !opts.proj) objs.unshift(recapPage(RC, pieces, L, title, opts));
     // assemblage PDF
     const parts = []; const offs = []; let len = 0;
     const emit = s => { const b = latin1(s); parts.push(b); len += b.length; };
@@ -357,7 +360,7 @@
     obj(2, `<< /Type /Pages /Count ${n} /Kids [${objs.map((_, i) => (4 + 2 * i) + ' 0 R').join(' ')}] >>`);
     obj(3, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
     objs.forEach((c, i) => {
-      obj(4 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${RC && i === 0 ? '595.28 841.89' : f(PW) + ' ' + f(PH)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + 2 * i} 0 R >>`);
+      obj(4 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${OFF && i === 0 ? '595.28 841.89' : f(PW) + ' ' + f(PH)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + 2 * i} 0 R >>`);
       obj(5 + 2 * i, `<< /Length ${c.length} >>\nstream\n${c}endstream`);
     });
     const total = 4 + 2 * n, xr = len;
