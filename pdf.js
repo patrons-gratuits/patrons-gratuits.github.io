@@ -338,7 +338,7 @@
         if (ps.some(p => p.dot)) E.push(['Fin de la ligne de coupe', 4]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Emplacement poche', 3]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Emplacement patte', 3]);
-        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push(['Boutonniere', 1]);
+        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push([opts.redLabel||'Boutonniere', 1]);
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
