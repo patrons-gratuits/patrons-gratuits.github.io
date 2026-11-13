@@ -6,7 +6,7 @@ main{max-width:1000px;margin:0 auto;padding:16px}
 h1{font-size:1.5rem;margin:.2em 0}p.sub{color:var(--mut);margin-top:0}
 .grid{display:grid;grid-template-columns:320px 1fr;gap:16px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px}
-label{display:block;margin:.6em 0 .1em;font-size:.9rem}
+label{display:block;margin:.6em 0 .1em;font-size:.9rem}#form h2{font-size:1.2rem;font-weight:800;margin:1.3em 0 .4em;padding-bottom:.2em;border-bottom:2px solid var(--ac)}#form>h2:first-child,#form>#varbox:first-child+#typebox+h2{margin-top:.2em}#form label{font-weight:700}#form .pieces label{font-weight:400}#form label small,#form label .hint{font-weight:400}
 .row{display:flex;gap:8px;align-items:center}
 input[type=number]{width:100%;padding:6px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--fg);font:inherit}
 .u{color:var(--mut);min-width:2.5em;font-size:.85rem}

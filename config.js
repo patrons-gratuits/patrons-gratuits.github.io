@@ -6,7 +6,7 @@ document.addEventListener("click",function(e){document.querySelectorAll("details
 var EN=/^en/i.test(document.documentElement.lang||'');
 var T=EN?{ok:'Settings copied. Paste them into your message.',ko:'Copy failed: select and copy the text below.',pg:'Page',dt:'Date',ur:'Address',cf:'Settings',br:'Browser',ver:'Site version',yes:'yes',no:'no',head:'Settings for my pattern'}
 :{ok:'Réglages copiés. Collez-les dans votre message.',ko:'Copie impossible : sélectionnez et copiez le texte ci-dessous.',pg:'Page',dt:'Date',ur:'Adresse',cf:'Réglages',br:'Navigateur',ver:'Version du site',yes:'oui',no:'non',head:'Réglages de mon patron'};
-var VER='2026-11-08';
+var VER='2026-11-09';
 function txt(n){return (n.textContent||'').replace(/\s+/g,' ').trim();}
 function lab(e){
  var l=null;
@@ -42,7 +42,7 @@ function collect(){
 function build(){
  var h=document.querySelector('h1');
  var d=new Date();
- var s=[T.head,'',T.pg+' : '+(h?txt(h):document.title)+' ('+location.pathname+')',
+ var s=[T.head+' : '+(h?txt(h):document.title),'',T.ur+' : '+location.pathname,
   T.dt+' : '+d.toISOString().slice(0,16).replace('T',' ')+' UTC',
   T.ver+' : '+VER,
   T.br+' : '+navigator.userAgent,'',T.cf+' :'];
