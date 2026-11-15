@@ -197,7 +197,7 @@
       if (pi === L.test.page) {
         const tx = L.test.x, ty = L.test.y;
         c += '0.5 w\n' + `${X(tx)} ${Y(ty + 5 * PT)} ${f(5 * PT)} ${f(5 * PT)} re S\n`;
-        const SQ = 5 * PT, tl = [['Carre 5 x 5 cm', 8, 0], ['Imprimer a 100 %', 8, 12], ['(sans mise a l\'echelle)', 8, 22]];
+        const SQ = 5 * PT, tl = [['Carré 5 × 5 cm', 8, 0], ['Imprimer à 100 %', 8, 12], ['(sans mise à l\'échelle)', 8, 22]];
         const wl = []; (opts.lines || []).forEach(s => { let cur = ''; s.split(', ').forEach(part => { const t = cur ? cur + ', ' + part : part; if (cur && tw(t, 6.5) > SQ - 6) { wl.push(cur + ','); cur = part; } else cur = t; }); if (cur) wl.push(cur); });
         wl.forEach((s, i) => tl.push([s, 6.5, 40 + 9 * i]));
         const top = 12 - 5.8, bot = 12 + tl[tl.length - 1][2] + 1.5, sh = SQ / 2 - (top + bot) / 2;
