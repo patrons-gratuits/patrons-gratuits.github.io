@@ -1,12 +1,13 @@
 /* Pour activer le lien « Donner votre avis », l'adresse du formulaire est entre les guillemets (laisser vide pour masquer le lien). */
-window.SITE_CONFIG={feedbackUrl:"https://docs.google.com/forms/d/e/1FAIpQLSfCsPkwPA11Qi8JS338ool6vwgykDAdgqni8D7GieMxpCbyTg/viewform"};
+window.SITE_CONFIG={feedbackUrl:"https://docs.google.com/forms/d/e/1FAIpQLSfCsPkwPA11Qi8JS338ool6vwgykDAdgqni8D7GieMxpCbyTg/viewform",feedbackEntry:""};
+/* feedbackEntry : identifiant du champ « message » du formulaire (ex. entry.123456789). S'il est renseigné, les réglages sont collés automatiquement dans le formulaire ; sinon ils sont copiés et il suffit de faire Ctrl+V. */
 document.addEventListener("click",function(e){document.querySelectorAll("details.dd[open]").forEach(function(d){if(!d.contains(e.target))d.open=false})});
 
 (function(){
 var EN=/^en/i.test(document.documentElement.lang||'');
-var T=EN?{ok:'Settings copied. Paste them into your message.',ko:'Copy failed: select and copy the text below.',pg:'Page',dt:'Date',ur:'Address',cf:'Settings',br:'Browser',ver:'Site version',yes:'yes',no:'no',head:'Settings for my pattern'}
-:{ok:'Réglages copiés. Collez-les dans votre message.',ko:'Copie impossible : sélectionnez et copiez le texte ci-dessous.',pg:'Page',dt:'Date',ur:'Adresse',cf:'Réglages',br:'Navigateur',ver:'Version du site',yes:'oui',no:'non',head:'Réglages de mon patron'};
-var VER='2026-11-09';
+var T=EN?{ok:'Settings copied and the form is open: paste them into your message (Ctrl+V).',okp:'The form is open with your settings already in it.',lnk:'Open “Give feedback”',ko:'Copy failed: select and copy the text below.',pg:'Page',dt:'Date',ur:'Address',cf:'Settings',br:'Browser',ver:'Site version',yes:'yes',no:'no',head:'Settings for my pattern'}
+:{ok:'Réglages copiés et formulaire ouvert : collez-les dans votre message (Ctrl+V).',okp:'Le formulaire est ouvert, vos réglages y sont déjà.',lnk:'Ouvrir « Donner votre avis »',ko:'Copie impossible : sélectionnez et copiez le texte ci-dessous.',pg:'Page',dt:'Date',ur:'Adresse',cf:'Réglages',br:'Navigateur',ver:'Version du site',yes:'oui',no:'non',head:'Réglages de mon patron'};
+var VER='2026-11-15';
 function txt(n){return (n.textContent||'').replace(/\s+/g,' ').trim();}
 function lab(e){
  var l=null;
@@ -52,15 +53,25 @@ function init(){
  var b=document.getElementById('cpset');if(!b)return;
  var msg=document.getElementById('cpmsg');
  b.addEventListener('click',function(){
-  var t=build();
+  var t=build(),c=window.SITE_CONFIG||{},u=c.feedbackUrl,en=c.feedbackEntry,pre=false,w=null;
+  if(u){
+   var url=u;
+   if(en){var q=url+(url.indexOf('?')>-1?'&':'?')+'usp=pp_url&'+en+'='+encodeURIComponent(t);if(q.length<=1900){url=q;pre=true;}}
+   try{w=window.open(url,'_blank');if(w)w.opener=null;}catch(e){}
+  }
+  function done(){
+   if(!u){msg.textContent=T.ok;return;}
+   if(w){msg.textContent=pre?T.okp:T.ok;}
+   else{msg.innerHTML='';msg.appendChild(document.createTextNode(T.ok+' '));var a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=T.lnk;msg.appendChild(a);}
+  }
   function fb(){
    var a=document.getElementById('cpta');
    if(!a){a=document.createElement('textarea');a.id='cpta';a.readOnly=true;a.rows=10;a.style.cssText='width:100%;margin-top:8px;font:12px monospace';b.parentNode.appendChild(a);}
    a.value=t;a.focus();a.select();
-   try{if(document.execCommand('copy')){msg.textContent=T.ok;return;}}catch(e){}
+   try{if(document.execCommand('copy')){done();return;}}catch(e){}
    msg.textContent=T.ko;
   }
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){msg.textContent=T.ok;},fb);}else fb();
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb);}else fb();
  });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();

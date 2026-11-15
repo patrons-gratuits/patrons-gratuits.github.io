@@ -89,3 +89,13 @@ body.th #cpset{background:transparent;color:var(--ac2);border:2px solid var(--ac
 body.th #cpset:hover,body.th #cpset:focus-visible{background:var(--fu-soft)}
 @media(max-width:600px){body.th nav a#fbn:not([hidden]){display:inline}}
 body.th #cpset{width:auto;display:inline-block;padding:8px 18px}
+body.home .gal.mosaic figure>a{display:block;color:inherit;text-decoration:none;position:static}
+body.home .gal.mosaic figure>a:focus-visible{outline:3px solid var(--fu);outline-offset:-3px;border-radius:12px}
+body.home .gal.mosaic figure img{transition:transform .25s}
+body.home .gal.mosaic figure>a:hover img{transform:scale(1.03)}
+body.home .gal.mosaic figure>a{height:100%}
+body.th p.lvl.pg{color:var(--ac);letter-spacing:.15em;font-size:1rem;margin:-.3em 0 .9em}
+body.th p.lvl.pg small{letter-spacing:0;color:var(--mut);margin-right:.5em;font-size:.82rem}
+body.th .tile p.lvl{margin:.2em 0 .4em;color:var(--ac);letter-spacing:.1em;font-size:.85rem}
+body.th .tile p.lvl small{letter-spacing:0;color:var(--mut);margin-right:.4em;font-size:.72rem}
+body.th .tile p.lvl small{display:block;margin:0}body.th .tile p.lvl{white-space:nowrap;letter-spacing:.06em;font-size:.8rem}
