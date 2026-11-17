@@ -9,7 +9,7 @@
     intro: 'Before you start', recap: 'Summary', adv: 'Advanced settings (optional)', advLead: 'Rarely changed: you can skip straight to the next step.',
     ais: 'Ease allowances', pcs: 'Pieces to download', seam: 'Seam allowance', cal: 'Print calibration', mes: 'Measurements', edit: 'Edit', none: 'none', yes: 'yes', no: 'no',
     priv: 'Your measurements are kept only in this browser, on this device. Nothing is sent to the site.', clear: 'Clear my measurements',
-    resume: 'Continue with your measurements from ', restart: 'Start over', hint: 'Tap the preview to enlarge or shrink it.',
+    resume: 'Continue with your measurements from ', restart: 'Start over', hint: 'Tap the preview to enlarge or shrink it.', showPcs: 'Show the pattern pieces', hidePcs: 'Hide the pattern pieces',
     one: 'Your measurement', kofn: function (k, n) { return 'Measurement ' + k + ' of ' + n; },
     advSum: 'Advanced settings (optional): seam allowance, print calibration', advSumCal: 'Advanced settings (optional): print calibration'
   } : {
@@ -17,7 +17,7 @@
     intro: 'Avant de commencer', recap: 'Récapitulatif', adv: 'Réglages avancés (facultatif)', advLead: 'Rarement modifiés : vous pouvez passer directement à la suite.',
     ais: 'Aisances', pcs: 'Pièces à télécharger', seam: 'Marge de couture', cal: 'Étalonnage d’impression', mes: 'Mesures', edit: 'Modifier', none: 'aucune', yes: 'oui', no: 'non',
     priv: 'Vos mesures sont gardées uniquement dans ce navigateur, sur cet appareil. Rien n’est envoyé au site.', clear: 'Effacer mes mesures',
-    resume: 'Reprendre avec vos mesures du ', restart: 'Recommencer', hint: 'Touchez l’aperçu pour l’agrandir ou le réduire.',
+    resume: 'Reprendre avec vos mesures du ', restart: 'Recommencer', hint: 'Touchez l’aperçu pour l’agrandir ou le réduire.', showPcs: 'Voir les pièces du patron', hidePcs: 'Masquer les pièces du patron',
     one: 'Votre mesure', kofn: function (k, n) { return 'Mesure ' + k + ' sur ' + n; },
     advSum: 'Réglages avancés (facultatif) : marge de couture, étalonnage d’impression', advSumCal: 'Réglages avancés (facultatif) : étalonnage d’impression'
   };
@@ -104,11 +104,17 @@
 
   function step(key, title, count, kind) { var s = document.createElement('section'); s.className = 'wz-step'; s.dataset.k = key; s.dataset.title = title; s.dataset.count = count || ''; s.dataset.kind = kind || ''; s.setAttribute('tabindex', '-1'); var h = document.createElement('h2'); h.textContent = title; s.appendChild(h); stage.appendChild(s); steps.push(s); return s; }
 
+  /* étape « Style » (saharienne) : premier écran, avant l'accueil des mesures */
+  var UI = window.SAH_STYLE_UI || null, sS = null;
+  if (UI) { sS = step('style', UI.title, UI.title, 'style'); UI.build(sS); }
+  var i0 = UI ? 1 : 0;
+
   /* 0. accueil */
   var s0 = step('intro', L.intro, '', 'intro');
   var mids = C.measures, nM = mids.length;
   var ul = (C.intro.list && nM > 1) ? '<ol class="wz-list">' + mids.map(function (id) { return '<li>' + labelText(id) + '</li>'; }).join('') + '</ol>' : '';
-  s0.insertAdjacentHTML('beforeend', C.intro.lead + ul + C.intro.after + '<div class="wz-resume" hidden></div>');
+  s0.insertAdjacentHTML('beforeend', C.intro.lead + ul + C.intro.after + (UI ? '' : '<div class="wz-resume" hidden></div>'));
+  if (UI) sS.insertAdjacentHTML('beforeend', '<div class="wz-resume" hidden></div>');
 
   /* mesures */
   mids.forEach(function (id, k) {
@@ -164,23 +170,24 @@
   }
   function go(n, opts) {
     if (n < 0 || n >= steps.length) return;
-    returnTo = opts && opts.from ? opts.from : -1;
+    returnTo = opts && opts.from !== undefined ? opts.from : -1;
     cur = n;
     steps.forEach(function (s, i) { s.classList.toggle('on', i === n); });
+    document.documentElement.setAttribute('data-wz-step', steps[n].dataset.k);
     if (n === iR) buildRecap();
     var pct = Math.round(100 * n / iR);
     bar.style.width = pct + '%'; prog.setAttribute('aria-valuenow', pct);
     var s = steps[n];
-    count.textContent = n === 0 ? '' : (s.dataset.kind === 'mes' && nM > 1 ? s.dataset.count + ' · ' + s.dataset.title : s.dataset.count);
+    count.textContent = (n === i0 || n === 0) ? '' : (s.dataset.kind === 'mes' && nM > 1 ? s.dataset.count + ' · ' + s.dataset.title : s.dataset.count);
     bPrev.hidden = n === 0;
     bNext.hidden = n === iR;
-    bNext.textContent = returnTo > 0 ? L.back : (n === 0 ? L.start : (n === iA ? L.see : L.next));
-    nav.classList.toggle('single', n === 0);
-    if (!opts || !opts.quiet) { try { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { } var f = s.querySelector('input[type="number"]'); if (f && n >= 1 && n <= iM && !(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) { try { f.focus({ preventScroll: true }); f.select(); } catch (e) { } } }
+    bNext.textContent = returnTo >= 0 ? L.back : (n === i0 ? L.start : (n === iA ? L.see : L.next));
+    nav.classList.toggle('single', !UI && n === 0);
+    if (!opts || !opts.quiet) { try { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { } var f = s.querySelector('input[type="number"]'); if (f && n > i0 && n <= iM && !(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) { try { f.focus({ preventScroll: true }); f.select(); } catch (e) { } } }
   }
   bNext.addEventListener('click', function () {
     if (stepErrors(steps[cur])) return;
-    if (returnTo > 0) { go(iR); return; }
+    if (returnTo >= 0) { go(iR); return; }
     go(cur + 1);
   });
   bPrev.addEventListener('click', function () { returnTo = -1; go(cur - 1); });
@@ -200,8 +207,13 @@
     }
     return rows.join('');
   }
+  function styleRecap() {
+    var rows = UI.recap().map(function (x) { return '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td><td><button type="button" class="wz-mod" data-s="0" aria-label="' + L.edit + ' : ' + x[0].replace(/"/g, '') + '">' + L.edit + '</button></td></tr>'; }).join('');
+    var sm = UI.smalls(), ul2 = sm.items.length ? '<h3>' + sm.title + '</h3><p class="wz-smintro">' + sm.intro + '</p><ul class="wz-small">' + sm.items.map(function (x) { return '<li><span>' + x.label + '</span><a class="wz-dlsm" href="' + x.href + '" target="_blank" rel="noopener">' + sm.dl + '</a></li>'; }).join('') + '</ul>' : '';
+    return '<h3>' + UI.title + '</h3><table class="wz-t"><tbody>' + rows + '</tbody></table>' + ul2;
+  }
   function buildRecap() {
-    var html = '<h3>' + L.mes + '</h3><table class="wz-t"><tbody>' + steps.slice(1, 1 + nM).map(function (s, k) { return rowsOf(s, 1 + k); }).join('') + '</tbody></table>' +
+    var html = (UI ? styleRecap() : '') + '<h3>' + L.mes + '</h3><table class="wz-t"><tbody>' + steps.slice(i0 + 1, i0 + 1 + nM).map(function (s, k) { return rowsOf(s, i0 + 1 + k); }).join('') + '</tbody></table>' +
       '<h3>' + C.model.title + '</h3><table class="wz-t"><tbody>' + rowsOf(sM, iM) + '</tbody></table>' +
       '<h3>' + L.adv.replace(/ \(.*\)$/, '') + '</h3><table class="wz-t"><tbody>' + rowsOf(sA, iA) + '</tbody></table>';
     recap.innerHTML = html;
@@ -240,19 +252,30 @@
     if (rad) { var r = form.querySelector('input[name="np"][value="' + defRad + '"]'); if (r) r.checked = true; }
     fire();
   }
-  $('wz-clear').addEventListener('click', function (e) { e.preventDefault(); lsDel(); reset(); go(0); var r = s0.querySelector('.wz-resume'); r.hidden = true; });
+  $('wz-clear').addEventListener('click', function (e) { e.preventDefault(); lsDel(); reset(); if (UI) UI.reset(); go(0); var r = (UI ? sS : s0).querySelector('.wz-resume'); r.hidden = true; });
   var saved = lsGet();
   if (saved && saved.v) {
     var d = new Date(saved.t), ds = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();
-    var r0 = s0.querySelector('.wz-resume'); r0.hidden = false;
+    var r0 = (UI ? sS : s0).querySelector('.wz-resume'); r0.hidden = false;
     r0.innerHTML = '<p><button type="button" class="wz-big" id="wz-resume">' + L.resume + ds + '</button> <button type="button" class="wz-alt" id="wz-restart">' + L.restart + '</button></p>';
     $('wz-resume').addEventListener('click', function () { apply(saved); go(iR); });
-    $('wz-restart').addEventListener('click', function () { reset(); go(1); });
+    $('wz-restart').addEventListener('click', function () { reset(); go(i0 + 1); });
   }
 
   /* --- aperçu mobile : réduit en haut, s'agrandit au toucher --- */
   var pv = document.querySelector('.card.sticky');
-  if (pv) { pv.classList.add('wz-pv'); pv.insertAdjacentHTML('afterbegin', '<p class="wz-pvhint"><small>' + L.hint + '</small></p>'); pv.addEventListener('click', function () { if (window.innerWidth <= 760) pv.classList.toggle('zoom'); }); }
+  Array.prototype.slice.call(document.querySelectorAll('.card.sticky')).forEach(function (p) { p.classList.add('wz-pv'); p.insertAdjacentHTML('afterbegin', '<p class="wz-pvhint"><small>' + L.hint + '</small></p>'); p.addEventListener('click', function (ev) { if (ev.target.closest && ev.target.closest('button')) return; if (window.innerWidth <= 760) p.classList.toggle('zoom'); }); });
+
+  /* composition : le croquis et l'aperçu des pièces sont groupés ; sur téléphone, les pièces sont repliées par défaut */
+  if (UI) {
+    var sk = document.getElementById('sketchcard'), pc = document.querySelector('.card.sticky:not(#sketchcard)');
+    if (sk && pc) {
+      var pair = document.createElement('div'); pair.className = 'wz-pair'; sk.parentNode.insertBefore(pair, sk); pair.appendChild(sk); pair.appendChild(pc);
+      pc.classList.add('folded');
+      var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'wz-fold'; fb.textContent = L.showPcs; pc.insertAdjacentElement('afterbegin', fb);
+      fb.addEventListener('click', function (ev) { ev.stopPropagation(); var f = pc.classList.toggle('folded'); fb.textContent = f ? L.showPcs : L.hidePcs; });
+    }
+  }
 
   /* chapeaux : sur téléphone, la coupe schématique reste collée en haut pendant la saisie */
   var prof = document.querySelector('.card.rc .prof');

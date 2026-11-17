@@ -1,0 +1,58 @@
+/* Étape « Style » de la saharienne : croquis et choix */
+#sketchcard{display:none}
+html[data-wz-step="style"] #sketchcard{display:block}
+html[data-wz-step="style"] .card.sticky:not(#sketchcard),html[data-wz-step="style"] .wz-pair .card.sticky:not(#sketchcard){display:none}
+#sketchcard .cq-svg{display:block;width:100%;height:auto}
+@media(min-width:761px){#sketchcard .cq-svg{max-height:calc(100vh - 130px)}}
+.cq-views{display:flex;gap:0;justify-content:center;margin-bottom:10px}
+.cq-views button{font:inherit;font-size:1rem;font-weight:600;padding:9px 26px;min-height:40px;border:1px solid var(--ac);background:transparent;color:var(--ac);cursor:pointer;width:auto;border-radius:0}
+.cq-views button:first-child{border-radius:999px 0 0 999px}
+.cq-views button:last-child{border-radius:0 999px 999px 0;border-left:0}
+.cq-views button[aria-pressed="true"]{background:var(--ac);border-color:var(--ac);color:#fff}
+.cq-leg{display:flex;justify-content:space-between;font-size:.75rem;color:var(--mut);padding:2px 6px 0}
+.cq-lead{margin:.2em 0 1em}
+.cq-form{display:flex;flex-direction:column;gap:12px}
+.cq-form fieldset{border:1px solid var(--bd);border-radius:10px;background:var(--card);margin:0;padding:8px 12px 10px;min-width:0}
+.cq-form legend{font-weight:700;color:var(--ac2);padding:0 4px}
+.cq-form h3{font-size:.9rem;font-weight:600;margin:8px 0 6px;color:inherit}
+.cq-form h4{font-size:.85rem;font-weight:600;margin:0 0 6px}
+.cq-form .hint{font-size:.8rem;color:var(--mut);margin:4px 0 6px}
+.cq-form .chips{display:flex;flex-wrap:wrap;gap:6px}
+.cq-form .chip{position:relative;display:inline-block;margin:0}
+.cq-form .chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;width:100%;height:100%}
+.cq-form .chip span{display:inline-block;padding:6px 11px;border:1px solid var(--bd);border-radius:8px;font-size:.88rem;background:var(--bg)}
+.cq-form .chip input:checked+span{background:var(--ac);border-color:var(--ac);color:#fff}
+.cq-form .chip input:focus-visible+span{outline:2px solid var(--fu);outline-offset:2px}
+.cq-form .chip input:disabled+span{opacity:.45}
+.cq-form .chip input:disabled{cursor:not-allowed}
+.cq-form .check{display:flex;gap:8px;align-items:center;font-size:.9rem;margin:2px 0 8px}
+.cq-form .check input{width:18px;height:18px;accent-color:var(--ac)}
+.cq-form .sub{margin-top:8px}
+.cq-form .souf{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;padding:2px 2px 2px 8px;border-left:2px solid var(--ac);margin-left:-2px}
+.cq-form .souf .chip span{font-size:.8rem;padding:4px 8px}
+.cq-form .souf[hidden]{display:none!important}
+.cq-form .summary{font-size:.9rem;background:var(--fu-soft);border-radius:10px;padding:10px 14px}
+.cq-links{font-size:.88rem;margin:4px 0 0}
+body.th .card.wz-pv .cq-svg{max-height:24vh}
+body.th .card.wz-pv.zoom .cq-svg{max-height:70vh}
+body.th .card.wz-pv.kb .cq-svg{max-height:13vh}
+body.th #sketchcard .cq-leg{font-size:.7rem}
+.wz-small{list-style:none;margin:.4rem 0 1rem;padding:0;display:grid;gap:.45rem}
+.wz-small li{display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.5rem .7rem;border:1px solid var(--line,#cfdde4);border-radius:10px}
+.wz-small a.wz-dlsm{font-weight:600;text-decoration:none;padding:.35rem .8rem;border-radius:8px;border:1px solid currentColor;white-space:nowrap}
+/* groupe croquis + pièces */
+.wz-pair{display:contents}
+.wz-fold{display:none}
+@media(max-width:760px){
+ .card.wz-pv .wz-fold{display:block;width:100%;margin:0 0 .3rem;padding:.4rem;font-size:.85rem}
+ .card.wz-pv.folded .wz-fold{margin:0}
+ .card.wz-pv.folded svg,.card.wz-pv.folded .wz-pvhint{display:none}
+ html[data-wz-step="recap"] .card.wz-pv.folded svg{display:block}
+ html[data-wz-step="recap"] .card.wz-pv .wz-fold{display:none}
+}
+html[data-wz-step="recap"] .wz-pair{display:flex;gap:.6rem;align-items:flex-start}
+html[data-wz-step="recap"] .wz-pair .card.sticky,html[data-wz-step="recap"] #sketchcard{display:block;flex:1 1 0;min-width:0;position:static}
+html[data-wz-step="recap"] .wz-pair .card .wz-pvhint{display:none}
+html[data-wz-step="recap"] .wz-pair svg{max-height:32vh;width:100%;height:auto}
+@media(min-width:761px){html[data-wz-step="recap"] .wz-pair{position:sticky;top:12px}}
+.wz-smintro{margin:.2rem 0 .4rem;color:var(--mut,#556)}

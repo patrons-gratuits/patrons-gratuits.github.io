@@ -1,0 +1,4 @@
+/* Croquis de la saharienne : couleurs du tissu, mode sombre compris */
+.mc,.cq{--mc-fabric:#efe3cf;--mc-fabric2:#e4d4b9;--mc-ink:#3b2f22;--mc-stitch:#8a6d48;--fabric:var(--mc-fabric);--fabric2:var(--mc-fabric2);--ink:var(--mc-ink);--stitch:var(--mc-stitch)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .mc,:root:not([data-theme="light"]) .cq{--mc-fabric:#d9c9ad;--mc-fabric2:#c9b694;--mc-ink:#2a2118;--mc-stitch:#7a5f3c}}
+:root[data-theme="dark"] .mc,:root[data-theme="dark"] .cq{--mc-fabric:#d9c9ad;--mc-fabric2:#c9b694;--mc-ink:#2a2118;--mc-stitch:#7a5f3c}

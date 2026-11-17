@@ -40,7 +40,7 @@
         if (peek() && peek().t === 'op' && peek().v === '(') {
           next();
           const args = [expr()];
-          while (peek() && peek().v === ',') { next(); args.push(expr()); }
+          while (peek() && (peek().v === ',' || peek().v === ';')) { next(); args.push(expr()); }
           next(); // )
           const f = FUNCS[t.v];
           if (!f) throw new Error('Fonction inconnue : ' + t.v);
@@ -398,6 +398,7 @@
       if (!l || Math.hypot(p.x - l.x, p.y - l.y) > e) out.push(p);
       else {
         if (p.miter) l.miter = true; if (p.bevel) l.bevel = true; if (p.fmiter) l.fmiter = true;
+        if (p.slit) l.slit = true;
         if (p.notch && !l.notch) l.notch = p.notch; // point confondu : une largeur explicite (nombre) l'emporte
         l.wb = num(l.wb) ? l.wb : (num(p.wb) ? p.wb : (l.wb != null ? l.wb : (p.wb != null ? p.wb : null)));
         l.wa = num(p.wa) ? p.wa : (num(l.wa) ? l.wa : (p.wa != null ? p.wa : (l.wa != null ? l.wa : null)));
@@ -405,7 +406,7 @@
     }
     if (out.length > 1 && Math.hypot(out[0].x - out[out.length - 1].x, out[0].y - out[out.length - 1].y) <= e) {
       const last = out.pop();
-      if (last.miter) out[0].miter = true; if (last.bevel) out[0].bevel = true; if (last.fmiter) out[0].fmiter = true; if (last.notch && !out[0].notch) out[0].notch = last.notch;
+      if (last.miter) out[0].miter = true; if (last.bevel) out[0].bevel = true; if (last.fmiter) out[0].fmiter = true; if (last.notch && !out[0].notch) out[0].notch = last.notch; if (last.slit) out[0].slit = true;
       if (num(last.wb) || out[0].wb == null) out[0].wb = last.wb != null ? last.wb : out[0].wb;
       if (out[0].wa == null && last.wa != null) out[0].wa = last.wa;
     }
@@ -481,13 +482,14 @@
       if (n.excluded === 'true') continue;
       const o = resolveNode(res, n.idObject);
       if (o.kind === 'pt') {
-        poly.push({ x: o.p.x, y: o.p.y, wb: n.before !== undefined ? +n.before : null, wa: n.after !== undefined ? +n.after : null, notch: n.notch === 'true' ? (n.notchLength !== undefined ? +n.notchLength : 1.25) : 0, miter: n.angle === '1', bevel: !!(bevelNames && o.p.name && bevelNames.indexOf(o.p.name) >= 0), fmiter: !!(miterNames && o.p.name && miterNames.indexOf(o.p.name) >= 0) });
+        poly.push({ x: o.p.x, y: o.p.y, wb: n.before !== undefined ? +n.before : null, wa: n.after !== undefined ? +n.after : null, notch: n.notch === 'true' ? (n.notchLength !== undefined ? +n.notchLength : 1.25) : 0, slit: n.notch === 'true' && /^Fente_c/.test(o.p.name || ''), miter: n.angle === '1', bevel: !!(bevelNames && o.p.name && bevelNames.indexOf(o.p.name) >= 0), fmiter: !!(miterNames && o.p.name && miterNames.indexOf(o.p.name) >= 0) });
       } else {
         let a = o.kind === 'curve' ? curvePolyline(o.curve, 0.2) : arcPolyline(o.arc, arcStep);
         const last = poly[poly.length - 1];
         // comme Seamly2D : un arc inséré entre deux points n'est tracé que d'un point à l'autre
         let nxt = null;
         for (let j = nodeList.indexOf(n) + 1; j < nodeList.length; j++) { if (nodeList[j].excluded === 'true') continue; const o2 = resolveNode(res, nodeList[j].idObject); if (o2.kind === 'pt') nxt = o2.p; break; }
+        if (!nxt) { for (const n0 of nodeList) { if (n0.excluded === 'true') continue; const o0 = resolveNode(res, n0.idObject); if (o0.kind === 'pt') { nxt = o0.p; } break; } }
         if (last) {
           const dS = Math.hypot(a[0].x - last.x, a[0].y - last.y);
           const dE = Math.hypot(a[a.length - 1].x - last.x, a[a.length - 1].y - last.y);
@@ -605,7 +607,7 @@
         const e1 = { x: v.x - a.x, y: v.y - a.y }, e2 = { x: b.x - v.x, y: b.y - v.y }, l1 = Math.hypot(e1.x, e1.y) || 1, l2 = Math.hypot(e2.x, e2.y) || 1;
         let nx = sg * (e1.y / l1 + e2.y / l2), ny = -sg * (e1.x / l1 + e2.x / l2); const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl;
         const wl = typeof v.wb === 'number' ? v.wb : saw, wr = typeof v.wa === 'number' ? v.wa : saw;
-        notches.push({ x: v.x, y: v.y, nx, ny, len: v.notch, w: Math.max(wl, wr) });
+        notches.push({ x: v.x, y: v.y, nx, ny, len: v.notch, w: Math.max(wl, wr), slit: !!v.slit });
       });
       out.push({ name: pc.name, poly, sa, notches, onFold: !!pc.onFold, internal: lines, internalKind: kinds, quantity: pc.quantity, lines: pc.lines, grain: pc.grainline, annotation: pc.annotation });
     }

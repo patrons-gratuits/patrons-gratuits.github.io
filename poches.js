@@ -236,3 +236,10 @@ function setUnit(nu){if(nu===U)return;
 if(UNIT_SELECT){$('unitbox').hidden=false;try{if(localStorage.getItem('unit')==='in')U='in'}catch(e){}
  document.querySelectorAll('input[name=un]').forEach(i=>{i.checked=i.value===U;i.addEventListener('change',()=>{setUnit(i.value);try{localStorage.setItem('unit',U)}catch(e){}})});updateUnitUi(true)}
 renderRabats();{let q0=window.POCHE_TYPE&&TYPES[window.POCHE_TYPE]?window.POCHE_TYPE:'simple';if(!window.POCHE_TYPE)try{const q=new URLSearchParams(location.search).get('type');if(q&&TYPES[q])q0=q}catch(e){}setType(q0);$('type').value=q0;if(window.POCHE_TYPE){$('typebox').hidden=true;renderVariants()}}
+/* préréglages passés dans l'adresse (choix de style et dimensions de poche, jamais de mesures du corps) */
+try{const P=new URLSearchParams(location.search);
+ const chk=(sel,v)=>{if(v==null)return false;const e=[...document.querySelectorAll(sel)].find(i=>i.value===v);if(e){e.checked=true;return true}return false};
+ const vt=P.get('variante');if(vt&&window.POCHE_VARIANTS){const e=[...document.querySelectorAll('.vr')].find(i=>i.value===vt);if(e){e.checked=true;setType(vt);$('type').value=vt}}
+ FIELDS.forEach(([n])=>{const v=P.get(n),e=$('v_'+n);if(e&&v!==null&&v!==''&&!isNaN(parseFloat(v)))e.value=v});
+ chk('.pc',P.get('forme'));chk('.rb',P.get('rabat'));chk('.pl',P.get('pli'));chk('.sd',P.get('cote'));
+ renderVars(false);draw()}catch(e){}
