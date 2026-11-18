@@ -147,7 +147,7 @@
   /* récapitulatif */
   var sR = step('recap', L.recap, L.recap, 'recap');
   var recap = document.createElement('div'); recap.className = 'wz-recap'; sR.appendChild(recap);
-  var dls = document.createElement('div'); dls.className = 'wz-dls'; dls.appendChild(dlP); if (npgP) dls.appendChild(npgP); dls.appendChild(dl1P); dls.appendChild(msg); if (lastP) dls.appendChild(lastP);
+  var dls = document.createElement('div'); dls.className = 'wz-dls'; var tipP = dlP.previousElementSibling; if (tipP && tipP.classList.contains('dltip')) dls.appendChild(tipP); dls.appendChild(dlP); if (npgP) dls.appendChild(npgP); dls.appendChild(dl1P); dls.appendChild(msg); if (lastP) dls.appendChild(lastP);
   sR.appendChild(dls);
 
   Array.prototype.slice.call(form.children).forEach(function (n) { n.remove(); });
@@ -174,6 +174,7 @@
     cur = n;
     steps.forEach(function (s, i) { s.classList.toggle('on', i === n); });
     document.documentElement.setAttribute('data-wz-step', steps[n].dataset.k);
+    priv.hidden = steps[n].dataset.k !== 'intro';
     if (n === iR) buildRecap();
     var pct = Math.round(100 * n / iR);
     bar.style.width = pct + '%'; prog.setAttribute('aria-valuenow', pct);
@@ -209,7 +210,7 @@
   }
   function styleRecap() {
     var rows = UI.recap().map(function (x) { return '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td><td><button type="button" class="wz-mod" data-s="0" aria-label="' + L.edit + ' : ' + x[0].replace(/"/g, '') + '">' + L.edit + '</button></td></tr>'; }).join('');
-    var sm = UI.smalls(), ul2 = sm.items.length ? '<h3>' + sm.title + '</h3><p class="wz-smintro">' + sm.intro + '</p><ul class="wz-small">' + sm.items.map(function (x) { return '<li><span>' + x.label + '</span><a class="wz-dlsm" href="' + x.href + '" target="_blank" rel="noopener">' + sm.dl + '</a></li>'; }).join('') + '</ul>' : '';
+    var sm = UI.smalls(), ul2 = sm.items.length ? '<h3>' + sm.title + '</h3><p class="wz-smintro">' + sm.intro + '</p><ul class="wz-small">' + sm.items.map(function (x) { return x.act ? '<li><button type="button" class="wz-dlsm" data-act="' + x.act + '">' + x.label + '</button></li>' : '<li><a class="wz-dlsm" href="' + x.href + '" target="_blank" rel="noopener">' + x.label + '</a></li>'; }).join('') + '</ul>' : '';
     return '<h3>' + UI.title + '</h3><table class="wz-t"><tbody>' + rows + '</tbody></table>' + ul2;
   }
   function buildRecap() {
@@ -217,6 +218,7 @@
       '<h3>' + C.model.title + '</h3><table class="wz-t"><tbody>' + rowsOf(sM, iM) + '</tbody></table>' +
       '<h3>' + L.adv.replace(/ \(.*\)$/, '') + '</h3><table class="wz-t"><tbody>' + rowsOf(sA, iA) + '</tbody></table>';
     recap.innerHTML = html;
+    Array.prototype.slice.call(recap.querySelectorAll('[data-act="cart"]')).forEach(function (b) { b.addEventListener('click', function () { UI.cartPdf(); }); });
     Array.prototype.slice.call(recap.querySelectorAll('.wz-mod')).forEach(function (b) { b.addEventListener('click', function () { go(+b.dataset.s, { from: iR }); }); });
   }
 

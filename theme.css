@@ -99,3 +99,9 @@ body.th p.lvl.pg small{letter-spacing:0;color:var(--mut);margin-right:.5em;font-
 body.th .tile p.lvl{margin:.2em 0 .4em;color:var(--ac);letter-spacing:.1em;font-size:.85rem}
 body.th .tile p.lvl small{letter-spacing:0;color:var(--mut);margin-right:.4em;font-size:.72rem}
 body.th .tile p.lvl small{display:block;margin:0}body.th .tile p.lvl{white-space:nowrap;letter-spacing:.06em;font-size:.8rem}
+.appel{margin:2em 0 0}
+body.th .btn-real{background:transparent;color:var(--ac2);border:2px solid var(--ac2);font-weight:600;width:auto;display:inline-block;padding:8px 18px;margin-left:.4em;text-decoration:none;border-radius:8px}
+body.th .btn-real:hover,body.th .btn-real:focus-visible{background:var(--fu-soft)}
+/* Sous-titres à l'intérieur des formulaires : police des intitulés (sans empattements, gras). Logo, h1, h2 gardent la police des titres. */
+body.th .card h3,body.th .cq-form h3,body.th .cq-form h4,body.th .wz-stage h3{font-family:inherit;font-weight:700}
+.dltip{margin:.8em 0 .4em;color:var(--mut,#556)}

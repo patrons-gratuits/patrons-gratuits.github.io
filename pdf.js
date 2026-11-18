@@ -204,7 +204,7 @@
         tl.forEach(t => { const w = tw(t[0], t[1]); text(t[0], tx + Math.max(2, (SQ - w) / 2), ty + 12 + t[2] + sh, t[1]); });
       }
       if (pi === 0 && !pg.items.length && L.tiled.length) { // page de contrôle seule : explication de l'assemblage
-        const msg = ['Certaines pièces sont trop grandes pour une page A4 : elles sont imprimées en plusieurs pages à assembler.'].concat(L.tiled.map(t => '- ' + t.name + ' : ' + t.cols + ' colonne(s) x ' + t.rows + ' ligne(s), soit ' + (t.cols * t.rows) + ' pages.'), ['Découpez au bord des cadres (traits de coupe aux 4 coins) et superposez les zones de recouvrement de 1,5 cm :', 'les lignes de la pièce doivent se prolonger exactement d\'une page à l\'autre. Collez ou scotchez.']);
+        const msg = ['Certaines pièces sont trop grandes pour une page A4 : elles sont imprimées en plusieurs pages à assembler.'].concat(L.tiled.map(t => '- ' + t.name + ' : ' + t.cols + ' colonne(s) x ' + t.rows + ' ligne(s), soit ' + (t.cols * t.rows) + ' pages.'), ['Superposez les bandes grises de recouvrement de 1,5 cm sur la page voisine :', 'les lignes de la pièce doivent se prolonger exactement d\'une page à l\'autre. Collez ou scotchez.']);
         msg.forEach((m, i) => text(m, 0, (L.test.y || 0) + 5 * PT + 40 + 12 * i, i ? 8 : 9));
       }
       for (const it of (pg.tile ? [pg.tile.it] : pg.items)) {
@@ -212,21 +212,18 @@
         const ox = T_ ? -T_.tx : it.px, oy = T_ ? T_.TH - T_.ty : it.py + L.head;
         if (T_) {
           const idn = 'L' + (T_.r + 1) + '-C' + (T_.c + 1), wl2 = (opts.date ? 'Créé le ' + opts.date : '') + (p.note ? '  -  ' + p.note : '');
-          text(p.name + ' - page ' + idn + ' (' + T_.cols + ' colonne(s) x ' + T_.rows + ' ligne(s))', 0, 10, 9);
+          text(p.name + ' - page ' + (pi + 1 + OFF) + ' - colonne ' + (T_.c + 1) + ', ligne ' + (T_.r + 1), 0, 10, 9);
           text(wl2, 0, 21, 7);
           const cs = Math.max(2, Math.min(7, 24 / T_.rows, 110 / T_.cols)), mx = T_.winW - T_.cols * cs - 2;
           for (let rr = 0; rr < T_.rows; rr++) for (let cc = 0; cc < T_.cols; cc++) { c += '0.3 w ' + (rr === T_.r && cc === T_.c ? '0.6 g ' : '1 g ') + `${X(mx + cc * cs)} ${Y(4 + (rr + 1) * cs)} ${f(cs)} ${f(cs)} re B\n`; }
           c += '0 g\n';
-          // repères de découpe aux 4 coins de la fenêtre et recouvrements
-          const x1 = T_.winW, y0 = T_.TH, y1 = T_.TH + T_.winH, k = 10;
-          c += '0.3 w [] 0 d\n';
-          [[0, y0, 1, 1], [x1, y0, -1, 1], [0, y1, 1, -1], [x1, y1, -1, -1]].forEach(([cx_, cy_, sx, sy]) => { c += `${X(cx_)} ${Y(cy_ + sy * k)} m ${X(cx_)} ${Y(cy_)} l ${X(cx_ + sx * k)} ${Y(cy_)} l S\n`; });
-          c += '0.3 w [2 2] 0 d\n';
-          const nb = (cc, rr) => 'L' + (rr + 1) + '-C' + (cc + 1);
-          if (T_.c < T_.cols - 1) { c += `${X(x1 - T_.OV)} ${Y(y0)} m ${X(x1 - T_.OV)} ${Y(y1)} l S\n`; { const t2 = 'Recouvre ' + nb(T_.c + 1, T_.r) + ' >'; text(t2, x1 - T_.OV - tw(t2, 6) - 2, y0 + 10, 6); } }
-          if (T_.c > 0) { c += `${X(T_.OV)} ${Y(y0)} m ${X(T_.OV)} ${Y(y1)} l S\n`; text('< ' + nb(T_.c - 1, T_.r), 2, y0 + 10, 6); }
-          if (T_.r < T_.rows - 1) { c += `${X(0)} ${Y(y1 - T_.OV)} m ${X(x1)} ${Y(y1 - T_.OV)} l S\n`; text('Recouvre ' + nb(T_.c, T_.r + 1) + ' (en bas)', x1 / 2 - 40, y1 - T_.OV - 3, 6); }
-          if (T_.r > 0) { c += `${X(0)} ${Y(y0 + T_.OV)} m ${X(x1)} ${Y(y0 + T_.OV)} l S\n`; text(nb(T_.c, T_.r - 1) + ' (en haut)', x1 / 2 - 30, y0 + T_.OV + 8, 6); }
+          // bandes grises de recouvrement (droite et bas) et pages voisines
+          const x1 = T_.winW, y0 = T_.TH, y1 = T_.TH + T_.winH, nb = (cc, rr) => 'L' + (rr + 1) + '-C' + (cc + 1);
+          c += '0.92 g\n';
+          if (T_.c < T_.cols - 1) c += `${X(x1 - T_.OV)} ${Y(y1)} ${f(T_.OV)} ${f(T_.winH)} re f\n`;
+          if (T_.r < T_.rows - 1) c += `${X(0)} ${Y(y1)} ${f(x1)} ${f(T_.OV)} re f\n`;
+          c += '0 g\n';
+          { const nbs = []; [[1, 0, 'droite'], [0, 1, 'dessous'], [-1, 0, 'gauche'], [0, -1, 'dessus']].forEach(([dc, dr, t]) => { const cc = T_.c + dc, rr = T_.r + dr; if (cc >= 0 && rr >= 0 && cc < T_.cols && rr < T_.rows) nbs.push(t + ' : page ' + (pi + 1 + OFF + dc + dr * T_.cols)); }); text(nbs.join(' | '), 0, 31, 7); }
           c += '[] 0 d\n';
           c += `q ${X(0)} ${Y(y1)} ${f(x1)} ${f(T_.winH)} re W n\n`;
         } else {
@@ -236,13 +233,13 @@
         { let yy = oy - 2 - H.h + 3; H.lines.forEach(([t, sz]) => { yy += sz * 1.2; text(t, ox + Math.max(2, (bw - tw(t, sz)) / 2), yy - sz * 0.25, sz); }); }
         }
         // ligne de coupe
-        if (p.sa) { c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; path(p.sa, true, ox, oy, it.x0, it.y0); c += 'S\n0 G\n'; }
+        if (p.sa) { c += '0.62 0.106 0.07 RG 1.2 w [] 0 d\n'; path(p.sa, true, ox, oy, it.x0, it.y0); c += 'S\n0 G\n'; }
         // ligne de couture
         c += '0.4 w [] 0 d\n'; if (p.seamRuns) p.seamRuns.forEach(rn => { path(rn, false, ox, oy, it.x0, it.y0); c += 'S\n'; }); else { path(p.poly, true, ox, oy, it.x0, it.y0); c += 'S\n'; }
         // croix rouge : fin de la ligne de coupe (prolongée jusqu'au rempli)
         if (p.dot) {
           const hh = 0.35 * PT, cx = ox + (p.dot.x - it.x0) * PT, cy = oy + (p.dot.y - it.y0) * PT, U = (x, y) => `${X(x)} ${Y(y)}`;
-          c += '0.84 0.16 0.16 RG 1.1 w [] 0 d 1 J\n';
+          c += '0.62 0.106 0.07 RG 1.1 w [] 0 d 1 J\n';
           c += `${U(cx - hh, cy - hh)} m ${U(cx + hh, cy + hh)} l S\n${U(cx - hh, cy + hh)} m ${U(cx + hh, cy - hh)} l S\n0 G 0 J\n`;
         }
         // crans : trait vers l'intérieur depuis la ligne de couture (+ trait depuis la ligne de coupe s'il y a une marge)
@@ -273,10 +270,10 @@
         // lignes internes
         (p.internal || []).forEach((ln, ii) => {
           const kd = (p.internalKind || [])[ii];
-          if (kd && kd.color === 'darkRed') c += '0.75 0.22 0.17 RG 1.2 w [] 0 d\n'; // trait plein rouge (ex. boutonnières)
-          else if (kd && kd.color === 'green') c += '0.10 0.55 0.25 RG 1.2 w [] 0 d\n'; // trait plein vert (repère)
-          else if (kd && kd.place) c += '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d\n'; // emplacement (ex. poche) : tirets orange
-          else c += '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
+          if (kd && kd.color === 'darkRed') c += '0.85 0.45 0.02 RG 1.6 w [] 0 d\n'; // boutonnière : trait plein orange (même couleur que l\'emplacement)
+          else if (kd && kd.color === 'green') c += '0 0.56 0.345 RG 1.2 w [] 0 d\n'; // trait plein vert (repère)
+          else if (kd && kd.place) c += '0.85 0.45 0.02 RG 1.1 w [5 2.5] 0 d\n'; // emplacement (ex. poche) : tirets orange
+          else c += '0.165 0.365 0.69 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
           path(ln, false, ox, oy, it.x0, it.y0); c += 'S\n';
         });
         c += '0 G [] 0 d\n';
@@ -338,11 +335,11 @@
         if (ps.some(p => p.dot)) E.push(['Fin de la ligne de coupe', 4]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Emplacement poche', 3]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Emplacement patte', 3]);
-        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push([opts.redLabel||'Boutonniere', 1]);
+        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push([opts.redLabel||'Boutonniere', 6]);
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
-          c += ['0 G 0.4 w [] 0 d', '0.75 0.22 0.17 RG 1.2 w [] 0 d', '0.12 0.44 0.82 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.05 RG 1.1 w [5 2.5] 0 d', '0.84 0.16 0.16 RG 1.1 w [] 0 d', '0.10 0.55 0.25 RG 1.2 w [] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
+          c += ['0 G 0.4 w [] 0 d', '0.62 0.106 0.07 RG 1.2 w [] 0 d', '0.165 0.365 0.69 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.02 RG 1.1 w [5 2.5] 0 d', '0.62 0.106 0.07 RG 1.1 w [] 0 d', '0 0.56 0.345 RG 1.2 w [] 0 d', '0.85 0.45 0.02 RG 1.6 w [] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
           text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
         });
       }
@@ -370,7 +367,7 @@
     const out = new Uint8Array(len); let o = 0; for (const b of parts) { out.set(b, o); o += b.length; }
     return { bytes: out, pages: n, warnings: L.warnings };
   }
-  const api = { build, layout };
+  const api = { build, layout, tw, esc, latin1 };
   if (typeof window !== 'undefined') window.PatternPDF = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();

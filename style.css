@@ -1,5 +1,5 @@
 
-:root{--bg:#faf8f4;--fg:#222;--mut:#666;--card:#fff;--bd:#ddd6c8;--ac:#8a4b2a;--cut:#c0392b;--ph:#efe9dd}
+:root{--bg:#faf8f4;--fg:#222;--mut:#666;--card:#fff;--bd:#ddd6c8;--ac:#8a4b2a;--cut:#9E1B12;--ph:#efe9dd}
 @media(prefers-color-scheme:dark){:root{--bg:#1c1b19;--fg:#eee;--mut:#aaa;--card:#26241f;--bd:#444;--ac:#e0a070;--cut:#ff7766;--ph:#33302a}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
 header{border-bottom:1px solid var(--bd);background:var(--card)}
