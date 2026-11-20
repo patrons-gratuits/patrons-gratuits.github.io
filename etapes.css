@@ -73,3 +73,5 @@ body.th .wz-fig{margin:0}
 body.th .wz-fig img{display:block;width:100%;height:auto;background:#fff;border-radius:10px;border:2px solid var(--fu-soft)}
 body.th .wz-fig figcaption{margin-top:.4em;font-size:.82rem;color:var(--mut)}
 body.th .wz-stdline{margin:.2em 0 .6em;font-weight:600}
+
+body.th .wz-empty{color:#b3261e;font-weight:600}
