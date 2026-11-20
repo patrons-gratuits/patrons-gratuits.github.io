@@ -79,3 +79,4 @@ html[data-wz-step="recap"] .wz-pair svg{max-height:32vh;width:100%;height:auto}
 .pv-b2{background:transparent;color:inherit;border:1px solid var(--bd,#ddd);border-radius:6px;padding:10px 16px;font:inherit;cursor:pointer}
 .pv-ft button{width:auto;margin:0;flex:0 0 auto}
 @media(max-width:480px){.pv-ft button{flex:1 1 100%}}
+.wz-note{margin:.6rem 0;padding:.5rem .7rem;border-left:3px solid var(--acc,#d9480f);background:rgba(217,72,15,.07)}

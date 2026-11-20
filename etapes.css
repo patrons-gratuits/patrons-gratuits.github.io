@@ -59,3 +59,17 @@ body.th .wz-prof:empty{display:none}
  body.th .card.wz-pv.kb #prev,body.th .card.wz-prof.kb .prof svg{max-height:13vh!important}
  body.th .card.wz-pv.kb #cdim{display:none}
 }
+/* Tailles standard : choix de la taille, mesures en liste, dessin à côté du champ */
+body.th .wz-blk{margin:0 0 1.2em}
+body.th .wz-blk h3{margin-top:1em}
+body.th .wz-stdrow label{display:block;margin:.6em 0 .2em;font-weight:600}
+body.th .wz-stdrow select{display:block;width:100%;padding:8px;font-size:1rem}
+body.th .wz-stdmsg{margin:.4em 0 0;color:var(--ac2);min-height:1.2em}
+body.th .wz-chk{margin-left:.4em;padding:1px 6px;border-radius:99px;background:var(--fu-soft);color:var(--ac2);font-size:.72rem;font-weight:600;white-space:nowrap}
+body.th .fld.wz-sel{display:grid;align-content:start;grid-auto-rows:min-content;grid-template-columns:minmax(0,1fr) 128px;column-gap:12px;align-items:start}
+body.th .fld.wz-sel > label,body.th .fld.wz-sel > .row,body.th .fld.wz-sel > .err{grid-column:1}
+body.th .fld.wz-sel > .wz-fig{grid-column:2;grid-row:1 / span 3}
+body.th .wz-fig{margin:0}
+body.th .wz-fig img{display:block;width:100%;height:auto;background:#fff;border-radius:10px;border:2px solid var(--fu-soft)}
+body.th .wz-fig figcaption{margin-top:.4em;font-size:.82rem;color:var(--mut)}
+body.th .wz-stdline{margin:.2em 0 .6em;font-weight:600}

@@ -235,8 +235,9 @@
   function computeBlockRaw(data, blockIndex, overrides, inherit) {
     const block = data.blocks[blockIndex];
     const vars = {};
-    for (const v of data.variables) vars[v.name] = evalFormula(v.formula, (n) => { if (n in vars) return vars[n]; throw new Error('Variable inconnue ' + n); });
-    Object.assign(vars, overrides || {});
+    const ovr = overrides || {};
+    for (const v of data.variables) vars[v.name] = (v.name in ovr) ? ovr[v.name] : evalFormula(v.formula, (n) => { if (n in vars) return vars[n]; throw new Error('Variable inconnue ' + n); });
+    Object.assign(vars, ovr);
 
     const pts = {};      // id -> {x,y,name}
     const arcs = {};     // id -> {cx,cy,r,a1,a2}
@@ -340,6 +341,10 @@
             segs.push([{ x: A.P.x, y: A.P.y }, { x: A.P.x + A.l2 * ua.x, y: A.P.y + A.l2 * ua.y }, { x: B.P.x + B.l1 * ub.x, y: B.P.y + B.l1 * ub.y }, { x: B.P.x, y: B.P.y }]);
           }
           cv = { segs }; prefix = 'SplPath'; a = pp[0].P.name; b = pp[pp.length - 1].P.name;
+        } else if (e.type === 'cubicBezier') { // courbe de Bézier définie par ses quatre points de contrôle
+          const q = [P(e.point1), P(e.point2), P(e.point3), P(e.point4)];
+          cv = { segs: [q.map((z) => ({ x: z.x, y: z.y }))] };
+          prefix = 'Spl'; a = q[0].name; b = q[3].name;
         } else throw new Error('Type de courbe non géré : ' + e.type);
         cv.meta = { prefix, a, b };
         curves[e.id] = cv;

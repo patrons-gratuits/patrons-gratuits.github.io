@@ -11,7 +11,13 @@
     priv: 'Your measurements are kept only in this browser, on this device. Nothing is sent to the site.', clear: 'Clear my measurements',
     resume: 'Continue with your measurements from ', restart: 'Start over', hint: 'Tap the preview to enlarge or shrink it.', showPcs: 'Show the pattern pieces', hidePcs: 'Hide the pattern pieces',
     one: 'Your measurement', kofn: function (k, n) { return 'Measurement ' + k + ' of ' + n; },
-    advSum: 'Advanced settings (optional): seam allowance, print calibration', advSumCal: 'Advanced settings (optional): print calibration'
+    advSum: 'Advanced settings (optional): seam allowance, print calibration', advSumCal: 'Advanced settings (optional): print calibration',
+    b1: '1. Start from a standard size', sizeL: 'Your usual size (French, UK or US)', statL: 'Your height', fill: 'Fill in my measurements',
+    b2: '2. Measurements to check first', b2p: 'Pre-filled from your size: correct them if needed.', b3: '3. Made to measure: the other measurements', b3p: 'Also pre-filled: correct those you can take.',
+    needSize: 'Please choose your size and height first.', chk: 'check', pick: 'Choose',
+    stat: { petite: 'Petite', short: 'Short', moyenne: 'Average', grande: 'Tall' },
+    recapStd: function (sz, st, n) { return 'Pattern based on size ' + sz + ', ' + st + ' height, with ' + (n ? n + ' personal measurement' + (n > 1 ? 's' : '') : 'no personal measurement') + '.'; },
+    stdAfter: 'Choose your size and height to pre-fill your measurements, then correct the ones you can take. The pattern updates with every change.'
   } : {
     prev: 'Précédent', next: 'Suivant', start: 'Commencer', see: 'Voir le récapitulatif', back: 'Retour au récapitulatif',
     intro: 'Avant de commencer', recap: 'Récapitulatif', adv: 'Réglages avancés (facultatif)', advLead: 'Rarement modifiés : vous pouvez passer directement à la suite.',
@@ -19,7 +25,13 @@
     priv: 'Vos mesures sont gardées uniquement dans ce navigateur, sur cet appareil. Rien n’est envoyé au site.', clear: 'Effacer mes mesures',
     resume: 'Reprendre avec vos mesures du ', restart: 'Recommencer', hint: 'Touchez l’aperçu pour l’agrandir ou le réduire.', showPcs: 'Voir les pièces du patron', hidePcs: 'Masquer les pièces du patron',
     one: 'Votre mesure', kofn: function (k, n) { return 'Mesure ' + k + ' sur ' + n; },
-    advSum: 'Réglages avancés (facultatif) : marge de couture, étalonnage d’impression', advSumCal: 'Réglages avancés (facultatif) : étalonnage d’impression'
+    advSum: 'Réglages avancés (facultatif) : marge de couture, étalonnage d’impression', advSumCal: 'Réglages avancés (facultatif) : étalonnage d’impression',
+    b1: '1. Partir d’une taille standard', sizeL: 'Votre taille habituelle (française)', statL: 'Votre stature', fill: 'Préremplir mes mesures',
+    b2: '2. Les mesures à vérifier en priorité', b2p: 'Préremplies d’après votre taille : corrigez-les si utile.', b3: '3. Le sur-mesure : les autres mesures', b3p: 'Préremplies elles aussi : corrigez celles que vous pouvez prendre.',
+    needSize: 'Choisissez d’abord votre taille et votre stature.', chk: 'à vérifier', pick: 'Choisir',
+    stat: { petite: 'Petite', short: 'Petite', moyenne: 'Moyenne', grande: 'Grande' },
+    recapStd: function (sz, st, n) { return 'Patron établi à partir de la taille ' + sz + ', stature ' + st + ', ' + (n ? 'avec ' + n + ' mesure' + (n > 1 ? 's' : '') + ' personnalisée' + (n > 1 ? 's' : '') : 'sans mesure personnalisée') + '.'; },
+    stdAfter: 'Choisissez votre taille et votre stature pour préremplir vos mesures, puis corrigez celles que vous pouvez prendre. Le patron se modifie à chaque réglage.'
   };
   var $ = function (id) { return document.getElementById(id); };
   var C = window.WZ_CFG;
@@ -74,6 +86,8 @@
   var fld = function (id) { return $('w_' + id); };
   var inputs = function () { return Array.prototype.slice.call(form.querySelectorAll('input[id^="v_"],select[id^="v_"]')); };
   var defaults = {}; inputs().forEach(function (i) { defaults[i.id] = i.value; });
+  var STD = (C.std && window.TAILLES_STD && window.TAILLES_STD[C.std.genre]) ? C.std : null, stdState = null;
+  if (STD) C.measures.forEach(function (id) { defaults['v_' + id] = ''; });
   var defGroups = {}; form.querySelectorAll('.grp').forEach(function (c) { defGroups[c.value] = c.checked; });
   var cbx = $('opt_epaule'), defCbx = cbx ? cbx.checked : null;
   var rad = form.querySelector('input[type="radio"][name="np"]'), defRad = rad ? form.querySelector('input[name="np"]:checked').value : null;
@@ -111,13 +125,62 @@
 
   /* 0. accueil */
   var s0 = step('intro', L.intro, '', 'intro');
-  var mids = C.measures, nM = mids.length;
-  var ul = (C.intro.list && nM > 1) ? '<ol class="wz-list">' + mids.map(function (id) { return '<li>' + labelText(id) + '</li>'; }).join('') + '</ol>' : '';
-  s0.insertAdjacentHTML('beforeend', C.intro.lead + ul + C.intro.after + (UI ? '' : '<div class="wz-resume" hidden></div>'));
+  var mids = C.measures, nM = STD ? 1 : mids.length;
+  var ul = (C.intro.list && nM > 1 && !STD) ? '<ol class="wz-list">' + mids.map(function (id) { return '<li>' + labelText(id) + '</li>'; }).join('') + '</ol>' : '';
+  s0.insertAdjacentHTML('beforeend', C.intro.lead + ul + (STD ? '<p>' + L.stdAfter + '</p>' : C.intro.after) + (UI ? '' : '<div class="wz-resume" hidden></div>'));
   if (UI) sS.insertAdjacentHTML('beforeend', '<div class="wz-resume" hidden></div>');
 
   /* mesures */
-  mids.forEach(function (id, k) {
+  var figEl = null, figPlace = null, fldEl = {};
+  function buildStd() {
+    var T = window.TAILLES_STD[STD.genre], statKeys = Object.keys(T.statures), sizes = Object.keys(T.tailles[T.statures[statKeys[0]]]);
+    var s = step('m0', L.mes, L.mes, 'mes');
+    var EQ = (window.TAILLES_STD.equivalences || {})[STD.genre] || {};
+    var sizeLabel = function (z) { var q = EN && EQ[z]; if (!q) return z; return STD.genre === 'homme' ? z + ' (UK/US ' + q.UK_US_poitrine_pouces + ')' : z + ' (UK ' + q.UK + ' · US ' + q.US + ')'; };
+    var statLabel = function (k) { var nm = (EN && STD.genre === 'homme' && k === 'petite') ? L.stat.short : L.stat[k]; return nm + ' (' + T.statures[k] + ' cm)'; };
+    var h = '<section class="wz-blk wz-b1"><h3>' + L.b1 + '</h3><div class="wz-stdrow"><label for="wz-size">' + L.sizeL + '</label><select id="wz-size"><option value="">' + L.pick + '</option>' + sizes.map(function (z) { return '<option value="' + z + '">' + sizeLabel(z) + '</option>'; }).join('') + '</select>' +
+      '<label for="wz-stat">' + L.statL + '</label><select id="wz-stat"><option value="">' + L.pick + '</option>' + statKeys.map(function (k) { return '<option value="' + k + '">' + statLabel(k) + '</option>'; }).join('') + '</select></div>' +
+      '<p><button type="button" class="wz-big" id="wz-fill">' + L.fill + '</button></p><p class="wz-stdmsg" id="wz-stdmsg" role="status" aria-live="polite"></p></section>';
+    s.insertAdjacentHTML('beforeend', h);
+    var b2 = document.createElement('section'); b2.className = 'wz-blk'; b2.innerHTML = '<h3>' + L.b2 + '</h3><p class="wz-smintro">' + L.b2p + '</p>';
+    var b3 = document.createElement('section'); b3.className = 'wz-blk'; b3.innerHTML = '<h3>' + L.b3 + '</h3><p class="wz-smintro">' + L.b3p + '</p>';
+    s.appendChild(b2); s.appendChild(b3);
+    var guideOf = {}; C.measures.forEach(function (id, k) { guideOf[id] = (C.guide && C.guide[k]) || {}; });
+    var ids = STD.prio.concat(C.measures.filter(function (id) { return STD.prio.indexOf(id) < 0; })), els = {};
+    ids.forEach(function (id) { els[id] = fld(id); });
+    ids.forEach(function (id) {
+      var f = els[id], pr = STD.prio.indexOf(id) >= 0;
+      if (pr) { var lb = f.querySelector('label'); lb.insertAdjacentHTML('beforeend', ' <small class="wz-chk">' + L.chk + '</small>'); }
+      f.dataset.mid = id; (pr ? b2 : b3).appendChild(f); fldEl[id] = f;
+    });
+    figEl = document.createElement('figure'); figEl.className = 'wz-fig'; figEl.innerHTML = '<img alt="" width="300" height="400"><figcaption></figcaption>';
+    function showFig(id) {
+      var g = guideOf[id]; if (!g || !g.img) return;
+      var im = figEl.querySelector('img'); im.src = g.img; im.alt = g.alt || ''; figEl.querySelector('figcaption').innerHTML = (g.text || '');
+      Array.prototype.forEach.call(s.querySelectorAll('.fld.wz-sel'), function (x) { x.classList.remove('wz-sel'); });
+      figEl.dataset.mid = id;
+      var f = fldEl[id];
+      f.classList.add('wz-sel'); f.appendChild(figEl);
+    }
+    figPlace = showFig;
+    s.addEventListener('focusin', function (ev) { var f = ev.target.closest && ev.target.closest('.fld'); if (f && f.dataset.mid) showFig(f.dataset.mid); });
+    showFig(STD.prio[0]);
+    var zs = s.querySelector('#wz-size'), zt = s.querySelector('#wz-stat'), msg = s.querySelector('#wz-stdmsg');
+    s.querySelector('#wz-fill').addEventListener('click', function () {
+      if (!zs.value || !zt.value) { msg.textContent = L.needSize; return; }
+      msg.textContent = '';
+      var vals = T.tailles[T.statures[zt.value]][zs.value], base = {};
+      Object.keys(vals).forEach(function (id) { var e = $('v_' + id); if (e) { e.value = vals[id]; base[id] = String(vals[id]); } });
+      stdState = { size: zs.value, stat: zt.value, base: base };
+      C.measures.forEach(function (id) { var e = $('v_' + id); if (e) e.dispatchEvent(new Event('input', { bubbles: true })); });
+      save();
+    });
+    [zs, zt].forEach(function (e) { e.addEventListener('change', function () { msg.textContent = ''; }); });
+    s.dataset.std = '1';
+    return s;
+  }
+  if (STD) buildStd();
+  if (!STD) mids.forEach(function (id, k) {
     var g = (C.guide && C.guide[k]) || {};
     var s = step('m' + k, labelText(id), nM > 1 ? L.kofn(k + 1, nM) : L.one, 'mes');
     var wrap = document.createElement('div'); wrap.className = 'wz-mes';
@@ -184,9 +247,13 @@
     bNext.hidden = n === iR;
     bNext.textContent = returnTo >= 0 ? L.back : (n === i0 ? L.start : (n === iA ? L.see : L.next));
     nav.classList.toggle('single', !UI && n === 0);
-    if (!opts || !opts.quiet) { try { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { } var f = s.querySelector('input[type="number"]'); if (f && n > i0 && n <= iM && !(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) { try { f.focus({ preventScroll: true }); f.select(); } catch (e) { } } }
+    if (!opts || !opts.quiet) { try { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { } var f = s.querySelector('input[type="number"]'); if (f && n > i0 && n <= iM && !s.dataset.std && !(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) { try { f.focus({ preventScroll: true }); f.select(); } catch (e) { } } }
   }
   bNext.addEventListener('click', function () {
+    if (steps[cur].dataset.std) {
+      var empty = Array.prototype.slice.call(steps[cur].querySelectorAll('input[id^="v_"]')).some(function (i) { return i.value.trim() === ''; });
+      if (empty) { var sm = $('wz-stdmsg'); if (sm) { sm.textContent = L.needSize; try { steps[cur].querySelector('.wz-b1').scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { } } return; }
+    }
     if (stepErrors(steps[cur])) return;
     if (returnTo >= 0) { go(iR); return; }
     go(cur + 1);
@@ -213,8 +280,14 @@
     var sm = UI.smalls(), ul2 = sm.items.length ? '<h3>' + sm.title + '</h3><p class="wz-smintro">' + sm.intro + '</p><ul class="wz-small">' + sm.items.map(function (x) { return x.act ? '<li><button type="button" class="wz-dlsm" data-act="' + x.act + '">' + x.label + '</button></li>' : '<li><a class="wz-dlsm" href="' + x.href + '" target="_blank" rel="noopener">' + x.label + '</a></li>'; }).join('') + '</ul>' : '';
     return '<h3>' + UI.title + '</h3><table class="wz-t"><tbody>' + rows + '</tbody></table>' + ul2;
   }
+  function stdLine() {
+    if (!stdState) return '';
+    var n = 0; Object.keys(stdState.base).forEach(function (id) { var e = $('v_' + id); if (e && e.value !== stdState.base[id] && parseFloat(e.value) !== parseFloat(stdState.base[id])) n++; });
+    var T = window.TAILLES_STD[STD.genre], nm = (EN && STD.genre === 'homme' && stdState.stat === 'petite') ? L.stat.short : L.stat[stdState.stat];
+    return '<p class="wz-stdline">' + L.recapStd(stdState.size, nm.toLowerCase(), n) + '</p>';
+  }
   function buildRecap() {
-    var html = (UI ? styleRecap() : '') + '<h3>' + L.mes + '</h3><table class="wz-t"><tbody>' + steps.slice(i0 + 1, i0 + 1 + nM).map(function (s, k) { return rowsOf(s, i0 + 1 + k); }).join('') + '</tbody></table>' +
+    var html = (UI ? styleRecap() : '') + '<h3>' + L.mes + '</h3>' + stdLine() + '<table class="wz-t"><tbody>' + steps.slice(i0 + 1, i0 + 1 + nM).map(function (s, k) { return rowsOf(s, i0 + 1 + k); }).join('') + '</tbody></table>' + (function () { var nt = window.WZ_NOTE ? window.WZ_NOTE() : ''; return nt ? '<p class="wz-note">' + nt + '</p>' : ''; })() +
       '<h3>' + C.model.title + '</h3><table class="wz-t"><tbody>' + rowsOf(sM, iM) + '</tbody></table>' +
       '<h3>' + L.adv.replace(/ \(.*\)$/, '') + '</h3><table class="wz-t"><tbody>' + rowsOf(sA, iA) + '</tbody></table>';
     recap.innerHTML = html;
@@ -229,6 +302,7 @@
       var v = {}; inputs().forEach(function (i) { v[i.id] = i.value; });
       var g = {}; form.querySelectorAll('.grp').forEach(function (c) { g[c.value] = c.checked; });
       var o = { t: Date.now(), v: v, g: g };
+      if (stdState) o.std = stdState;
       if (cbx) o.c = cbx.checked; if (rad) { var r = form.querySelector('input[name="np"]:checked'); if (r) o.r = r.value; }
       lsSet(o);
     }, 300);
@@ -241,6 +315,7 @@
     if (cbx) cbx.dispatchEvent(new Event('change', { bubbles: true }));
   }
   function apply(o) {
+    if (STD) { stdState = o.std || null; var zs = $('wz-size'), zt = $('wz-stat'); if (zs && stdState) { zs.value = stdState.size; zt.value = stdState.stat; } }
     Object.keys(o.v || {}).forEach(function (id) { var i = $(id); if (i && id !== 'v_meas') i.value = o.v[id]; });
     Object.keys(o.g || {}).forEach(function (k) { var c = form.querySelector('.grp[value="' + k + '"]'); if (c) c.checked = !!o.g[k]; });
     if (cbx && typeof o.c === 'boolean') cbx.checked = o.c;
@@ -248,6 +323,7 @@
     fire();
   }
   function reset() {
+    if (STD) { stdState = null; var zs = $('wz-size'), zt = $('wz-stat'), sm = $('wz-stdmsg'); if (zs) { zs.value = ''; zt.value = ''; sm.textContent = ''; } }
     Object.keys(defaults).forEach(function (id) { $(id).value = defaults[id]; });
     form.querySelectorAll('.grp').forEach(function (c) { c.checked = defGroups[c.value]; });
     if (cbx) cbx.checked = defCbx;
@@ -255,6 +331,7 @@
     fire();
   }
   $('wz-clear').addEventListener('click', function (e) { e.preventDefault(); lsDel(); reset(); if (UI) UI.reset(); go(0); var r = (UI ? sS : s0).querySelector('.wz-resume'); r.hidden = true; });
+  if (STD) { reset(); }
   var saved = lsGet();
   if (saved && saved.v) {
     var d = new Date(saved.t), ds = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();

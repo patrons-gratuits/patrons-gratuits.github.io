@@ -3,10 +3,12 @@
 (function () {
   'use strict';
   var EN = /^en/i.test(document.documentElement.lang || '');
+  var FEM = !!window.SAH_FEMME;   /* saharienne femme (aperçu privé) : une seule page, version simple / doublée choisie ici, croquis femme */
   var PV = window.SAH_PAGE_VER === 'd' ? 'd' : 's';
-  var KEY = 'sahariennes_style_v1';
+  var KEY = FEM ? 'sahariennes_style_femme_v1' : 'sahariennes_style_v1';
+  if (FEM) { try { if (localStorage.getItem('sahariennes_femme_ver') === 'd') PV = 'd'; } catch (e) { } }
   var T = EN ? {
-    title: 'Your style', lead: 'Start by designing your jacket: every choice changes the drawing. The measurements come next.',
+    title: 'Your style', lead: 'Design a safari jacket that suits you: the sketch shows each of your choices. The measurements come next.',
     ver: 'Version', s: 'Simple', d: 'Lined', hs: 'One layer, the quickest to sew.', hd: 'Lining and interfacing, for mid-season.',
     sleeves: 'Sleeves and slits', ml: 'Long sleeves', mc: 'Short sleeves', mcn: 'Short sleeves are available on the simple jacket only.',
     slits: 'Slits', f0: 'None', fc: 'Side', fd: 'Back', soon: 'soon', pvTitle: 'Before downloading', pvSup: 'Stacked pieces', pvSupD: 'Linings, facings and interfacings are drawn on the piece they derive from. Fewer pages, slightly more to read.', pvSep: 'Separate pieces', pvSepD: 'Each piece has its own outline, including linings and interfacings. More pages, easier to read.', pvPlan: 'Assembly plan (page 1 of the PDF)', pvSepCap: 'Each piece is printed on its own pages.', pvCancel: 'Cancel', pvGo: 'Download the PDF', pvWait: 'Calculating…', modeH: 'Pieces on the printed sheets', modeSup: 'Stacked pieces', modeSupD: 'fewer pages; linings, facings and interfacings are traced onto the piece they come from (recommended)', modeSep: 'Separate pieces', modeSepD: 'every piece is cut out directly, nothing to trace', pgw: 'pages',
@@ -27,7 +29,7 @@
     rv: 'Version', rm: 'Sleeves', rf: 'Slits', rs: 'Small pieces', rr: 'Flaps', rch: 'Chest pockets', rlo: 'Lower pockets', rc: 'Pen and glasses holder',
     sep: 'To download separately:'
   } : {
-    title: 'Votre style', lead: 'Commencez par composer votre saharienne : chaque choix change le dessin. Les mesures viennent ensuite.',
+    title: 'Votre style', lead: 'Composez une saharienne qui vous ressemble : le croquis intègre chacun de vos choix. Viennent ensuite les mesures.',
     ver: 'Version', s: 'Simple', d: 'Doublée', hs: 'Une épaisseur, la plus rapide à coudre.', hd: 'Doublure et entoilage, pour la mi-saison.',
     sleeves: 'Manches et fentes', ml: 'Manches longues', mc: 'Manches courtes', mcn: 'Les manches courtes sont proposées pour la saharienne simple.',
     slits: 'Fentes', f0: 'Aucune', fc: 'De côté', fd: 'De dos', soon: 'bientôt', pvTitle: 'Avant de télécharger', pvSup: 'Pièces superposées', pvSupD: 'Les doublures et entoilages sont tracés sur la pièce dont ils dérivent. Moins de pages, un peu plus de lecture.', pvSep: 'Pièces séparées', pvSepD: 'Chaque pièce a son propre tracé, y compris doublures et entoilages. Plus de pages, lecture simple.', pvPlan: 'Plan d’assemblage (page 1 du PDF)', pvSepCap: 'Chaque pièce est imprimée sur ses propres pages.', pvCancel: 'Annuler', pvGo: 'Télécharger le PDF', pvWait: 'Calcul en cours…', modeH: 'Pièces sur les pages imprimées', modeSup: 'Pièces superposées', modeSupD: 'moins de pages ; doublures, parementures et entoilages sont à décalquer sur la pièce dont elles dérivent (conseillé)', modeSep: 'Pièces séparées', modeSepD: 'chaque pièce est à découper directement, rien à décalquer', pgw: 'pages',
@@ -72,7 +74,7 @@
     var RB = { pointe: 'p', droit: 'd', arrondi: 'a', coupe: 'c' }; if (RB[r]) { st.rab = RB[r]; fromUrl = true; }
   } catch (e) { }
   if (st.same && (st.pd === 'k' || st.pg === 'k')) st.same = false;
-  if (PV === 'd') st.man = 'l'; else st.emp = false;
+  if (FEM) { if (PV !== 'd') st.emp = false; } else if (PV === 'd') st.man = 'l'; else st.emp = false;
   window.SAH_STYLE = { man: 'l', fen: '0' };
 
   var view = 'face';
@@ -99,7 +101,7 @@
   function chk(id, label) { return '<label class="chip"><input type="checkbox" id="st-' + id + '"><span>' + label + '</span></label>'; }
 
   function build(sec) {
-    var h = '<p class="cq-lead">' + T.lead + '</p><div class="cq-form">' +
+    var h = '<div class="cq-form">' +
       '<fieldset><legend>' + T.ver + '</legend>' + chips('ver', [['s', T.s], ['d', T.d]]) + '<p class="hint" id="st-verhint"></p></fieldset>' +
       '<fieldset><legend>' + T.sleeves + '</legend>' + chips('man', [['l', T.ml], ['c', T.mc]]) + '<p class="hint" id="st-manhint" hidden>' + T.mcn + '</p>' +
       '<div class="sub"><h3>' + T.slits + '</h3>' + chips('fen', [['0', T.f0], ['c', T.fc, 0], ['d', T.fd, 0]]) + '</div></fieldset>' +
@@ -110,7 +112,7 @@
       '<fieldset><legend>' + T.low + '</legend>' + pocketGroup('pb', '', false) + '</fieldset>' +
       '<fieldset><legend>' + T.flaps + '</legend>' + chips('rab', [['p', T.fp], ['d', T.fdr], ['a', T.fa], ['c', T.fcc]]) + '<p class="hint">' + T.flaps_h + '</p></fieldset>' +
       '<p class="cq-links" id="st-links"></p></div>';
-    root = sec; sec.insertAdjacentHTML('beforeend', h);
+    root = sec; var h2 = sec.querySelector('h2'); if (h2) h2.insertAdjacentHTML('beforebegin', '<p class="cq-lead">' + T.lead + '</p>'); else sec.insertAdjacentHTML('afterbegin', '<p class="cq-lead">' + T.lead + '</p>'); sec.insertAdjacentHTML('beforeend', h);
     sec.addEventListener('change', onChange);
     $('st-vf').onclick = function () { setView('face'); };
     $('st-vd').onclick = function () { setView('dos'); };
@@ -137,6 +139,7 @@
     var key = (t.name || t.id || '').replace(/^st-/, '');
     if (key === 'fen' && t.value === 'd') { if (view !== 'dos') setView('dos'); }
     else if (/^(ps|pd|pg|pb|cart|rab|same)/.test(key) && view !== 'face') setView('face');
+    if (t.name === 'st-ver' && FEM) { PV = t.value; try { localStorage.setItem('sahariennes_femme_ver', PV); } catch (e) { } I('emp').checked = PV === 'd'; render(); return; }
     if (t.name === 'st-ver') { if (t.value !== PV) { persist(readDom()); location.href = t.value === 'd' ? 'saharienne-doublee.html' : 'saharienne.html'; } return; }
     if (t.name === 'st-cart') {
       var c = val('cart'), base = val('ps') || 'c', set = function (k, v) { I(k + '-' + v).checked = true; };
@@ -152,7 +155,7 @@
   function persist(o) {
     var s = {}, prev = lsGet() || {}; Object.keys(DEF).forEach(function (k) { s[k] = o[k]; });
     /* les choix propres à l'autre version sont conservés quand on passe de l'une à l'autre */
-    if (PV === 's') s.emp = prev.emp !== undefined ? prev.emp : true; else s.man = prev.man !== undefined ? prev.man : 'l';
+    if (FEM) { } else if (PV === 's') s.emp = prev.emp !== undefined ? prev.emp : true; else s.man = prev.man !== undefined ? prev.man : 'l';
     lsSet(s);
   }
   var NAMES = { p: T.tp, c: T.tc, l: T.tl, d: T.td };
@@ -177,19 +180,20 @@
     $('st-pSame').hidden = !I('same').checked; $('st-pSides').hidden = I('same').checked;
     /* version : simple / doublée */
     $('st-verhint').textContent = PV === 's' ? T.hs : T.hd;
-    I('man-c').closest('label').hidden = PV === 'd'; $('st-manhint').hidden = PV !== 'd';
-    if (PV === 'd' && o.man === 'c') { I('man-l').checked = true; o.man = 'l'; }
+    I('man-c').closest('label').hidden = PV === 'd' && !FEM; $('st-manhint').hidden = FEM || PV !== 'd';
+    if (!FEM && PV === 'd' && o.man === 'c') { I('man-l').checked = true; o.man = 'l'; }
     I('emp').closest('label').hidden = PV === 's'; $('st-emphint').hidden = true;
     if (PV === 's' && o.emp) { I('emp').checked = false; o.emp = false; }
     var o2 = readDom(); o2.cart = o.cart; o = o2;
     o.ver = PV;
     /* lien avec le calcul du patron */
     var changed = window.SAH_STYLE.man !== o.man || window.SAH_STYLE.fen !== o.fen;
-    window.SAH_STYLE.man = o.man; window.SAH_STYLE.fen = o.fen;
+    window.SAH_STYLE.man = o.man; window.SAH_STYLE.fen = o.fen; window.SAH_STYLE.ver = PV;
     var ob = $('opt_epaule'); if (PV === 'd' && ob && ob.checked !== o.emp) { ob.checked = o.emp; ob.dispatchEvent(new Event('change', { bubbles: true })); }
     var g = document.querySelector('.grp[value="manches"]');
     if (g) { var lab = g.parentNode, txt = o.man === 'c' ? window.SAH_LBL_SHORT : window.SAH_LBL_LONG; if (txt && lab.lastChild && lab.lastChild.nodeType === 3) lab.lastChild.textContent = ' ' + txt; if (changed) g.dispatchEvent(new Event('change', { bubbles: true })); }
     persist(o);
+    if (FEM) o.genre = 'f';
     window.SahCroquis.draw($('st-svg'), o, o.rab, view);
     $('st-leg').innerHTML = '<span>' + (view === 'face' ? T.lr : T.rl).join('</span><span>') + '</span>';
     /* résumé */
@@ -214,6 +218,7 @@
     addP(o.pb, o.pbr, o.pbs, T.lLow, 'low');
     lastLinks = []; lastSmall = SM;
     $('st-links').innerHTML = SM.length ? T.links : '';
+    if (FEM) window.dispatchEvent(new Event('sah-style'));
   }
   var last = null, lastLinks = [], lastSmall = [];
   /* cartouchière : modèle affiché, PDF A4 1:1 direct (même étalonnage d'impression que le patron de la veste) */
@@ -266,6 +271,7 @@
     return '?LongEp=' + (Math.round(L * 100) / 100);
   }
   function pocketDims() {
+    if (FEM && window.SAH_FEMME_DIMS) return window.SAH_FEMME_DIMS;
     var P = window.SAH_PCS, dv = null; if (!P) return null;
     P.forEach(function (p) { if (p.name === 'Devant' && !dv) dv = p; });
     if (!dv || !dv.internal) return null;
