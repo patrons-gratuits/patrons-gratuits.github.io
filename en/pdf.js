@@ -1,7 +1,10 @@
 /* Générateur PDF vectoriel minimal (A4, échelle 1:1). UMD : window.PatternPDF / module.exports */
 (function () {
   const PT = 72 / 2.54, MARGIN = 10 / 25.4 * 72;
-  let PW = 595.276, PH = 841.89, NOVC = false;
+  const PAPERS = { a4: [595.276, 841.89], letter: [612, 792] };
+  let PW = 595.276, PH = 841.89, NOVC = false, PAPER = 'a4', TSQ = 5 * PT;
+  function setPaper(p) { PAPER = p === 'letter' ? 'letter' : 'a4'; PW = PAPERS[PAPER][0]; PH = PAPERS[PAPER][1]; TSQ = PAPER === 'letter' ? 144 : 5 * PT; }
+  const pname = () => PAPER === 'letter' ? 'Letter' : 'A4';
   const f = n => (+n).toFixed(2);
   const HW = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
   function tw(s, size) { let w = 0; for (const ch of String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) { const k = ch.charCodeAt(0); w += (k >= 32 && k <= 126 ? HW[k - 32] : 556); } return w * size / 1000; }
@@ -60,7 +63,7 @@
       for (const it of pg.items) { it.px += Math.max(dx, -it.px); if (!NOVC) it.py += Math.max(dy, top - it.py); }
     }
     // carré d'essai : premier coin libre de la page 1, sinon page supplémentaire
-    const S = 5 * PT, T = { page: 0, x: 0, y: 0 };
+    const S = TSQ, T = { page: 0, x: 0, y: 0 };
     const cand = [[usableW - S, band], [usableW - S, usableH - S - 12], [0, usableH - S - 12], [0, band]];
     const free = cand.find(([cx, cy]) => pages[0].items.every(it => {
       const ix = it.px, iy = it.py, iw = it.w, ih = it.h + head;
@@ -75,7 +78,7 @@
     for (const it of big) {
       const cols = Math.max(1, Math.ceil((it.w - OV) / (winW - OV) - 1e-9)), rows = Math.max(1, Math.ceil((it.h - OV) / (winH - OV) - 1e-9));
       tiled.push({ name: it.p.name, cols, rows });
-      warnings.push(it.p.name + ' is printed on ' + (cols * rows) + ' A4 pages to be assembled (' + cols + ' × ' + rows + ').');
+      warnings.push(it.p.name + ' is printed on ' + (cols * rows) + ' ' + pname() + ' pages to be assembled (' + cols + ' × ' + rows + ').');
       for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
         pages.push({ items: [], tile: { it, c, r, cols, rows, tx: c * (winW - OV), ty: r * (winH - OV), winW, winH, TH, OV } });
     }
@@ -85,17 +88,18 @@
   /* Une seule page, à la taille du patron (1:1), pour la vidéoprojection : pas de découpage en A4. */
   function build(pieces, opts) {
     opts = opts || {};
+    if (opts.paper) setPaper(opts.paper);
     if (!opts.single) return build1(pieces, opts);
-    const A = 595.276, B = 841.89;
+    const A = PAPERS[PAPER][0], B = PAPERS[PAPER][1];
     try {
       let area = 0, wmax = 0;
       pieces.forEach(p => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; (p.sa || p.poly).concat(p.poly, ...(p.internal || [])).forEach(q => { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }); area += (x1 - x0) * (y1 - y0) * PT * PT; wmax = Math.max(wmax, (x1 - x0) * PT); });
       PW = Math.max(wmax + 2 * MARGIN + 20, Math.sqrt(area * 1.35 * 1.5) + 2 * MARGIN);
-      PW = Math.max(PW, Math.max(wmax, HMIN) + 2 * (5 * PT + 6) + 2 * MARGIN); // place pour le carré d'essai à côté d'une petite pièce
+      PW = Math.max(PW, Math.max(wmax, HMIN) + 2 * (TSQ + 6) + 2 * MARGIN); // place pour le carré d'essai à côté d'une petite pièce
       PH = 1e5; NOVC = true;
       const L1 = layout(pieces, 1);
       let ymax = 0; L1.pages.forEach(pg => pg.items.forEach(it => { ymax = Math.max(ymax, it.py + it.h + L1.head); }));
-      ymax = Math.max(ymax, 5 * PT + 40);
+      ymax = Math.max(ymax, TSQ + 40);
       NOVC = false; PH = ymax + 2 * MARGIN + 24;
       return build1(pieces, Object.assign({}, opts, { single: false, scale: 1, proj: true }));
     } finally { PW = A; PH = B; NOVC = false; }
@@ -131,7 +135,7 @@
   }
   /* Page de récapitulatif : paramètres choisis + tableau des pièces (quantité, tissu, consigne, page). rc = {title, params:[[libellé, valeur]]} ; chaque pièce porte rlabel, rqty. */
   function recapPage(rc, pieces, L, title, opts) {
-    const VH = 841.89, wA = 595.276 - 2 * MARGIN;
+    const VH = PH, wA = PW - 2 * MARGIN;
     let c = '0 G 0 g\n', y = 0;
     const X = v => f(MARGIN + v), Y = v => f(VH - MARGIN - v);
     const text = (s, x, yy, size) => { c += `BT /F1 ${size} Tf ${X(x)} ${Y(yy)} Td (${esc(s)}) Tj ET\n`; };
@@ -165,7 +169,7 @@
       y += rh(r, sz) - sz - 3; rule(y - 1, wA);
     });
     y += 14; text('Total: ' + total + ' piece' + (total > 1 ? 's' : '') + ' to cut.', 0, y, 9);
-    y += 16; text('Print at 100 % (no scaling) and check the 5 x 5 cm (2 in) test square, on page ' + (L.test.page + 2) + '.', 0, y, 8);
+    y += 16; text('Print at 100 % (no scaling) and check the ' + (PAPER === 'letter' ? '2 in (5.08 cm)' : '5 x 5 cm (2 in)') + ' test square, on page ' + (L.test.page + 2) + '.', 0, y, 8);
     return c;
   }
   function build1(pieces, opts) {
@@ -196,16 +200,16 @@
       if (VIG && pi === 0) { c += '0.4 w\n'; vigDraw(VIG, RC, text, PW / sc - 2 * MARGIN, yy => { c += `${X(0)} ${Y(yy)} m ${X(PW / sc - 2 * MARGIN)} ${Y(yy)} l S\n`; }); }
       if (pi === L.test.page) {
         const tx = L.test.x, ty = L.test.y;
-        c += '0.5 w\n' + `${X(tx)} ${Y(ty + 5 * PT)} ${f(5 * PT)} ${f(5 * PT)} re S\n`;
-        const SQ = 5 * PT, tl = [['Square 5 x 5 cm (2 in)', 8, 0], ['Print at 100 %', 8, 12], ['(no scaling)', 8, 22]];
+        c += '0.5 w\n' + `${X(tx)} ${Y(ty + TSQ)} ${f(TSQ)} ${f(TSQ)} re S\n`;
+        const SQ = TSQ, tl = [[PAPER === 'letter' ? 'Square 2 in (5.08 cm)' : 'Square 5 x 5 cm (2 in)', 8, 0], ['Print at 100 %', 8, 12], ['(no scaling)', 8, 22]];
         const wl = []; (opts.lines || []).forEach(s => { let cur = ''; s.split(', ').forEach(part => { const t = cur ? cur + ', ' + part : part; if (cur && tw(t, 6.5) > SQ - 6) { wl.push(cur + ','); cur = part; } else cur = t; }); if (cur) wl.push(cur); });
         wl.forEach((s, i) => tl.push([s, 6.5, 40 + 9 * i]));
         const top = 12 - 5.8, bot = 12 + tl[tl.length - 1][2] + 1.5, sh = SQ / 2 - (top + bot) / 2;
         tl.forEach(t => { const w = tw(t[0], t[1]); text(t[0], tx + Math.max(2, (SQ - w) / 2), ty + 12 + t[2] + sh, t[1]); });
       }
       if (pi === 0 && !pg.items.length && L.tiled.length) { // page de contrôle seule : explication de l'assemblage
-        const msg = ['Some pieces are too large for one A4 page: they are printed on several pages to be assembled.'].concat(L.tiled.map(t => '- ' + t.name + ': ' + t.cols + ' column(s) x ' + t.rows + ' row(s), i.e. ' + (t.cols * t.rows) + ' pages.'), ['Lay the grey 1.5 cm (0.6 in) overlap strips over the neighbouring page:', 'the lines of the piece must continue exactly from one page to the next. Glue or tape together.']);
-        msg.forEach((m, i) => text(m, 0, (L.test.y || 0) + 5 * PT + 40 + 12 * i, i ? 8 : 9));
+        const msg = ['Some pieces are too large for one ' + pname() + ' page: they are printed on several pages to be assembled.'].concat(L.tiled.map(t => '- ' + t.name + ' : ' + t.cols + ' colonne(s) x ' + t.rows + ' ligne(s), soit ' + (t.cols * t.rows) + ' pages.'), ['Superposez les bandes grises de recouvrement de 1,5 cm sur la page voisine :', 'les lignes de la pièce doivent se prolonger exactement d\'une page à l\'autre. Collez ou scotchez.']);
+        msg.forEach((m, i) => text(m, 0, (L.test.y || 0) + TSQ + 40 + 12 * i, i ? 8 : 9));
       }
       for (const it of (pg.tile ? [pg.tile.it] : pg.items)) {
         const p = it.p, T_ = pg.tile;
@@ -271,6 +275,7 @@
         (p.internal || []).forEach((ln, ii) => {
           const kd = (p.internalKind || [])[ii];
           if (kd && kd.color === 'darkRed') c += '0.85 0.45 0.02 RG 1.6 w [] 0 d\n'; // boutonnière : trait plein orange (même couleur que l\'emplacement)
+          else if (kd && kd.color === 'green') c += '0 0.56 0.345 RG 1.2 w [] 0 d\n'; // trait plein vert (repère)
           else if (kd && kd.place) c += '0.85 0.45 0.02 RG 1.1 w [5 2.5] 0 d\n'; // emplacement (ex. poche) : tirets orange
           else c += '0.165 0.365 0.69 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
           path(ln, false, ox, oy, it.x0, it.y0); c += 'S\n';
@@ -287,7 +292,7 @@
           let yt = Infinity; for (let i = 0, n = p.poly.length; i < n; i++) { const u = p.poly[i], v = p.poly[(i + 1) % n]; if ((u.x - cx) * (v.x - cx) <= 0 && u.x !== v.x) { const yy = u.y + (v.y - u.y) * (cx - u.x) / (v.x - u.x); if (yy < yt) yt = yy; } }
           if (isFinite(yt)) { cy = yt + 2.6; gl = Math.min(gl, 1.6 * PT); gy = oy + (cy - it.y0) * PT; }
         }
-        if (T_ && T_.tmode !== 0) { // pièce découpée en pages A4 : la flèche et son nom restent entiers sur une seule page (hors des bandes de recouvrement)
+        if (T_ && T_.tmode !== 0) { // pièce découpée en pages : la flèche et son nom restent entiers sur une seule page (hors des bandes de recouvrement)
           const adj = (v, lo, hi, step, win, n) => { const m = 4; let best = null;
             for (let k = 0; k < n; k++) { const a0 = (k ? k * step + T_.OV : 0) + m - lo, a1 = (k < n - 1 ? (k + 1) * step : k * step + win) - m - hi; if (a0 > a1) continue; const w = Math.min(Math.max(v, a0), a1); if (best === null || Math.abs(w - v) < Math.abs(best - v)) best = w; }
             return best === null ? v : best; };
@@ -329,7 +334,8 @@
       { // légende des lignes, en pied de page, alignée à droite
         const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Sewing line', 0]];
         if (ps.some(p => p.sa)) E.push(['Seam allowance', 1]);
-        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].place))))) E.push(['Fold-under', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].color === 'green' || p.internalKind[k].place))))) E.push(['Fold-under', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'green'))) E.push(['Marker', 5]);
         if (ps.some(p => p.dot)) E.push(['End of cutting line', 4]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Pocket position', 3]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Tab position', 3]);
@@ -355,7 +361,7 @@
     obj(2, `<< /Type /Pages /Count ${n} /Kids [${objs.map((_, i) => (4 + 2 * i) + ' 0 R').join(' ')}] >>`);
     obj(3, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
     objs.forEach((c, i) => {
-      obj(4 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${OFF && i === 0 ? '595.28 841.89' : f(PW) + ' ' + f(PH)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + 2 * i} 0 R >>`);
+      obj(4 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${OFF && i === 0 ? f(PAPERS[PAPER][0]) + ' ' + f(PAPERS[PAPER][1]) : f(PW) + ' ' + f(PH)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + 2 * i} 0 R >>`);
       obj(5 + 2 * i, `<< /Length ${c.length} >>\nstream\n${c}endstream`);
     });
     const total = 4 + 2 * n, xr = len;
@@ -365,7 +371,7 @@
     const out = new Uint8Array(len); let o = 0; for (const b of parts) { out.set(b, o); o += b.length; }
     return { bytes: out, pages: n, warnings: L.warnings };
   }
-  const api = { build, layout, tw, esc, latin1 };
+  const api = { build, layout, tw, esc, latin1, setPaper };
   if (typeof window !== 'undefined') window.PatternPDF = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();

@@ -3,7 +3,7 @@
    UMD : window.PatternSheet / module.exports. Dépend de PatternPDF (largeurs de police, échappement). */
 (function () {
   'use strict';
-  const PT = 72 / 2.54, MARGIN = 10 / 25.4 * 72, PWp = 595.276, PHp = 841.89, CELL = 0.5, GAP = 1, OVc = 1.5, TH = 34, FT = 12;
+  const PT = 72 / 2.54, MARGIN = 10 / 25.4 * 72, CELL = 0.5, GAP = 1, OVc = 1.5, TH = 34, FT = 12;
   const f = n => (+n).toFixed(2);
   const BASE = () => (typeof window !== 'undefined' ? window.PatternPDF : require('./pdf.js'));
   const COL = { cut: [0.620, 0.106, 0.071], blue: [0.165, 0.365, 0.690], green: [0, 0.561, 0.345], orange: [0.851, 0.451, 0.024], vio: [0.710, 0.275, 0.541], gry: [0.5, 0.5, 0.5], gryT: [0.33, 0.33, 0.33], drk: [0.2, 0.2, 0.2], blk: [0, 0, 0] };
@@ -210,7 +210,10 @@
   function build(pieces, opts) { return make(pieces, opts || {}, false); }
   function count(pieces, opts) { return make(pieces, Object.assign({}, opts || {}), true); }
   function make(pieces, opts, onlyCount) {
-    const T = TXT[opts.lang === 'en' ? 'en' : 'fr'], B = BASE(), tw = (s, z, bold) => B.tw(s, z) * (bold ? 1.06 : 1), esc = B.esc, latin1 = B.latin1;
+    const LET = opts.paper === 'letter', PWp = LET ? 612 : 595.276, PHp = LET ? 792 : 841.89;
+    let T = TXT[opts.lang === 'en' ? 'en' : 'fr'];
+    if (LET) { const q = opts.lang === 'en' ? '2 in (5.08 cm)' : '2 in (5,08 cm)', r = x => String(x).replace('5 x 5 cm', q); T = Object.assign({}, T, { intro: T.intro.map(r), square: r(T.square) }); }
+    const B = BASE(), tw = (s, z, bold) => B.tw(s, z) * (bold ? 1.06 : 1), esc = B.esc, latin1 = B.latin1;
     const sc = opts.scale && opts.scale > 0.5 && opts.scale < 2 ? opts.scale : 1, VH = PHp / sc;
     const WWpt = PWp / sc - 2 * MARGIN, WW = WWpt / PT, WH = (VH - 2 * MARGIN - TH - FT) / PT, SW = WW - OVc, SH = WH - OVc;
     const { hosts: hp, over } = prepare(pieces);
@@ -267,7 +270,7 @@
       let y = 3.5 > ty + 0.2 ? 3.5 : ty + 0.2;
       T.intro.forEach(t => wrap(t, 8, 6.9 * PT).forEach(l => { text(l, 7.8, y, 8); y += 0.38; }));
       // carré de contrôle (avec la compensation d’impression)
-      { const S = 5 * sc, sx = 15.3, sy = 2.0; stroke(COL.blk, 0.6, []); c += `${X(sx)} ${Y(sy + S)} ${f(S * PT)} ${f(S * PT)} re S\n`; text(T.square, sx + 0.1, sy + S + 0.3, 7); }
+      { const S = (LET ? 5.08 : 5) * sc, sx = 15.3, sy = 2.0; stroke(COL.blk, 0.6, []); c += `${X(sx)} ${Y(sy + S)} ${f(S * PT)} ${f(S * PT)} re S\n`; text(T.square, sx + 0.1, sy + S + 0.3, 7); }
       // plan
       const cmax = Math.max.apply(null, cells.map(k => k.c)), rmax = Math.max.apply(null, cells.map(k => k.r));
       const sw = (cmax + 1) * SW + OVc, sh = (rmax + 1) * SH + OVc, topY = Math.max(y + 0.2, 3.6), s = Math.min(6.4 / sw, (PHp / PT - topY - 1.0) / sh), x0 = 1.0;
