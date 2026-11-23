@@ -3,10 +3,12 @@
 (function () {
   'use strict';
   var EN = /^en/i.test(document.documentElement.lang || '');
-  var FEM = !!window.SAH_FEMME;   /* saharienne femme (aperçu privé) : une seule page, version simple / doublée choisie ici, croquis femme */
+  var ROBE = !!window.SAH_ROBE;   /* robe saharienne : même composeur, avec longueur, ceinture et croquis de robe */
+  var FEM = !!window.SAH_FEMME || ROBE;   /* saharienne femme (aperçu privé) : une seule page, version simple / doublée choisie ici, croquis femme */
   var PV = window.SAH_PAGE_VER === 'd' ? 'd' : 's';
-  var KEY = FEM ? 'sahariennes_style_femme_v1' : 'sahariennes_style_v1';
-  if (FEM) { try { if (localStorage.getItem('sahariennes_femme_ver') === 'd') PV = 'd'; } catch (e) { } }
+  var KEY = ROBE ? 'robesah_style_v1' : FEM ? 'sahariennes_style_femme_v1' : 'sahariennes_style_v1';
+  var VKEY = ROBE ? 'robesah_ver' : 'sahariennes_femme_ver';
+  if (FEM) { try { if (localStorage.getItem(VKEY) === 'd') PV = 'd'; } catch (e) { } }
   var T = EN ? {
     title: 'Your style', lead: 'Design a safari jacket that suits you: the sketch shows each of your choices. The measurements come next.',
     ver: 'Version', sea: 'Season', se: 'Summer', sd: 'Mid-season', seah: 'Summer: worn over a T-shirt or shirt.<br>Mid-season: a little more room for a shirt and a light sweater.', s: 'Simple', d: 'Lined', hs: 'One layer, the quickest to sew.', hd: '',
@@ -48,6 +50,27 @@
     rv: 'Version', rm: 'Manches', rf: 'Fentes', rs: 'Petites pièces', rr: 'Rabats', rch: 'Poches de poitrine', rlo: 'Poches du bas', rc: 'Cartouchière',
     sep: 'À télécharger séparément :'
   };
+
+  /* textes propres à la robe (les autres intitulés sont ceux de la saharienne) */
+  var RLEN = { mini: { ext: 9.5, flare: 1.5, dChest: 2, dSpread: 1.5, dLow: 4, btnStop: 11, waist: 40, waistIn: 0.11, trueW: 1.35, slitSide: 12, slitBack: 12, flapOver: 0.25 },
+               midi: { ext: 33, flare: 3.5, dChest: 2, dSpread: 1.5, dLow: 8, btnStop: 18, waist: 40, waistIn: 0.11, trueW: 1.35, slitSide: 12, slitBack: 18, flapOver: 0.25 } };
+  if (ROBE) {
+    Object.assign(T, EN ? {
+      lead: 'Design a safari dress that suits you: the sketch reflects each of your choices. Measurements come next.',
+      len: 'Length', mini: 'Mini', midi: 'Midi', hs: 'One layer, the quickest to sew.', hd: 'The top is lined down to the hips.',
+      seah: 'Summer: worn on its own, in a light fabric.<br>Mid-season: a little more room for a long-sleeved T-shirt or a thin jumper underneath.',
+      empn: 'The shoulder yoke belongs to the lined dress.', belt: 'Belt', b0: 'Without', b1: 'Tie belt', hfen: 'For the midi, a slit makes walking easier.',
+      alt: 'Sketch of the safari dress', sum: 'Your dress:', beltTxt: 'tie belt', rlen: 'Length',
+      smTitle: 'Going further: customise each piece', smIntro: T.smIntro.replace(/your jacket/g, 'your dress')
+    } : {
+      lead: 'Composez une robe saharienne qui vous ressemble : le croquis intègre chacun de vos choix. Viennent ensuite les mesures.',
+      len: 'Longueur', mini: 'Mini', midi: 'Midi', hs: 'Une épaisseur, la plus rapide à coudre.', hd: 'Le haut est doublé jusqu’aux hanches.',
+      seah: 'Été : se porte seule, en tissu léger.<br>Demi-saison : un peu plus d’ampleur pour un T-shirt à manches longues ou un pull fin dessous.',
+      empn: 'La pièce d’épaule est propre à la robe doublée.', belt: 'Ceinture', b0: 'Sans', b1: 'À nouer', hfen: 'Pour la midi, une fente aide à marcher.',
+      alt: 'Croquis de la robe saharienne', sum: 'Votre robe :', beltTxt: 'ceinture à nouer', rlen: 'Longueur',
+      smIntro: T.smIntro.replace(/votre saharienne/g, 'votre robe')
+    });
+  }
   var root = null;
   var $ = function (id) { return (root && root.querySelector('[id="' + id + '"]')) || document.getElementById(id); };
   var I = function (id) { return $('st-' + id); };
@@ -56,6 +79,7 @@
   var PAGES = { p: 'poches-simple.html', c: 'poches-soufflet-central.html', l: 'poches-soufflets-lateraux.html', d: 'poches-double-soufflet.html' };
 
   var DEF = { sea: '', man: 'l', fen: '0', emp: PV === 'd', epa: true, pat: true, pmc: true, cart: '0', same: true, ps: 'c', psr: true, pss: 'i', pd: 'c', pdr: true, pds: 'i', pg: 'c', pgr: true, pgs: 'i', pb: 'l', pbr: true, pbs: 'i', rab: 'p' };
+  if (ROBE) Object.assign(DEF, { len: 'mini', belt: '0', man: 'c', emp: false, epa: true, pat: false, pmc: false, ps: 'p', pss: 'e', pd: 'p', pds: 'e', pg: 'p', pgs: 'e', pb: 'p', pbs: 'e' });
   function lsGet() { try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
   function lsSet(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } }
   function lsDel() { try { localStorage.removeItem(KEY); } catch (e) { } }
@@ -80,7 +104,7 @@
   var sk = document.createElement('div');
   sk.className = 'card sticky cq'; sk.id = 'sketchcard';
   sk.innerHTML = '<div class="cq-views" role="group"><button type="button" id="st-vf" aria-pressed="true">' + T.face + '</button><button type="button" id="st-vd" aria-pressed="false">' + T.dos + '</button></div>' +
-    '<svg id="st-svg" class="cq-svg" viewBox="50 30 300 345" role="img" aria-label="' + T.alt + '"></svg><div class="cq-leg" id="st-leg"></div><p class="cq-cap" id="st-cap" aria-hidden="true"></p>';
+    '<svg id="st-svg" class="cq-svg" viewBox="50 30 300 345" role="img" aria-label="' + T.alt + '"></svg><div class="cq-leg" id="st-leg"></div><p class="cq-cap" id="st-cap" aria-hidden="true"></p><p class="cq-note">' + (EN ? 'Illustration colour: choose your own fabric.' : 'Couleur d’illustration : choisissez votre tissu.') + '</p>';
   var prevCard = document.querySelector('.grid > .card.sticky');
   if (prevCard) prevCard.parentNode.insertBefore(sk, prevCard);
 
@@ -101,11 +125,13 @@
 
   function build(sec) {
     var h = '<div class="cq-form">' +
+      (ROBE ? '<fieldset><legend>' + T.len + '</legend>' + chips('len', [['mini', T.mini], ['midi', T.midi]]) + '</fieldset>' : '') +
       '<fieldset><legend>' + T.ver + '</legend>' + chips('ver', [['s', T.s], ['d', T.d]]) + '<p class="hint" id="st-verhint"></p></fieldset>' +
       '<fieldset><legend>' + T.sea + '</legend>' + chips('sea', [['0', T.se], ['1', T.sd]]) + '<p class="hint">' + T.seah + '</p></fieldset>' +
       '<fieldset><legend>' + T.sleeves + '</legend>' + chips('man', [['l', T.ml], ['c', T.mc]]) + '<p class="hint" id="st-manhint" hidden>' + T.mcn + '</p>' +
-      '<div class="sub"><h3>' + T.slits + '</h3>' + chips('fen', [['0', T.f0], ['c', T.fc, 0], ['d', T.fd, 0]]) + '</div></fieldset>' +
+      '<div class="sub"><h3>' + T.slits + '</h3>' + chips('fen', [['0', T.f0], ['c', T.fc, 0], ['d', T.fd, 0]]) + (ROBE ? '<p class="hint" id="st-hfen" hidden>' + T.hfen + '</p>' : '') + '</div></fieldset>' +
       '<fieldset><legend>' + T.small + '</legend><div class="chips">' + chk('emp', T.emp) + chk('epa', T.epa) + chk('pat', T.pat) + chk('pmc', T.pmc) + '</div><p class="hint" id="st-emphint" hidden>' + T.empn + '</p></fieldset>' +
+      (ROBE ? '<fieldset><legend>' + T.belt + '</legend>' + chips('belt', [['0', T.b0], ['1', T.b1]]) + '</fieldset>' : '') +
       '<fieldset><legend>' + T.cart + '</legend><p class="hint">' + T.cart_h + '</p>' + chips('cart', [['0', T.c0], ['g', T.cg], ['d', T.cd]]) + '</fieldset>' +
       '<fieldset><legend>' + T.chest + '</legend><label class="check"><input type="checkbox" id="st-same"> ' + T.same + '</label>' +
       '<div id="st-pSame">' + pocketGroup('ps', '', false) + '</div><div id="st-pSides" hidden><div class="sub">' + pocketGroup('pd', T.right, true) + '</div><div class="sub">' + pocketGroup('pg', T.left, true) + '</div></div></fieldset>' +
@@ -123,12 +149,12 @@
 
   function applyDom() {
     function rad(n, v) { var e = I(n + '-' + v); if (e) e.checked = true; }
-    rad('ver', PV); rad('sea', seaVal()); rad('man', st.man); rad('fen', st.fen); rad('cart', st.cart); rad('rab', st.rab);
+    rad('ver', PV); if (ROBE) { rad('len', st.len); rad('belt', st.belt); } rad('sea', seaVal()); rad('man', st.man); rad('fen', st.fen); rad('cart', st.cart); rad('rab', st.rab);
     ['ps', 'pd', 'pg', 'pb'].forEach(function (k) { rad(k, st[k]); rad(k + '-souf', st[k + 's']); I(k + '-rab').checked = !!st[k + 'r']; });
     ['emp', 'epa', 'pat', 'pmc', 'same'].forEach(function (k) { I(k).checked = !!st[k]; });
   }
   function readDom() {
-    var o = { sea: st.sea || '', man: val('man') || 'l', fen: val('fen') || '0', cart: val('cart') || '0', rab: val('rab') || 'p', same: I('same').checked };
+    var o = { sea: st.sea || '', len: val('len') || 'mini', belt: val('belt') || '0', man: val('man') || 'l', fen: val('fen') || '0', cart: val('cart') || '0', rab: val('rab') || 'p', same: I('same').checked };
     ['emp', 'epa', 'pat', 'pmc'].forEach(function (k) { o[k] = I(k).checked; });
     ['ps', 'pd', 'pg', 'pb'].forEach(function (k) { o[k] = val(k) || '0'; o[k + 'r'] = I(k + '-rab').checked; o[k + 's'] = val(k + '-souf') || 'i'; });
     return o;
@@ -139,8 +165,8 @@
     if (t.name === 'st-sea') st.sea = t.value;
     var key = (t.name || t.id || '').replace(/^st-/, '');
     if (key === 'fen' && t.value === 'd') { if (view !== 'dos') setView('dos'); }
-    else if (/^(ps|pd|pg|pb|cart|rab|same)/.test(key) && view !== 'face') setView('face');
-    if (t.name === 'st-ver' && FEM) { PV = t.value; try { localStorage.setItem('sahariennes_femme_ver', PV); } catch (e) { } I('emp').checked = PV === 'd'; render(); return; }
+    else if (/^(ps|pd|pg|pb|cart|rab|same|belt)/.test(key) && view !== 'face') setView('face');
+    if (t.name === 'st-ver' && FEM) { PV = t.value; try { localStorage.setItem(VKEY, PV); } catch (e) { } I('emp').checked = PV === 'd' && !ROBE; render(); return; }
     if (t.name === 'st-ver') { if (t.value !== PV) { persist(readDom()); location.href = t.value === 'd' ? 'saharienne-doublee.html' : 'saharienne.html'; } return; }
     if (t.name === 'st-cart') {
       var c = val('cart'), base = val('ps') || 'c', set = function (k, v) { I(k + '-' + v).checked = true; };
@@ -192,18 +218,21 @@
     var sv = seaVal(); I('sea-' + sv).checked = true;
     var seaChanged = window.SAH_STYLE.sea !== +sv; window.SAH_STYLE.sea = +sv; window.SAH_STYLE.seaTxt = sv === '0' ? T.se : T.sd;
     window.SAH_STYLE.man = o.man; window.SAH_STYLE.fen = o.fen; window.SAH_STYLE.ver = PV;
+    if (ROBE) { window.SAH_STYLE.len = o.len; window.SAH_STYLE.belt = o.belt; $('st-hfen').hidden = o.len !== 'midi'; }
     if (seaChanged && !FEM) { var g0 = document.querySelector('.grp'); if (g0) setTimeout(function () { g0.dispatchEvent(new Event('change', { bubbles: true })); }, 0); }
     var ob = $('opt_epaule'); if (PV === 'd' && ob && ob.checked !== o.emp) { ob.checked = o.emp; ob.dispatchEvent(new Event('change', { bubbles: true })); }
     var g = document.querySelector('.grp[value="manches"]');
     if (g) { var lab = g.parentNode, txt = o.man === 'c' ? window.SAH_LBL_SHORT : window.SAH_LBL_LONG; if (txt && lab.lastChild && lab.lastChild.nodeType === 3) lab.lastChild.textContent = ' ' + txt; if (changed) g.dispatchEvent(new Event('change', { bubbles: true })); }
     persist(o);
     if (FEM) o.genre = 'f';
-    window.SahCroquis.draw($('st-svg'), o, o.rab, view);
+    if (ROBE) window.SahCroquis.drawDress($('st-svg'), o, o.rab, view, Object.assign({}, RLEN[o.len], { belt: +o.belt, legs: 1, floor: 137, knee: 93 }));
+    else window.SahCroquis.draw($('st-svg'), o, o.rab, view);
     $('st-leg').innerHTML = '<span>' + (view === 'face' ? T.lr : T.rl).join('</span><span>') + '</span>';
     /* résumé */
     var RB = { p: T.fpn, d: T.fdn, a: T.fan, c: T.fcn };
-    var parts = [PV === 's' ? T.simple : T.lined, (sv === '0' ? T.se : T.sd).toLowerCase(), o.man === 'l' ? T.long : T.short, o.fen === '0' ? T.noslit : (o.fen === 'c' ? T.sslit : T.bslit)];
+    var parts = [ROBE ? (EN ? (PV === 's' ? 'Simple ' : 'Lined ') + o.len + ' dress' : 'Robe ' + o.len + (PV === 's' ? ' simple' : ' doublée')) : PV === 's' ? T.simple : T.lined, (sv === '0' ? T.se : T.sd).toLowerCase(), o.man === 'l' ? T.long : T.short, o.fen === '0' ? T.noslit : (o.fen === 'c' ? T.sslit : T.bslit)];
     if (o.emp) parts.push(T.yoke); if (o.epa) parts.push(T.epaul); if (o.pat) parts.push(T.tabs); if (o.pmc) parts.push(T.spock);
+    if (ROBE && o.belt === '1') parts.push(T.beltTxt);
     parts.push(T.flapsOf + RB[o.rab]);
     var poit = o.same ? T.chestP + pk(o.ps, o.psr, o.pss) : T.rchest + pk(o.pd, o.pdr, o.pds) + ' ; ' + T.lchest + pk(o.pg, o.pgr, o.pgs);
     var sumTxt = parts.join(', ') + ' ; ' + poit + ' ; ' + T.lowP + pk(o.pb, o.pbr, o.pbs) + '.';
@@ -330,13 +359,16 @@
   window.SAH_STYLE_UI = {
     mode: mode, preview: preview,
     title: T.title, build: build, fromUrl: fromUrl,
-    reset: function () { lsDel(); Object.keys(DEF).forEach(function (k) { st[k] = DEF[k]; }); if (PV === 'd') st.man = 'l'; applyDom(); render(); },
+    reset: function () { lsDel(); Object.keys(DEF).forEach(function (k) { st[k] = DEF[k]; }); if (PV === 'd' && !FEM) st.man = 'l'; applyDom(); render(); },
     recap: function () {
       var o = last.o, rows = [];
-      rows.push([T.rv, PV === 's' ? T.simple : T.lined]);
+      if (ROBE) rows.push([T.rlen, o.len === 'midi' ? T.midi : T.mini]);
+      rows.push([T.rv, ROBE ? (PV === 's' ? T.s : T.d) : PV === 's' ? T.simple : T.lined]);
       rows.push([T.sea, seaVal() === '0' ? T.se : T.sd]);
       rows.push([T.rm, o.man === 'l' ? T.ml : T.mc]);
+      if (ROBE) rows.push([T.rf, o.fen === '0' ? T.f0 : (o.fen === 'c' ? T.fc : T.fd)]);
       rows.push([T.rs, [o.emp ? T.emp : '', o.epa ? T.epa : '', o.pat ? T.pat : '', o.pmc ? T.pmc : ''].filter(Boolean).join(', ') || T.none]);
+      if (ROBE) rows.push([T.belt, o.belt === '1' ? T.b1 : T.b0]);
       rows.push([T.rch, last.poit.replace(T.chestP, '')]);
       rows.push([T.rlo, pk(o.pb, o.pbr, o.pbs)]);
       rows.push([T.flaps, ({ p: T.fp, d: T.fdr, a: T.fa, c: T.fcc })[o.rab]]);

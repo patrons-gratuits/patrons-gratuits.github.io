@@ -104,7 +104,7 @@
 
   function labelText(id) { var l = form.querySelector('label[for="v_' + id + '"]'); if (!l) return id; var c = l.cloneNode(true); c.querySelectorAll('small').forEach(function (s) { s.remove(); }); return c.textContent.replace(/\s+/g, ' ').trim(); }
   function unitOf(id) { var u = $('v_' + id).parentNode.querySelector('.u'); return u ? u.textContent.trim() : ''; }
-  function fmt(id) { var e = $('v_' + id); if (e.tagName === 'SELECT') return e.options[e.selectedIndex].textContent.trim(); if (e.value.trim() === '') return ''; if (window.UNITS && window.UNITS.active(e)) return window.UNITS.fmtCm(e.value); var v = e.value.replace('.', ','); var u = unitOf(id); return v + (u ? (u === '°' || u === '%' ? '' : ' ') + u : ''); }
+  function fmt(id) { var e = $('v_' + id); if (e.tagName === 'SELECT') return e.options[e.selectedIndex].textContent.trim(); if (e.value.trim() === '') return ''; if (window.UNITS && window.UNITS.active(e)) return window.UNITS.fmtCm(e.value); if (window.UNITS && window.UNITS.activeMm && window.UNITS.activeMm(e)) return window.UNITS.fmtMm(e.value); var v = e.value.replace('.', ','); var u = unitOf(id); return v + (u ? (u === '°' || u === '%' ? '' : ' ') + u : ''); }
   function nodeOf(t) {
     if (typeof t !== 'string') return null;
     if (t.charAt(0) === '@') { var e = $(t.slice(1)); return e ? e.closest('.pieces') : null; }
@@ -240,6 +240,7 @@
 
   Array.prototype.slice.call(form.children).forEach(function (n) { n.remove(); });
   form.appendChild(top); form.appendChild(stage); form.appendChild(nav); form.appendChild(priv);
+  if (cbx && !document.body.contains(cbx)) form.appendChild(cbx);   /* case cachée « pièce d’épaule » (pages femme et robe) : elle était retirée avec le reste du formulaire */
 
   var iR = steps.length - 1, iA = iR - 1, iM = C.model ? iR - 2 : iR - 3;
 

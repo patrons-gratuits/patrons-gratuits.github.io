@@ -1,0 +1,27 @@
+/* Couleurs d’illustration des croquis, une par modèle (validées par Eric le 23 novembre 2026).
+   À charger après croquis.css. La page, ou le bloc du croquis, porte data-modele="…". */
+/* Saharienne homme (simple et doublée) */
+[data-modele="saharienne-homme"] .mc,[data-modele="saharienne-homme"] .cq,[data-modele="saharienne-homme"].mc,[data-modele="saharienne-homme"].cq{--mc-fabric:#498195;--mc-fabric2:#417385;--mc-stitch:#2a4b56}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) [data-modele="saharienne-homme"] .mc,:root:not([data-theme=light]) [data-modele="saharienne-homme"] .cq,:root:not([data-theme=light]) [data-modele="saharienne-homme"].mc,:root:not([data-theme=light]) [data-modele="saharienne-homme"].cq{--mc-fabric:#437789;--mc-fabric2:#3c6a7a;--mc-stitch:#26444d}}
+:root[data-theme=dark] [data-modele="saharienne-homme"] .mc,:root[data-theme=dark] [data-modele="saharienne-homme"] .cq,:root[data-theme=dark] [data-modele="saharienne-homme"].mc,:root[data-theme=dark] [data-modele="saharienne-homme"].cq{--mc-fabric:#437789;--mc-fabric2:#3c6a7a;--mc-stitch:#26444d}
+/* Saharienne femme (simple et doublée) */
+[data-modele="saharienne-femme"] .mc,[data-modele="saharienne-femme"] .cq,[data-modele="saharienne-femme"].mc,[data-modele="saharienne-femme"].cq{--mc-fabric:#c1846c;--mc-fabric2:#ac7560;--mc-stitch:#704d3f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) [data-modele="saharienne-femme"] .mc,:root:not([data-theme=light]) [data-modele="saharienne-femme"] .cq,:root:not([data-theme=light]) [data-modele="saharienne-femme"].mc,:root:not([data-theme=light]) [data-modele="saharienne-femme"].cq{--mc-fabric:#b27963;--mc-fabric2:#9e6c58;--mc-stitch:#654539}}
+:root[data-theme=dark] [data-modele="saharienne-femme"] .mc,:root[data-theme=dark] [data-modele="saharienne-femme"] .cq,:root[data-theme=dark] [data-modele="saharienne-femme"].mc,:root[data-theme=dark] [data-modele="saharienne-femme"].cq{--mc-fabric:#b27963;--mc-fabric2:#9e6c58;--mc-stitch:#654539}
+/* Robe saharienne */
+[data-modele="robe-saharienne"] .mc,[data-modele="robe-saharienne"] .cq,[data-modele="robe-saharienne"].mc,[data-modele="robe-saharienne"].cq{--mc-fabric:#cf7f9c;--mc-fabric2:#b9688a;--mc-stitch:#7d3d58}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) [data-modele="robe-saharienne"] .mc,:root:not([data-theme=light]) [data-modele="robe-saharienne"] .cq,:root:not([data-theme=light]) [data-modele="robe-saharienne"].mc,:root:not([data-theme=light]) [data-modele="robe-saharienne"].cq{--mc-fabric:#be7590;--mc-fabric2:#aa607f;--mc-stitch:#70374f}}
+:root[data-theme=dark] [data-modele="robe-saharienne"] .mc,:root[data-theme=dark] [data-modele="robe-saharienne"] .cq,:root[data-theme=dark] [data-modele="robe-saharienne"].mc,:root[data-theme=dark] [data-modele="robe-saharienne"].cq{--mc-fabric:#be7590;--mc-fabric2:#aa607f;--mc-stitch:#70374f}
+/* Bob */
+[data-modele="bob"] .mc,[data-modele="bob"] .cq,[data-modele="bob"].mc,[data-modele="bob"].cq{--mc-fabric:#91a857;--mc-fabric2:#81964d;--mc-stitch:#546132}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) [data-modele="bob"] .mc,:root:not([data-theme=light]) [data-modele="bob"] .cq,:root:not([data-theme=light]) [data-modele="bob"].mc,:root:not([data-theme=light]) [data-modele="bob"].cq{--mc-fabric:#859b50;--mc-fabric2:#778a47;--mc-stitch:#4c572d}}
+:root[data-theme=dark] [data-modele="bob"] .mc,:root[data-theme=dark] [data-modele="bob"] .cq,:root[data-theme=dark] [data-modele="bob"].mc,:root[data-theme=dark] [data-modele="bob"].cq{--mc-fabric:#859b50;--mc-fabric2:#778a47;--mc-stitch:#4c572d}
+/* Béret basque */
+[data-modele="beret-basque"] .mc,[data-modele="beret-basque"] .cq,[data-modele="beret-basque"].mc,[data-modele="beret-basque"].cq{--mc-fabric:#b8555c;--mc-fabric2:#a44c52;--mc-stitch:#6b3135}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) [data-modele="beret-basque"] .mc,:root:not([data-theme=light]) [data-modele="beret-basque"] .cq,:root:not([data-theme=light]) [data-modele="beret-basque"].mc,:root:not([data-theme=light]) [data-modele="beret-basque"].cq{--mc-fabric:#a94e55;--mc-fabric2:#97464b;--mc-stitch:#602c30}}
+:root[data-theme=dark] [data-modele="beret-basque"] .mc,:root[data-theme=dark] [data-modele="beret-basque"] .cq,:root[data-theme=dark] [data-modele="beret-basque"].mc,:root[data-theme=dark] [data-modele="beret-basque"].cq{--mc-fabric:#a94e55;--mc-fabric2:#97464b;--mc-stitch:#602c30}
+/* Béret */
+[data-modele="beret"] .mc,[data-modele="beret"] .cq,[data-modele="beret"].mc,[data-modele="beret"].cq{--mc-fabric:#55608b;--mc-fabric2:#4c557c;--mc-stitch:#b3b7cb}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) [data-modele="beret"] .mc,:root:not([data-theme=light]) [data-modele="beret"] .cq,:root:not([data-theme=light]) [data-modele="beret"].mc,:root:not([data-theme=light]) [data-modele="beret"].cq{--mc-fabric:#4e5880;--mc-fabric2:#464e72;--mc-stitch:#aab0c5}}
+:root[data-theme=dark] [data-modele="beret"] .mc,:root[data-theme=dark] [data-modele="beret"] .cq,:root[data-theme=dark] [data-modele="beret"].mc,:root[data-theme=dark] [data-modele="beret"].cq{--mc-fabric:#4e5880;--mc-fabric2:#464e72;--mc-stitch:#aab0c5}
+.cq-note{margin:6px 0 0;font-size:.8rem;color:var(--mut,#56707d);text-align:center}

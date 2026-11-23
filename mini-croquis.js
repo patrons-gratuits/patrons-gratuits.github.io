@@ -39,6 +39,7 @@ function mount(root){
   const fig=document.createElement('div');fig.className='mc-fig';
   const sv=document.createElementNS(NS,'svg');sv.setAttribute('viewBox','172 48 590 664');sv.setAttribute('role','img');sv.setAttribute('aria-label',L.alt);
   fig.appendChild(sv);root.appendChild(fig);
+  const note=document.createElement('p');note.className='cq-note';note.textContent=root.dataset.lang==='en'?'Illustration colour: choose your own fabric.':'Couleur d’illustration : choisissez votre tissu.';root.appendChild(note);
   const ctl=document.createElement('div');ctl.className='mc-ctl';root.appendChild(ctl);
   function seg(key,label,opts){
     const w=document.createElement('div');w.className='mc-seg';w.setAttribute('role','group');w.setAttribute('aria-label',label);
@@ -57,6 +58,7 @@ function mount(root){
   let cta=root.dataset.cta?document.getElementById(root.dataset.cta):null;
   if(!cta){cta=document.createElement('a');cta.className='mc-cta';cta.textContent=L.cta;root.appendChild(cta);}
   function draw(){
+    root.dataset.modele=s.genre==='f'?'saharienne-femme':'saharienne-homme';
     window.SahCroquis.draw(sv,{ver:'s',genre:s.genre,man:s.man,fen:'0',emp:false,epa:true,pat:true,pmc:true,same:!s.cart,
       ps:'c',psr:true,pss:'i',pd:'c',pdr:true,pds:'i',pg:s.cart?'k':'c',pgr:true,pgs:'i',pb:'l',pbr:true,pbs:'i'},s.rab,'face');
     for(const k in rows) rows[k].querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(String(s[k])===b.dataset.v)));

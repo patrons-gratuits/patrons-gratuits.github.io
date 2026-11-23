@@ -46,6 +46,10 @@
     return ok ? sign * tot : null;
   }
 
+  /* carré de contrôle : le champ reste en mm ; en pouces on affiche des décimales (2 in = 50,8 mm ; 50 mm = 1,97 in) */
+  var MM = 25.4;
+  function fmtMmIn(mm) { var x = parseFloat(String(mm).replace(',', '.')); if (isNaN(x)) return ''; var t = String(Math.round(x / MM * 100) / 100); return EN ? t : t.replace('.', ','); }
+
   /* ---------- textes (aide, messages) ---------- */
   var NUM = '((?:(?<!\\d)-)?\\d+(?:[.,]\\d+)?)';
   function n(x) { return parseFloat(String(x).replace(',', '.')); }
@@ -72,10 +76,10 @@
   function refresh(f) {
     if (mode !== 'in') return;
     if (document.activeElement === f.shadow) return;
-    f.shadow.value = fmtCm(proto.get.call(f.real));
+    f.shadow.value = f.mm ? fmtMmIn(proto.get.call(f.real)) : fmtCm(proto.get.call(f.real));
     f.shadow.classList.toggle('bad', f.real.classList.contains('bad'));
   }
-  function setup(real) {
+  function setup(real, mm) {
     if (real.__uin) return; real.__uin = true;
     var u = real.nextElementSibling, sh = document.createElement('input');
     sh.type = 'text'; sh.className = 'uin'; sh.setAttribute('inputmode', 'decimal'); sh.setAttribute('autocomplete', 'off');
@@ -83,16 +87,16 @@
     sh.style.display = 'none'; sh.id = 'ui_' + real.id.slice(2);
     real.parentNode.insertBefore(sh, real.nextSibling);
     var fld = real.closest('.fld'), hint = fld && fld.querySelector('small.hint');
-    var f = { real: real, shadow: sh, u: u, hint: hint, hintOrig: hint ? hint.innerHTML : '' };
+    var f = { real: real, shadow: sh, u: u, hint: hint, hintOrig: hint ? hint.innerHTML : '', mm: !!mm };
     fields.push(f);
     Object.defineProperty(real, 'value', { get: function () { return proto.get.call(this); }, set: function (v) { proto.set.call(this, v); refresh(f); }, configurable: true });
     sh.addEventListener('input', function () {
       var i = parseIn(sh.value);
       if (i === null) { proto.set.call(real, ''); }
-      else { proto.set.call(real, String(Math.round(i * K * 1e6) / 1e6)); }
+      else { proto.set.call(real, mm ? String(Math.round(i * MM * 1000) / 1000) : String(Math.round(i * K * 1e6) / 1e6)); }
       real.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    sh.addEventListener('blur', function () { var i = parseIn(sh.value); if (i !== null) sh.value = fmtIn(i); });
+    sh.addEventListener('blur', function () { var i = parseIn(sh.value); if (i !== null) sh.value = mm ? fmtMmIn(i * MM) : fmtIn(i); });
     try { new MutationObserver(function () { sh.classList.toggle('bad', real.classList.contains('bad')); }).observe(real, { attributes: true, attributeFilter: ['class'] }); } catch (e) {}
     var lab = document.querySelector('label[for="' + real.id + '"]'); if (lab) lab.addEventListener('click', function (ev) { if (mode === 'in') { ev.preventDefault(); sh.focus(); } });
   }
@@ -100,10 +104,11 @@
     fields.forEach(function (f) {
       var inch = mode === 'in';
       f.real.style.display = inch ? 'none' : ''; f.shadow.style.display = inch ? '' : 'none';
-      if (f.u) f.u.textContent = inch ? 'in' : 'cm';
+      if (f.u) f.u.textContent = inch ? 'in' : (f.mm ? 'mm' : 'cm');
       if (f.hint) f.hint.innerHTML = inch ? convertHint(f.hintOrig) : f.hintOrig;
-      if (inch) { f.shadow.value = fmtCm(proto.get.call(f.real)); }
+      if (inch) { f.shadow.value = f.mm ? fmtMmIn(proto.get.call(f.real)) : fmtCm(proto.get.call(f.real)); }
     });
+    measTexts();
     var sel = document.querySelectorAll('select.units-sel'); sel.forEach(function (s) { s.value = mode; });
     document.querySelectorAll('.err, .frac').forEach(fixErr);
     document.querySelectorAll('#wz-stat option').forEach(function (o) {
@@ -115,6 +120,20 @@
     watchSvg(); document.querySelectorAll('main svg').forEach(fixSvg);
     if (!noRedraw && fields[0]) { fields[0].real.dispatchEvent(new Event('input', { bubbles: true })); }
   }
+  var measOrig = null;
+  function measTexts() {
+    var m = document.getElementById('v_meas'); if (!m || !m.__uin || !m.__uin) return;
+    var lab = document.querySelector('label[for="v_meas"] small'), row = m.closest('.row'), help = row && row.nextElementSibling;
+    if (help && help.tagName !== 'SMALL') help = null;
+    if (!measOrig) measOrig = { help: help ? help.innerHTML : '' };
+    var ps = document.querySelector('select.paper-sel'), letter = (window.PAPER_CHOICE || (ps && ps.value)) === 'letter', inch = mode === 'in';
+    if (lab) {
+      var v = inch ? (letter ? '2' : (EN ? '1.97' : '1,97')) : (letter ? (EN ? '50.8' : '50,8') : '50');
+      lab.textContent = EN ? '(leave ' + v + ' if exact)' : '(laisser ' + v + ' si exact)';
+    }
+    if (help) help.innerHTML = inch ? measOrig.help.replace(/(\d+(?:[.,]\d+)?)\s*mm/, '1 7/8 in') : measOrig.help;
+  }
+  document.addEventListener('paperchange', function () { setTimeout(measTexts, 0); });
   function fixErr(e) { if (mode === 'in' && /cm\b/.test(e.textContent)) { var t = convertMsg(e.textContent); if (t !== e.textContent) e.textContent = t; } }
   function watchErrors() {
     document.querySelectorAll('.err, .frac').forEach(function (e) {
@@ -187,7 +206,9 @@
       if (!tables.length) return;
       selector(tables[0].t); applyMode(true); return;
     }
-    list.forEach(setup); selector(list[0]); watchErrors(); applyMode(true);
+    list.forEach(function (i) { setup(i); });
+    var mq = document.getElementById('v_meas'); if (mq && mq.type === 'number' && !document.querySelector('script[src*="poches.js"]') && mq.nextElementSibling && mq.nextElementSibling.classList.contains('u')) setup(mq, true);
+    selector(list[0]); watchErrors(); applyMode(true); setTimeout(measTexts, 0); setTimeout(measTexts, 400); setTimeout(measTexts, 1200);
     var tm = null;
     try {
       new MutationObserver(function () {
@@ -202,7 +223,9 @@
   }
   window.UNITS = {
     mode: function () { return mode; },
-    active: function (inp) { return mode === 'in' && !!inp && !!inp.__uin; },
+    active: function (inp) { return mode === 'in' && !!inp && !!inp.__uin && inp.id !== 'v_meas'; },
+    activeMm: function (inp) { return mode === 'in' && !!inp && inp.id === 'v_meas' && !!inp.__uin; },
+    fmtMm: function (mm) { return fmtMmIn(mm) + ' in'; },
     fmtCm: function (cm) { return fmtCm(cm) + ' in'; },
     fmt: fmtCm, parse: parseIn, set: setMode
   };
