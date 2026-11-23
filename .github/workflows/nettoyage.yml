@@ -1,0 +1,46 @@
+name: Nettoyage des anciens fichiers
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  nettoyage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Supprimer les 28 anciens fichiers
+        run: |
+          for f in \
+            images/mesure-epaule-coude.png \
+            images/mesure-epaule-poignet.png \
+            images/mesure-largeur-epaules.png \
+            images/mesure-longueur-devant-taille.png \
+            images/mesure-pente-epaule.png \
+            images/mesure-taille-hanche.png \
+            images/mesure-tour-cou.png \
+            images/mesure-tour-poignet.png \
+            images/mesure-tour-poitrine.png \
+            images/mesure-tour-taille-arriere.png \
+            images/mesure-tour-taille.png \
+            en/images/measurement-epaule-coude.png \
+            en/images/measurement-epaule-poignet.png \
+            en/images/measurement-largeur-epaules.png \
+            en/images/measurement-longueur-devant-taille.png \
+            en/images/measurement-pente-epaule.png \
+            en/images/measurement-taille-hanche.png \
+            en/images/measurement-tour-cou.png \
+            en/images/measurement-tour-poignet.png \
+            en/images/measurement-tour-poitrine.png \
+            en/images/measurement-tour-taille-arriere.png \
+            en/images/measurement-tour-taille.png \
+            images/famille-cartouchieres.png \
+            images/famille-epaulettes.png \
+            images/famille-pattes-manches.png \
+            en/images/cartridge-pockets-illustration.png \
+            en/images/epaulettes-illustration.png \
+            en/images/sleeve-tabs-illustration.png; do
+            git rm -q --ignore-unmatch "$f"
+          done
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git commit -m "Suppression des anciens schémas et illustrations" || echo "Rien à supprimer"
+          git push
