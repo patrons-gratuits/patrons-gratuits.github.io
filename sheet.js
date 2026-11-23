@@ -13,7 +13,7 @@
       plan: 'Plan d’assemblage (%n pages de patron)',
       intro: ['Imprimez à 100 % (sans mise à l’échelle) et contrôlez le carré de 5 x 5 cm.', 'Assemblez les pages numérotées selon le plan, en superposant les bandes de recouvrement de 1,5 cm.', 'Découpez chaque pièce dans la grande feuille obtenue.', 'Les pièces à décalquer (doublures, entoilages…) sont superposées à la pièce dont elles dérivent.'],
       square: 'carré de contrôle 5 x 5 cm', legend: 'Légende', cutl: 'Ligne de coupe (marge de couture comprise)', seam: 'Ligne de couture', fold: 'Repli', place: 'Emplacement de poche ou de patte', btn: 'Boutonnière', notch: 'Cran (repère de montage)', pli: 'Pli du tissu : symbole « Placer sur le pli du tissu »',
-      over: 'Pièces superposées (à décalquer)', dbl: 'Doublure', par: 'Parementure', thm: 'Entoilage',
+      over: 'Pièces superposées (à décalquer)', dbl: 'Doublure', par: 'Parementure', dec: 'Décor', thm: 'Entoilage',
       same: 'Là où un seul trait apparaît, les deux pièces ont le même contour.', sa1: 'Les contours superposés sont donnés marge de couture comprise,', sa2: 'sauf les entoilages, tracés sans marge.',
       recap: 'Récapitulatif des pièces', direct: 'Pièces à découper directement', trace: 'Pièces à décalquer (superposées)', no: 'N°', cut: 'À découper', fab: 'Tissu', on: 'sur',
       star: '* Plusieurs exemplaires symétriques : l’un des deux est à inverser.', total: 'Total : %n pièces à découper.',
@@ -23,7 +23,7 @@
       plan: 'Assembly plan (%n pattern pages)',
       intro: ['Print at 100% (no scaling) and check the 5 x 5 cm square.', 'Join the numbered pages following the plan, overlapping the 1.5 cm overlap strips.', 'Cut each piece out of the large sheet you obtain.', 'Pieces to trace (linings, interfacings…) are stacked on the piece they derive from.'],
       square: 'check square 5 x 5 cm', legend: 'Key', cutl: 'Cutting line (seam allowance included)', seam: 'Sewing line', fold: 'Fold line', place: 'Pocket or tab position', btn: 'Buttonhole', notch: 'Notch (matching mark)', pli: 'Fabric fold: “Place on fold of fabric” symbol',
-      over: 'Stacked pieces (to trace)', dbl: 'Lining', par: 'Facing', thm: 'Interfacing',
+      over: 'Stacked pieces (to trace)', dbl: 'Lining', par: 'Facing', dec: 'Trim', thm: 'Interfacing',
       same: 'Where only one line appears, both pieces have the same outline.', sa1: 'Stacked outlines include the seam allowance,', sa2: 'except interfacings, which are drawn without allowance.',
       recap: 'Pieces summary', direct: 'Pieces to cut directly', trace: 'Pieces to trace (stacked)', no: 'No.', cut: 'To cut', fab: 'Fabric', on: 'on',
       star: '* Several symmetrical copies: one of them has to be flipped.', total: 'Total: %n pieces to cut.',
@@ -31,9 +31,9 @@
     }
   };
   /* pièces dérivées : nom d’origine du moteur -> pièce hôte */
-  const OVR = { DoublureDos: 'Dos', DoublureDevant: 'Devant', Parementure: 'Devant', ParementureThermo: 'Devant', DevantThermo1: 'Devant', DevantThermo2: 'Devant', ColThermo: 'Col', DoublureManche1: 'Manche1', DoublureManche2: 'Manche2' };
-  const catOf = e => /^Doublure/.test(e) ? 'dbl' : /^Parementure$/.test(e) ? 'par' : 'thm';
-  const STY = { dbl: { col: COL.vio, tcol: COL.vio, da: [9, 2, 1.5, 2, 1.5, 2], w: 0.9 }, par: { col: COL.gry, tcol: COL.gryT, da: [10, 3], w: 0.9 }, thm: { col: COL.drk, tcol: COL.drk, da: [1, 2.5], w: 1.4 } };
+  const OVR = { DoublureDos: 'Dos', DoublureDevant: 'Devant', Parementure: 'Devant', ParementureThermo: 'Devant', DevantThermo1: 'Devant', DevantThermo2: 'Devant', ColThermo: 'Col', DoublureManche1: 'Manche1', DoublureManche2: 'Manche2', PareDevant: 'Devant', PareDos: 'Dos', DecoDevant: 'Devant', DecoDos: 'Dos', GarniturePoche: 'PocheInt' };
+  const catOf = e => /^Doublure/.test(e) ? 'dbl' : /^(Parementure|PareDevant|PareDos)$/.test(e) ? 'par' : /^(DecoDevant|DecoDos|GarniturePoche)$/.test(e) ? 'dec' : 'thm';
+  const STY = { dbl: { col: COL.vio, tcol: COL.vio, da: [9, 2, 1.5, 2, 1.5, 2], w: 0.9 }, par: { col: COL.gry, tcol: COL.gryT, da: [10, 3], w: 0.9 }, thm: { col: COL.drk, tcol: COL.drk, da: [1, 2.5], w: 1.4 }, dec: { col: COL.blue, tcol: COL.blue, da: [6, 2, 1, 2], w: 0.9 } };
   const FREE = { Epaule: 1 };
 
   /* ---------- géométrie ---------- */
@@ -140,7 +140,7 @@
     let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
     for (let i = 0; i < (fast ? 2 : 6); i++) { const o = hosts.slice(); for (let k = o.length - 1; k > 0; k--) { const j = Math.floor(rnd() * (k + 1)); const t = o[k]; o[k] = o[j]; o[j] = t; } orders.push(o); }
     let res = null;
-    for (const nc of [3, 4]) {
+    for (const nc of [3, 4, 5]) {
       const Wc = Math.floor((nc * SW + OVc) / CELL);
       for (const o of orders) {
         const r = nest(hosts, Wc, o, 30); if (!r) continue;

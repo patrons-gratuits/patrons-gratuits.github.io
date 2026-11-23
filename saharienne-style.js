@@ -9,17 +9,16 @@
   if (FEM) { try { if (localStorage.getItem('sahariennes_femme_ver') === 'd') PV = 'd'; } catch (e) { } }
   var T = EN ? {
     title: 'Your style', lead: 'Design a safari jacket that suits you: the sketch shows each of your choices. The measurements come next.',
-    ver: 'Version', s: 'Simple', d: 'Lined', hs: 'One layer, the quickest to sew.', hd: 'Lining and interfacing, for mid-season.',
+    ver: 'Version', sea: 'Season', se: 'Summer', sd: 'Mid-season', seah: 'Summer: worn over a T-shirt or shirt.<br>Mid-season: a little more room for a shirt and a light sweater.', s: 'Simple', d: 'Lined', hs: 'One layer, the quickest to sew.', hd: '',
     sleeves: 'Sleeves and slits', ml: 'Long sleeves', mc: 'Short sleeves', mcn: 'Short sleeves are available on the simple jacket only.',
     slits: 'Slits', f0: 'None', fc: 'Side', fd: 'Back', soon: 'soon', pvTitle: 'Before downloading', pvSup: 'Stacked pieces', pvSupD: 'Linings, facings and interfacings are drawn on the piece they derive from. Fewer pages, slightly more to read.', pvSep: 'Separate pieces', pvSepD: 'Each piece has its own outline, including linings and interfacings. More pages, easier to read.', pvPlan: 'Assembly plan (page 1 of the PDF)', pvSepCap: 'Each piece is printed on its own pages.', pvCancel: 'Cancel', pvGo: 'Download the PDF', pvWait: 'Calculating…', modeH: 'Pieces on the printed sheets', modeSup: 'Stacked pieces', modeSupD: 'fewer pages; linings, facings and interfacings are traced onto the piece they come from (recommended)', modeSep: 'Separate pieces', modeSepD: 'every piece is cut out directly, nothing to trace', pgw: 'pages',
     small: 'Small pieces', emp: 'Shoulder yoke', epa: 'Epaulettes', pat: 'Sleeve tabs', pmc: 'Sleeve pockets', empn: 'The shoulder yoke belongs to the lined jacket.',
     cart: 'Pen and glasses holder', cart_h: 'Pen and glasses holder, instead of a chest pocket.', c0: 'None', cg: 'For right-handers (left side)', cd: 'For left-handers (right side)',
-    cart_n: 'It sits on the side opposite the writing hand: the gesture is more natural, with less arm twist. Right and left are as worn.',
     chest: 'Chest pockets', same: 'Same choice on both sides', right: 'Right side, as worn', left: 'Left side, as worn', low: 'Lower pockets',
     t0: 'None', tp: 'No gusset', tc: 'Centre gusset', tl: 'Side gussets', td: 'Double gusset', tk: 'Pen and glasses holder', flap: 'With flap',
     gus: 'Centre gusset', gi: 'inwards', ge: 'outwards',
     flaps: 'Flap shape', fp: 'Pointed', fdr: 'Straight', fa: 'Rounded', fcc: 'Cut corners', flaps_h: 'The same shape for all the flaps on the jacket.',
-    face: 'Front', dos: 'Back', lr: ['right (wearer)', 'left (wearer)'], rl: ['left (wearer)', 'right (wearer)'], alt: 'Sketch of the safari jacket',
+    face: 'Front', dos: 'Back', lr: ['right', 'left'], rl: ['left', 'right'], alt: 'Sketch of the safari jacket',
     sum: 'Your jacket:', simple: 'Simple jacket', lined: 'Lined jacket', long: 'long sleeves', short: 'short sleeves', noslit: 'no slits', sslit: 'side slits', bslit: 'back slit',
     yoke: 'shoulder yoke', epaul: 'epaulettes', tabs: 'sleeve tabs', spock: 'sleeve pockets', flapsOf: 'flaps ', fpn: 'pointed', fdn: 'straight', fan: 'rounded', fcn: 'with cut corners',
     chestP: 'chest pockets: ', rchest: 'right chest: ', lchest: 'left chest: ', lowP: 'lower pockets: ', none: 'none', holder: 'pen and glasses holder', wflap: ' with flap', nflap: ' without flap',
@@ -30,17 +29,16 @@
     sep: 'To download separately:'
   } : {
     title: 'Votre style', lead: 'Composez une saharienne qui vous ressemble : le croquis intègre chacun de vos choix. Viennent ensuite les mesures.',
-    ver: 'Version', s: 'Simple', d: 'Doublée', hs: 'Une épaisseur, la plus rapide à coudre.', hd: 'Doublure et entoilage, pour la mi-saison.',
+    ver: 'Version', sea: 'Saison', se: 'Été', sd: 'Demi-saison', seah: 'Été : se porte sur un T-shirt ou une chemise.<br>Demi-saison : un peu plus d’ampleur pour une chemise et un pull léger.', s: 'Simple', d: 'Doublée', hs: 'Une épaisseur, la plus rapide à coudre.', hd: '',
     sleeves: 'Manches et fentes', ml: 'Manches longues', mc: 'Manches courtes', mcn: 'Les manches courtes sont proposées pour la saharienne simple.',
     slits: 'Fentes', f0: 'Aucune', fc: 'De côté', fd: 'De dos', soon: 'bientôt', pvTitle: 'Avant de télécharger', pvSup: 'Pièces superposées', pvSupD: 'Les doublures et entoilages sont tracés sur la pièce dont ils dérivent. Moins de pages, un peu plus de lecture.', pvSep: 'Pièces séparées', pvSepD: 'Chaque pièce a son propre tracé, y compris doublures et entoilages. Plus de pages, lecture simple.', pvPlan: 'Plan d’assemblage (page 1 du PDF)', pvSepCap: 'Chaque pièce est imprimée sur ses propres pages.', pvCancel: 'Annuler', pvGo: 'Télécharger le PDF', pvWait: 'Calcul en cours…', modeH: 'Pièces sur les pages imprimées', modeSup: 'Pièces superposées', modeSupD: 'moins de pages ; doublures, parementures et entoilages sont à décalquer sur la pièce dont elles dérivent (conseillé)', modeSep: 'Pièces séparées', modeSepD: 'chaque pièce est à découper directement, rien à décalquer', pgw: 'pages',
     small: 'Petites pièces', emp: 'Pièce d’épaule', epa: 'Épaulettes', pat: 'Pattes de manches', pmc: 'Poches de manches', empn: 'La pièce d’épaule est propre à la saharienne doublée.',
     cart: 'Cartouchière', cart_h: 'Porte-stylos et lunettes, à la place d’une poche de poitrine.', c0: 'Aucune', cg: 'Pour droitier (à gauche)', cd: 'Pour gaucher (à droite)',
-    cart_n: 'Elle se place du côté opposé à la main qui écrit : le geste est plus naturel, avec moins de torsion du bras. Droite et gauche s’entendent une fois la veste portée.',
     chest: 'Poches de poitrine', same: 'Même choix des deux côtés', right: 'Côté droit, une fois la veste portée', left: 'Côté gauche, une fois la veste portée', low: 'Poches du bas',
     t0: 'Aucune', tp: 'Sans soufflet', tc: 'Soufflet central', tl: 'Soufflets latéraux', td: 'Double soufflet', tk: 'Cartouchière', flap: 'Avec rabat',
     gus: 'Soufflet central', gi: 'vers l’intérieur', ge: 'vers l’extérieur',
     flaps: 'Forme des rabats', fp: 'En pointe', fdr: 'Droit', fa: 'Arrondi', fcc: 'Angles coupés', flaps_h: 'La même forme pour tous les rabats de la veste.',
-    face: 'Face', dos: 'Dos', lr: ['droite (porteur)', 'gauche (porteur)'], rl: ['gauche (porteur)', 'droite (porteur)'], alt: 'Croquis de la saharienne',
+    face: 'Face', dos: 'Dos', lr: ['droite', 'gauche'], rl: ['gauche', 'droite'], alt: 'Croquis de la saharienne',
     sum: 'Votre saharienne :', simple: 'Saharienne simple', lined: 'Saharienne doublée', long: 'manches longues', short: 'manches courtes', noslit: 'sans fente', sslit: 'fentes de côté', bslit: 'fente de dos',
     yoke: 'pièce d’épaule', epaul: 'épaulettes', tabs: 'pattes de manches', spock: 'poches de manches', flapsOf: 'rabats ', fpn: 'en pointe', fdn: 'droits', fan: 'arrondis', fcn: 'à angles coupés',
     chestP: 'poches de poitrine : ', rchest: 'poitrine droite : ', lchest: 'poitrine gauche : ', lowP: 'poches du bas : ', none: 'aucune', holder: 'cartouchière', wflap: ' à rabat', nflap: ' sans rabat',
@@ -57,7 +55,7 @@
   var TYPES = [['0', T.t0], ['p', T.tp], ['c', T.tc], ['l', T.tl], ['d', T.td]];
   var PAGES = { p: 'poches-simple.html', c: 'poches-soufflet-central.html', l: 'poches-soufflets-lateraux.html', d: 'poches-double-soufflet.html' };
 
-  var DEF = { man: 'l', fen: '0', emp: PV === 'd', epa: true, pat: true, pmc: true, cart: '0', same: true, ps: 'c', psr: true, pss: 'i', pd: 'c', pdr: true, pds: 'i', pg: 'c', pgr: true, pgs: 'i', pb: 'l', pbr: true, pbs: 'i', rab: 'p' };
+  var DEF = { sea: '', man: 'l', fen: '0', emp: PV === 'd', epa: true, pat: true, pmc: true, cart: '0', same: true, ps: 'c', psr: true, pss: 'i', pd: 'c', pdr: true, pds: 'i', pg: 'c', pgr: true, pgs: 'i', pb: 'l', pbr: true, pbs: 'i', rab: 'p' };
   function lsGet() { try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
   function lsSet(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } }
   function lsDel() { try { localStorage.removeItem(KEY); } catch (e) { } }
@@ -75,6 +73,7 @@
   } catch (e) { }
   if (st.same && (st.pd === 'k' || st.pg === 'k')) st.same = false;
   if (FEM) { if (PV !== 'd') st.emp = false; } else if (PV === 'd') st.man = 'l'; else st.emp = false;
+  function seaVal() { return (st.sea === '0' || st.sea === '1') ? st.sea : (PV === 'd' ? '1' : '0'); }
   window.SAH_STYLE = { man: 'l', fen: '0' };
 
   var view = 'face';
@@ -103,10 +102,11 @@
   function build(sec) {
     var h = '<div class="cq-form">' +
       '<fieldset><legend>' + T.ver + '</legend>' + chips('ver', [['s', T.s], ['d', T.d]]) + '<p class="hint" id="st-verhint"></p></fieldset>' +
+      '<fieldset><legend>' + T.sea + '</legend>' + chips('sea', [['0', T.se], ['1', T.sd]]) + '<p class="hint">' + T.seah + '</p></fieldset>' +
       '<fieldset><legend>' + T.sleeves + '</legend>' + chips('man', [['l', T.ml], ['c', T.mc]]) + '<p class="hint" id="st-manhint" hidden>' + T.mcn + '</p>' +
       '<div class="sub"><h3>' + T.slits + '</h3>' + chips('fen', [['0', T.f0], ['c', T.fc, 0], ['d', T.fd, 0]]) + '</div></fieldset>' +
       '<fieldset><legend>' + T.small + '</legend><div class="chips">' + chk('emp', T.emp) + chk('epa', T.epa) + chk('pat', T.pat) + chk('pmc', T.pmc) + '</div><p class="hint" id="st-emphint" hidden>' + T.empn + '</p></fieldset>' +
-      '<fieldset><legend>' + T.cart + '</legend><p class="hint">' + T.cart_h + '</p>' + chips('cart', [['0', T.c0], ['g', T.cg], ['d', T.cd]]) + '<p class="hint">' + T.cart_n + '</p></fieldset>' +
+      '<fieldset><legend>' + T.cart + '</legend><p class="hint">' + T.cart_h + '</p>' + chips('cart', [['0', T.c0], ['g', T.cg], ['d', T.cd]]) + '</fieldset>' +
       '<fieldset><legend>' + T.chest + '</legend><label class="check"><input type="checkbox" id="st-same"> ' + T.same + '</label>' +
       '<div id="st-pSame">' + pocketGroup('ps', '', false) + '</div><div id="st-pSides" hidden><div class="sub">' + pocketGroup('pd', T.right, true) + '</div><div class="sub">' + pocketGroup('pg', T.left, true) + '</div></div></fieldset>' +
       '<fieldset><legend>' + T.low + '</legend>' + pocketGroup('pb', '', false) + '</fieldset>' +
@@ -123,12 +123,12 @@
 
   function applyDom() {
     function rad(n, v) { var e = I(n + '-' + v); if (e) e.checked = true; }
-    rad('ver', PV); rad('man', st.man); rad('fen', st.fen); rad('cart', st.cart); rad('rab', st.rab);
+    rad('ver', PV); rad('sea', seaVal()); rad('man', st.man); rad('fen', st.fen); rad('cart', st.cart); rad('rab', st.rab);
     ['ps', 'pd', 'pg', 'pb'].forEach(function (k) { rad(k, st[k]); rad(k + '-souf', st[k + 's']); I(k + '-rab').checked = !!st[k + 'r']; });
     ['emp', 'epa', 'pat', 'pmc', 'same'].forEach(function (k) { I(k).checked = !!st[k]; });
   }
   function readDom() {
-    var o = { man: val('man') || 'l', fen: val('fen') || '0', cart: val('cart') || '0', rab: val('rab') || 'p', same: I('same').checked };
+    var o = { sea: st.sea || '', man: val('man') || 'l', fen: val('fen') || '0', cart: val('cart') || '0', rab: val('rab') || 'p', same: I('same').checked };
     ['emp', 'epa', 'pat', 'pmc'].forEach(function (k) { o[k] = I(k).checked; });
     ['ps', 'pd', 'pg', 'pb'].forEach(function (k) { o[k] = val(k) || '0'; o[k + 'r'] = I(k + '-rab').checked; o[k + 's'] = val(k + '-souf') || 'i'; });
     return o;
@@ -136,6 +136,7 @@
   function onChange(e) {
     var t = e.target;
     /* bascule automatique : fente de dos -> Dos ; poches, rabats, cartouchière -> Face */
+    if (t.name === 'st-sea') st.sea = t.value;
     var key = (t.name || t.id || '').replace(/^st-/, '');
     if (key === 'fen' && t.value === 'd') { if (view !== 'dos') setView('dos'); }
     else if (/^(ps|pd|pg|pb|cart|rab|same)/.test(key) && view !== 'face') setView('face');
@@ -188,7 +189,10 @@
     o.ver = PV;
     /* lien avec le calcul du patron */
     var changed = window.SAH_STYLE.man !== o.man || window.SAH_STYLE.fen !== o.fen;
+    var sv = seaVal(); I('sea-' + sv).checked = true;
+    var seaChanged = window.SAH_STYLE.sea !== +sv; window.SAH_STYLE.sea = +sv; window.SAH_STYLE.seaTxt = sv === '0' ? T.se : T.sd;
     window.SAH_STYLE.man = o.man; window.SAH_STYLE.fen = o.fen; window.SAH_STYLE.ver = PV;
+    if (seaChanged && !FEM) { var g0 = document.querySelector('.grp'); if (g0) setTimeout(function () { g0.dispatchEvent(new Event('change', { bubbles: true })); }, 0); }
     var ob = $('opt_epaule'); if (PV === 'd' && ob && ob.checked !== o.emp) { ob.checked = o.emp; ob.dispatchEvent(new Event('change', { bubbles: true })); }
     var g = document.querySelector('.grp[value="manches"]');
     if (g) { var lab = g.parentNode, txt = o.man === 'c' ? window.SAH_LBL_SHORT : window.SAH_LBL_LONG; if (txt && lab.lastChild && lab.lastChild.nodeType === 3) lab.lastChild.textContent = ' ' + txt; if (changed) g.dispatchEvent(new Event('change', { bubbles: true })); }
@@ -198,7 +202,7 @@
     $('st-leg').innerHTML = '<span>' + (view === 'face' ? T.lr : T.rl).join('</span><span>') + '</span>';
     /* résumé */
     var RB = { p: T.fpn, d: T.fdn, a: T.fan, c: T.fcn };
-    var parts = [PV === 's' ? T.simple : T.lined, o.man === 'l' ? T.long : T.short, o.fen === '0' ? T.noslit : (o.fen === 'c' ? T.sslit : T.bslit)];
+    var parts = [PV === 's' ? T.simple : T.lined, (sv === '0' ? T.se : T.sd).toLowerCase(), o.man === 'l' ? T.long : T.short, o.fen === '0' ? T.noslit : (o.fen === 'c' ? T.sslit : T.bslit)];
     if (o.emp) parts.push(T.yoke); if (o.epa) parts.push(T.epaul); if (o.pat) parts.push(T.tabs); if (o.pmc) parts.push(T.spock);
     parts.push(T.flapsOf + RB[o.rab]);
     var poit = o.same ? T.chestP + pk(o.ps, o.psr, o.pss) : T.rchest + pk(o.pd, o.pdr, o.pds) + ' ; ' + T.lchest + pk(o.pg, o.pgr, o.pgs);
@@ -330,6 +334,7 @@
     recap: function () {
       var o = last.o, rows = [];
       rows.push([T.rv, PV === 's' ? T.simple : T.lined]);
+      rows.push([T.sea, seaVal() === '0' ? T.se : T.sd]);
       rows.push([T.rm, o.man === 'l' ? T.ml : T.mc]);
       rows.push([T.rs, [o.emp ? T.emp : '', o.epa ? T.epa : '', o.pat ? T.pat : '', o.pmc ? T.pmc : ''].filter(Boolean).join(', ') || T.none]);
       rows.push([T.rch, last.poit.replace(T.chestP, '')]);

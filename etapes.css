@@ -75,3 +75,23 @@ body.th .wz-fig figcaption{margin-top:.4em;font-size:.82rem;color:var(--mut)}
 body.th .wz-stdline{margin:.2em 0 .6em;font-weight:600}
 
 body.th .wz-empty{color:#b3261e;font-weight:600}
+
+#wz-big{display:none;margin:0}
+@media(min-width:761px){
+ html[data-wz-step="m0"] #wz-big{display:block}
+ html[data-wz-step="m0"] #wz-big + #prev{display:none}
+ #wz-big img{display:block;width:auto;max-width:100%;max-height:48vh;height:auto;margin:0 auto;background:#fff;border-radius:10px}
+ #wz-big figcaption{margin-top:.6em;font-size:1rem;line-height:1.4}
+}
+@media(min-width:761px){
+ html[data-wz-step="m0"] .fld.wz-sel > .wz-fig{display:none}
+}
+@media(max-width:760px){
+ body.th .fld.wz-sel{grid-template-columns:minmax(0,1fr)}
+ body.th .fld.wz-sel > label{grid-column:1;grid-row:1}
+ body.th .fld.wz-sel > .wz-fig{grid-column:1;grid-row:2;margin:.4em 0 .6em}
+ body.th .fld.wz-sel > .row{grid-column:1;grid-row:3}
+ body.th .fld.wz-sel > .err{grid-column:1;grid-row:4}
+ body.th .wz-fig img{width:100%;max-height:60vh;object-fit:contain}
+ body.th .wz-fig figcaption{font-size:.9rem}
+}

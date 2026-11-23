@@ -8,7 +8,7 @@ h1{font-size:1.5rem;margin:.2em 0}p.sub{color:var(--mut);margin-top:0}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px}
 label{display:block;margin:.6em 0 .1em;font-size:.9rem}#form h2{font-size:1.2rem;font-weight:800;margin:1.3em 0 .4em;padding-bottom:.2em;border-bottom:2px solid var(--ac)}#form>h2:first-child,#form>#varbox:first-child+#typebox+h2{margin-top:.2em}#form label{font-weight:700}#form .pieces label{font-weight:400}#form label small,#form label .hint{font-weight:400}
 .row{display:flex;gap:8px;align-items:center}
-input[type=number]{width:100%;padding:6px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--fg);font:inherit}
+input[type=number],input.uin{width:100%;padding:6px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--fg);font:inherit}
 .u{color:var(--mut);min-width:2.5em;font-size:.85rem}
 small{color:var(--mut)}
 button:disabled{opacity:.4;cursor:not-allowed}button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer;margin-top:12px;width:100%}
@@ -17,3 +17,8 @@ button:disabled{opacity:.4;cursor:not-allowed}button{background:var(--ac);color:
 select{width:100%;padding:6px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--fg);font:inherit}input:disabled{opacity:.45;background:var(--bd)}input.bad{border-color:#9E1B12;outline-color:#9E1B12}.frac{font-size:.8rem;color:var(--mut);margin:-.05em 0 .15em}.err{color:#9E1B12;font-size:.85rem;min-height:0;margin:.15em 0 .3em}.legend{font-size:.85rem;color:var(--mut);margin:.2em 0 .6em}.legend span{display:block;margin:.15em 0}.legend svg{vertical-align:middle}.plg{margin:.5em 0 .8em}.plg span{display:inline-block;margin:.15em 1em .15em 0}#msg{color:var(--cut);font-size:.9rem;min-height:1.2em}
 h2{font-size:1rem;margin:.8em 0 .2em}
 @media(max-width:600px){body{font-size:14.4px}input,select,textarea,button{font-size:16px!important}}@media(max-width:760px){.grid{display:flex;flex-direction:column}.rc{display:contents}.prof{order:-2;position:sticky;top:0;z-index:5;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 10px}.prof h2{display:none}.prof svg{max-height:110px!important;margin:0 auto}.cn{order:-1}.cn p{margin:0 0 4px}#form{order:0}.pcs{order:1;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px}.pcs hr{display:none}}h1{font-size:1.6rem}h2{font-size:1.2rem}h3{font-size:1.05rem}.card h2,#form h2,.pcs h2,.prof h2,.cn h2{font-size:1rem}
+select.units-sel,select.paper-sel{width:auto}
+
+#cpset,#cpuser{width:100%;background:var(--ac)!important;color:#fff!important;border:0!important}
+#msg:empty{display:none;min-height:0}
+p.hook{margin:.2em 0 .9em;font-size:1.05rem;color:var(--ac)}

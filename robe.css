@@ -1,0 +1,10 @@
+.rb-sl{margin:6px 0 10px}
+.rb-sl label{display:flex;justify-content:space-between;gap:10px;font-size:.92rem}
+.rb-sl output{color:var(--mut);font-size:.88rem;text-align:right}
+.rb-sl input[type=range]{width:100%;accent-color:var(--ac);min-height:32px;margin:2px 0 0;padding:0}
+.rb-svg{aspect-ratio:340/720}
+@media(min-width:761px){#sketchcard .rb-svg{max-height:calc(100vh - 130px)}}
+@media(max-width:760px){#sketchcard .rb-svg{max-height:38vh;margin:0 auto}}
+.fam-croq{display:block;margin:0 auto;width:100%;height:auto}
+
+.rb-bandeau{margin:1em 0;padding:.8em 1em;border-left:5px solid var(--ac2,#b8307a);background:var(--fu-soft,#fbe8f1);border-radius:8px;font-weight:600;line-height:1.45}

@@ -1,5 +1,5 @@
 /* Mini-croquis interactif de la saharienne – patrons-gratuits.fr
-   Usage : <div class="mc" data-lang="fr" data-href="saharienne.html"></div>
+   Usage : <div class="mc" data-lang="fr" data-href="saharienne.html"></div>  (data-genre="f" pour ouvrir sur la coupe femme)
            <script src="mini-croquis.js" defer></script>
    Le dessin est celui du croquis complet (croquis.js, à charger avant ce fichier). */
 (function(){
@@ -24,17 +24,17 @@ function inset(pts,d){ // décalage simple vers le centre pour les surpiqûres
 
 // ---------- composant ----------
 const TXT={
- fr:{man:'Manches',longues:'Longues',courtes:'Courtes',cart:'Cartouchi\u00e8re',sans:'Sans',avec:'Avec',rab:'Rabats',
+ fr:{genre:'Coupe',homme:'Homme',femme:'Femme',man:'Manches',longues:'Longues',courtes:'Courtes',cart:'Cartouchi\u00e8re',sans:'Sans',avec:'Avec',rab:'Rabats',
      p:'En pointe',d:'Droits',a:'Arrondis',c:'Angles coup\u00e9s',aide:'Essayez : chaque choix modifie la saharienne.',
      cta:'Composer ma saharienne',alt:'Croquis de la saharienne'},
- en:{man:'Sleeves',longues:'Long',courtes:'Short',cart:'Pen and glasses holder',sans:'None',avec:'Yes',rab:'Flaps',
+ en:{genre:'Cut',homme:'Men\u2019s',femme:'Women\u2019s',man:'Sleeves',longues:'Long',courtes:'Short',cart:'Pen and glasses holder',sans:'None',avec:'Yes',rab:'Flaps',
      p:'Pointed',d:'Straight',a:'Rounded',c:'Cut corners',aide:'Try it: every choice changes the jacket.',
      cta:'Design my safari jacket',alt:'Sketch of the safari jacket'}};
 // valeurs passées \u00e0 la page de la saharienne (choix de style uniquement, aucune mesure)
-const QP={man:{l:'longues',c:'courtes'},cart:{0:'aucune',1:'gauche'},rab:{p:'pointe',d:'droit',a:'arrondi',c:'coupe'}};
+const QP={genre:{h:'homme',f:'femme'},man:{l:'longues',c:'courtes'},cart:{0:'aucune',1:'gauche'},rab:{p:'pointe',d:'droit',a:'arrondi',c:'coupe'}};
 function mount(root){
   const L=TXT[root.dataset.lang==='en'?'en':'fr'], href=root.dataset.href||'saharienne.html';
-  const s={man:'l',cart:0,rab:'p'};
+  const s={genre:root.dataset.genre==='f'?'f':'h',man:'l',cart:0,rab:'p'};
   root.innerHTML='';
   const fig=document.createElement('div');fig.className='mc-fig';
   const sv=document.createElementNS(NS,'svg');sv.setAttribute('viewBox','172 48 590 664');sv.setAttribute('role','img');sv.setAttribute('aria-label',L.alt);
@@ -48,7 +48,8 @@ function mount(root){
       b.addEventListener('click',()=>{s[key]=key==='cart'?+v:v;draw();});row.appendChild(b);});
     ctl.appendChild(w);return row;
   }
-  const rows={man:seg('man',L.man,[['l',L.longues],['c',L.courtes]]),
+  const rows={genre:seg('genre',L.genre,[['h',L.homme],['f',L.femme]]),
+              man:seg('man',L.man,[['l',L.longues],['c',L.courtes]]),
               cart:seg('cart',L.cart,[['0',L.sans],['1',L.avec]]),
               rab:seg('rab',L.rab,[['p',L.p],['d',L.d],['a',L.a],['c',L.c]])};
   const help=document.createElement('p');help.className='mc-help';help.textContent=L.aide;root.appendChild(help);
@@ -56,10 +57,10 @@ function mount(root){
   let cta=root.dataset.cta?document.getElementById(root.dataset.cta):null;
   if(!cta){cta=document.createElement('a');cta.className='mc-cta';cta.textContent=L.cta;root.appendChild(cta);}
   function draw(){
-    window.SahCroquis.draw(sv,{ver:'s',man:s.man,fen:'0',emp:false,epa:true,pat:true,pmc:true,same:!s.cart,
+    window.SahCroquis.draw(sv,{ver:'s',genre:s.genre,man:s.man,fen:'0',emp:false,epa:true,pat:true,pmc:true,same:!s.cart,
       ps:'c',psr:true,pss:'i',pd:'c',pdr:true,pds:'i',pg:s.cart?'k':'c',pgr:true,pgs:'i',pb:'l',pbr:true,pbs:'i'},s.rab,'face');
     for(const k in rows) rows[k].querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(String(s[k])===b.dataset.v)));
-    cta.href=href+'?manches='+QP.man[s.man]+'&cartouchiere='+QP.cart[s.cart]+'&rabats='+QP.rab[s.rab];
+    cta.href=href+'?coupe='+QP.genre[s.genre]+'&manches='+QP.man[s.man]+'&cartouchiere='+QP.cart[s.cart]+'&rabats='+QP.rab[s.rab];
   }
   draw();
 }

@@ -12,14 +12,14 @@
     resume: 'Continue with your measurements from ', restart: 'Start over', nextM: 'Next: measurements', resumeS: 'Resume your measurements from ', hint: 'Tap the preview to enlarge or shrink it.', showPcs: 'Show the pattern pieces', hidePcs: 'Hide the pattern pieces',
     one: 'Your measurement', kofn: function (k, n) { return 'Measurement ' + k + ' of ' + n; },
     advSum: 'Advanced settings (optional): seam allowance, print calibration', advSumCal: 'Advanced settings (optional): print calibration',
-    b1: '1. Start from a standard size', sizeL: 'Your usual size (French, UK or US)', statL: 'Your height', fill: 'Fill in my measurements',
-    b2: '2. Measurements to check first', b2p: 'Pre-filled from your size: correct them if needed.', b3: '3. Made to measure: the other measurements', b3p: 'Also pre-filled: correct those you can take.',
+    b1: '1. Ready-to-wear: your standard size', sizeL: 'Your usual size (French, UK or US)', statL: 'Your height', fill: 'Fill in my measurements',
+    b2: '2. Fitted: the 4 measurements to check first', b2p: 'Pre-filled from your size: correct them if needed.', b3: '3. Made to measure: the other measurements', b3p: 'Also pre-filled: correct those you can take.',
     needSize: 'Please choose your size and height first.', chk: 'check', pick: 'Choose',
     stat: { petite: 'Petite', short: 'Short', moyenne: 'Average', grande: 'Tall' },
-    recapStd: function (sz, st, n) { return 'Pattern based on size ' + sz + ', ' + st + ' height, with ' + (n ? n + ' personal measurement' + (n > 1 ? 's' : '') : 'no personal measurement') + '.'; },
-    stdAfter: 'Choose your size and height to pre-fill your measurements, then correct the ones you can take. The pattern updates with every change.',
-    introPrio: function (a, b) { return 'Some measurements are flagged “check” as the most important (' + a + '). The other measurements (' + b + ') are useful for a truly made-to-measure fit.'; },
-    introTape: 'You need a tape measure and about 10 minutes; a helping hand from another person is a plus. Take them in underwear or very thin clothing, with the tape flat against the body, not tight.', introBra: ' For the bust measurements, wear a bra.'
+    recapStd: function (sz, st, n, lv) { return 'Pattern based on size ' + sz + ', ' + st + ' height, with ' + (n ? n + ' personal measurement' + (n > 1 ? 's' : '') : 'no personal measurement') + ': ' + ['ready-to-wear', 'fitted', 'made to measure'][lv] + '.'; },
+    stdAfter: 'Choose your size and height to pre-fill your measurements, then correct any you wish. The pattern updates with every change.',
+    introPrio: function (a, b) { return 'You can go from ready-to-wear to made to measure. The ' + a + ' measurements to check first fit the jacket to your figure; the other ' + b + ' make it truly made to measure.'; },
+    introTape: 'You need a tape measure and about 10 minutes; help from another person is a plus. Take your measurements in underwear or very thin clothing, with the tape flat against the body, not tight.', introBra: ' For the bust measurements, wear a bra.'
   } : {
     prev: 'Précédent', next: 'Suivant', start: 'Commencer', see: 'Voir le récapitulatif', back: 'Retour au récapitulatif',
     intro: 'Avant de commencer', recap: 'Récapitulatif', adv: 'Réglages avancés (facultatif)', advLead: 'Rarement modifiés : vous pouvez passer directement à la suite.',
@@ -28,14 +28,14 @@
     resume: 'Reprendre avec vos mesures du ', restart: 'Recommencer', nextM: 'Suivant : les mesures', resumeS: 'Reprendre vos mesures du ', hint: 'Touchez l’aperçu pour l’agrandir ou le réduire.', showPcs: 'Voir les pièces du patron', hidePcs: 'Masquer les pièces du patron',
     one: 'Votre mesure', kofn: function (k, n) { return 'Mesure ' + k + ' sur ' + n; },
     advSum: 'Réglages avancés (facultatif) : marge de couture, étalonnage d’impression', advSumCal: 'Réglages avancés (facultatif) : étalonnage d’impression',
-    b1: '1. Partir d’une taille standard', sizeL: 'Votre taille habituelle (française)', statL: 'Votre stature', fill: 'Préremplir mes mesures',
-    b2: '2. Les mesures à vérifier en priorité', b2p: 'Préremplies d’après votre taille : corrigez-les si utile.', b3: '3. Le sur-mesure : les autres mesures', b3p: 'Préremplies elles aussi : corrigez celles que vous pouvez prendre.',
+    b1: '1. Prêt-à-porter : votre taille standard', sizeL: 'Votre taille habituelle (française)', statL: 'Votre stature', fill: 'Préremplir mes mesures',
+    b2: '2. Ajusté : les 4 mesures à vérifier en priorité', b2p: 'Préremplies d’après votre taille : corrigez-les si utile.', b3: '3. Sur-mesure : les autres mesures', b3p: 'Préremplies elles aussi : corrigez celles que vous pouvez prendre.',
     needSize: 'Choisissez d’abord votre taille et votre stature.', chk: 'à vérifier', pick: 'Choisir',
     stat: { petite: 'Petite', short: 'Petite', moyenne: 'Moyenne', grande: 'Grande' },
-    recapStd: function (sz, st, n) { return 'Patron établi à partir de la taille ' + sz + ', stature ' + st + ', ' + (n ? 'avec ' + n + ' mesure' + (n > 1 ? 's' : '') + ' personnalisée' + (n > 1 ? 's' : '') : 'sans mesure personnalisée') + '.'; },
-    stdAfter: 'Choisissez votre taille et votre stature pour préremplir vos mesures, puis corrigez celles que vous pouvez prendre. Le patron se modifie à chaque réglage.',
-    introPrio: function (a, b) { return 'Certaines mesures sont identifiées comme à vérifier en priorité (' + a + '). Les autres mesures (' + b + ') sont utiles pour un vrai « sur mesure ».'; },
-    introTape: 'Il vous faut un mètre ruban et environ 10 minutes ; une tierce personne pour vous aider est un plus. Prenez-les en sous-vêtements ou avec des vêtements très fins, le mètre ruban à plat contre le corps, sans serrer.', introBra: ' Pour les mesures de poitrine, portez un soutien-gorge.'
+    recapStd: function (sz, st, n, lv) { return 'Patron établi à partir de la taille ' + sz + ', stature ' + st + ', ' + (n ? 'avec ' + n + ' mesure' + (n > 1 ? 's' : '') + ' personnalisée' + (n > 1 ? 's' : '') : 'sans mesure personnalisée') + ' : ' + ['prêt-à-porter', 'ajusté', 'sur-mesure'][lv] + '.'; },
+    stdAfter: 'Choisissez votre taille et votre stature pour préremplir vos mesures, puis corrigez celles que vous souhaitez. Le patron se modifie à chaque réglage.',
+    introPrio: function (a, b) { return 'Vous pouvez aller du prêt-à-porter au sur-mesure. Les ' + a + ' mesures à vérifier en priorité ajustent la veste à votre silhouette ; les ' + b + ' autres en font une veste vraiment sur mesure.'; },
+    introTape: 'Il vous faut un mètre ruban et environ 10 minutes ; l’aide d’une autre personne est un plus. Prenez vos mesures en sous-vêtements ou avec des vêtements très fins, le mètre ruban à plat contre le corps, sans serrer.', introBra: ' Pour les mesures de poitrine, portez un soutien-gorge.'
   };
   var $ = function (id) { return document.getElementById(id); };
   var C = window.WZ_CFG;
@@ -104,7 +104,7 @@
 
   function labelText(id) { var l = form.querySelector('label[for="v_' + id + '"]'); if (!l) return id; var c = l.cloneNode(true); c.querySelectorAll('small').forEach(function (s) { s.remove(); }); return c.textContent.replace(/\s+/g, ' ').trim(); }
   function unitOf(id) { var u = $('v_' + id).parentNode.querySelector('.u'); return u ? u.textContent.trim() : ''; }
-  function fmt(id) { var e = $('v_' + id); if (e.tagName === 'SELECT') return e.options[e.selectedIndex].textContent.trim(); if (e.value.trim() === '') return ''; var v = e.value.replace('.', ','); var u = unitOf(id); return v + (u ? (u === '°' || u === '%' ? '' : ' ') + u : ''); }
+  function fmt(id) { var e = $('v_' + id); if (e.tagName === 'SELECT') return e.options[e.selectedIndex].textContent.trim(); if (e.value.trim() === '') return ''; if (window.UNITS && window.UNITS.active(e)) return window.UNITS.fmtCm(e.value); var v = e.value.replace('.', ','); var u = unitOf(id); return v + (u ? (u === '°' || u === '%' ? '' : ' ') + u : ''); }
   function nodeOf(t) {
     if (typeof t !== 'string') return null;
     if (t.charAt(0) === '@') { var e = $(t.slice(1)); return e ? e.closest('.pieces') : null; }
@@ -158,7 +158,7 @@
       if (pr) { var lb = f.querySelector('label'); lb.insertAdjacentHTML('beforeend', ' <small class="wz-chk">' + L.chk + '</small>'); }
       f.dataset.mid = id; (pr ? b2 : b3).appendChild(f); fldEl[id] = f;
     });
-    figEl = document.createElement('figure'); figEl.className = 'wz-fig'; figEl.innerHTML = '<img alt="" width="300" height="400"><figcaption></figcaption>';
+    figEl = document.createElement('figure'); figEl.className = 'wz-fig'; figEl.innerHTML = '<img alt=""><figcaption></figcaption>';
     function showFig(id) {
       var g = guideOf[id]; if (!g || !g.img) return;
       var im = figEl.querySelector('img'); im.src = g.img; im.alt = g.alt || ''; figEl.querySelector('figcaption').innerHTML = (g.text || '');
@@ -167,6 +167,21 @@
       var f = fldEl[id];
       f.classList.add('wz-sel'); f.appendChild(figEl);
     }
+    figPlace = showFig;
+    /* grand dessin dans le cadre de droite tant que l'aperçu du patron est vide */
+    var pv = $('prev'), bigEl = null;
+    if (pv && pv.parentNode) {
+      bigEl = document.createElement('figure'); bigEl.id = 'wz-big'; bigEl.innerHTML = '<img alt=""><figcaption></figcaption>';
+      pv.parentNode.insertBefore(bigEl, pv);
+      var syncBig = function () { bigEl.classList.toggle('on', pv.childElementCount === 0); };
+      new MutationObserver(syncBig).observe(pv, { childList: true }); syncBig();
+    }
+    var showFig0 = showFig;
+    showFig = function (id) {
+      showFig0(id);
+      var g = guideOf[id];
+      if (bigEl && g && g.img) { bigEl.querySelector('img').src = g.img; bigEl.querySelector('img').alt = g.alt || ''; bigEl.querySelector('figcaption').innerHTML = '<b>' + labelText(id) + '</b> : ' + (g.text || ''); }
+    };
     figPlace = showFig;
     s.addEventListener('focusin', function (ev) { var f = ev.target.closest && ev.target.closest('.fld'); if (f && f.dataset.mid) showFig(f.dataset.mid); });
     showFig(STD.prio[0]);
@@ -189,7 +204,7 @@
     var g = (C.guide && C.guide[k]) || {};
     var s = step('m' + k, labelText(id), nM > 1 ? L.kofn(k + 1, nM) : L.one, 'mes');
     var wrap = document.createElement('div'); wrap.className = 'wz-mes';
-    if (g.img) wrap.insertAdjacentHTML('beforeend', '<img src="' + g.img + '" alt="' + (g.alt || '') + '" width="300" height="400">');
+    if (g.img) wrap.insertAdjacentHTML('beforeend', '<img src="' + g.img + '" alt="' + (g.alt || '') + '">');
     var side = document.createElement('div'); side.className = 'wz-side';
     if (g.text) side.insertAdjacentHTML('beforeend', '<p class="wz-expl">' + g.text + '</p>');
     side.appendChild(fld(id));
@@ -197,17 +212,19 @@
   });
 
   /* modèle */
-  var sM = step('modele', C.model.title, C.model.title, 'model');
-  sM.insertAdjacentHTML('beforeend', '<p>' + C.model.text + '</p>');
-  C.model.nodes.forEach(function (t) {
-    if (t && typeof t === 'object') { sM.insertAdjacentHTML('beforeend', '<h3>' + t.h3 + '</h3>'); return; }
-    var n = nodeOf(t); if (n) sM.appendChild(n);
-  });
+  var sM = null;
+  if (C.model) {
+    sM = step('modele', C.model.title, C.model.title, 'model');
+    sM.insertAdjacentHTML('beforeend', '<p>' + C.model.text + '</p>');
+    C.model.nodes.forEach(function (t) {
+      if (t && typeof t === 'object') { sM.insertAdjacentHTML('beforeend', '<h3>' + t.h3 + '</h3>'); return; }
+      var n = nodeOf(t); if (n) sM.appendChild(n);
+    });
+  }
 
   /* avancé */
   var sA = step('avance', L.adv, L.adv, 'adv');
-  sA.insertAdjacentHTML('beforeend', '<p>' + L.advLead + '</p>');
-  if (C.aisances && C.aisances.length) { sA.insertAdjacentHTML('beforeend', '<h3>' + L.ais + '</h3>'); C.aisances.forEach(function (id) { sA.appendChild(fld(id)); }); }
+  if (C.aisances && C.aisances.length) { C.aisances.forEach(function (id) { sA.appendChild(fld(id)); }); }
   if (piecesDiv) { sA.insertAdjacentHTML('beforeend', '<h3>' + L.pcs + '</h3>'); sA.appendChild(piecesDiv); }
   sA.insertAdjacentHTML('beforeend', '<h3>' + L.seam + '</h3>'); seamN.forEach(function (n) { sA.appendChild(n); });
   sA.insertAdjacentHTML('beforeend', '<h3>' + L.cal + '</h3>'); calN.forEach(function (n) { sA.appendChild(n); });
@@ -217,11 +234,14 @@
   var recap = document.createElement('div'); recap.className = 'wz-recap'; sR.appendChild(recap);
   var dls = document.createElement('div'); dls.className = 'wz-dls'; var tipP = dlP.previousElementSibling; if (tipP && tipP.classList.contains('dltip')) dls.appendChild(tipP); dls.appendChild(dlP); if (npgP) dls.appendChild(npgP); dls.appendChild(dl1P); dls.appendChild(msg); if (lastP) dls.appendChild(lastP);
   sR.appendChild(dls);
+  /* « Un problème ? » et « Vous avez réalisé ce modèle ? » : seulement à l’étape de téléchargement */
+  var pbN = document.querySelector('p.note'); var cuN = document.getElementById('cpuserP'); if (cuN) sR.appendChild(cuN); if (pbN && pbN.querySelector('#cpset')) sR.appendChild(pbN);
+  var apN = document.getElementById('appel-photo'); if (apN) sR.appendChild(apN);
 
   Array.prototype.slice.call(form.children).forEach(function (n) { n.remove(); });
   form.appendChild(top); form.appendChild(stage); form.appendChild(nav); form.appendChild(priv);
 
-  var iR = steps.length - 1, iA = iR - 1, iM = iR - 2;
+  var iR = steps.length - 1, iA = iR - 1, iM = C.model ? iR - 2 : iR - 3;
 
   /* --- navigation --- */
   var cur = -1, returnTo = -1;
@@ -273,7 +293,7 @@
     function add(l, v) { if (v === '' || v == null) v = '<span class="wz-empty">' + L.fill + '</span>'; rows.push('<tr><th scope="row">' + l + '</th><td>' + v + '</td><td><button type="button" class="wz-mod" data-s="' + idx + '" aria-label="' + L.edit + ' : ' + l.replace(/"/g, '') + '">' + L.edit + '</button></td></tr>'); }
     Array.prototype.slice.call(s.querySelectorAll('input,select')).forEach(function (e) {
       if (e.id && e.id.indexOf('v_') === 0) { add(labelText(e.id.slice(2)), fmt(e.id.slice(2))); }
-      else if (e.id === 'opt_epaule') { add(e.parentNode.textContent.replace(/\s+/g, ' ').trim(), e.checked ? L.yes : L.no); }
+      else if (e.id === 'opt_epaule') { if (true) return; add(e.parentNode.textContent.replace(/\s+/g, ' ').trim(), e.checked ? L.yes : L.no); }
       else if (e.type === 'radio') { if (seen[e.name]) return; seen[e.name] = 1; var ch = s.querySelector('input[name="' + e.name + '"]:checked'); var h3 = (C.radio && C.radio[e.name]) || e.name; add(h3, ch ? ch.parentNode.textContent.replace(/\s+/g, ' ').trim() : ''); }
     });
     if (s === sA) {
@@ -288,14 +308,15 @@
   }
   function stdLine() {
     if (!stdState) return '';
-    var n = 0; Object.keys(stdState.base).forEach(function (id) { var e = $('v_' + id); if (e && e.value !== stdState.base[id] && parseFloat(e.value) !== parseFloat(stdState.base[id])) n++; });
+    var n = 0, ch = {}; Object.keys(stdState.base).forEach(function (id) { var e = $('v_' + id); if (e && e.value !== stdState.base[id] && parseFloat(e.value) !== parseFloat(stdState.base[id])) { n++; ch[id] = 1; } });
+    var allP = STD.prio.every(function (id) { return ch[id]; }), allM = C.measures.every(function (id) { return ch[id]; }), lv = allM ? 2 : (allP ? 1 : 0);
     var T = window.TAILLES_STD[STD.genre], nm = (EN && STD.genre === 'homme' && stdState.stat === 'petite') ? L.stat.short : L.stat[stdState.stat];
-    return '<p class="wz-stdline">' + L.recapStd(stdState.size, nm.toLowerCase(), n) + '</p>';
+    return '<p class="wz-stdline">' + L.recapStd(stdState.size, nm.toLowerCase(), n, lv) + '</p>';
   }
   function buildRecap() {
-    var html = (UI ? styleRecap() : '') + '<h3>' + L.mes + '</h3>' + stdLine() + '<table class="wz-t"><tbody>' + steps.slice(i0 + 1, i0 + 1 + nM).map(function (s, k) { return rowsOf(s, i0 + 1 + k); }).join('') + '</tbody></table>' + (function () { var nt = window.WZ_NOTE ? window.WZ_NOTE() : ''; return nt ? '<p class="wz-note">' + nt + '</p>' : ''; })() +
-      '<h3>' + C.model.title + '</h3><table class="wz-t"><tbody>' + rowsOf(sM, iM) + '</tbody></table>' +
-      '<h3>' + L.adv.replace(/ \(.*\)$/, '') + '</h3><table class="wz-t"><tbody>' + rowsOf(sA, iA) + '</tbody></table>';
+    var html = (UI ? styleRecap() : '') + '<h3>' + L.mes + '</h3>' + stdLine() + '<table class="wz-t"><tbody>' + steps.slice(i0 + 1, i0 + 1 + nM).map(function (s, k) { return rowsOf(s, i0 + 1 + k); }).join('') + '</tbody></table>' + (function () { var nt = ''; return nt ? '<p class="wz-note">' + nt + '</p>' : ''; })() +
+      (C.model ? '<h3>' + C.model.title + '</h3><table class="wz-t"><tbody>' + rowsOf(sM, iM) + '</tbody></table>' : '') +
+      '<h3>' + L.adv.replace(/ \(.*\)$/, '') + '</h3><table class="wz-t"><tbody>' + rowsOf(sA, iA) + '</tbody></table>' + (UI && UI.extra ? UI.extra() : '');
     recap.innerHTML = html;
     Array.prototype.slice.call(recap.querySelectorAll('[data-act="cart"]')).forEach(function (b) { b.addEventListener('click', function () { UI.cartPdf(); }); });
     Array.prototype.slice.call(recap.querySelectorAll('.wz-mod')).forEach(function (b) { b.addEventListener('click', function () { go(+b.dataset.s, { from: iR }); }); });
