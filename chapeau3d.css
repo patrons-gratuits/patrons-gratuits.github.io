@@ -1,0 +1,18 @@
+/* Aperçus 3D des chapeaux (bob, béret à pétales, béret basque) et réglages au curseur */
+.fld input[type=range]{width:100%;accent-color:var(--ac);margin:2px 0 0}
+.fld .vo{float:right;font-weight:600;color:var(--ac);margin-left:.6em}
+.view3d,.prof.view3d{background:#fff!important;color:#5b6775;border-radius:10px;padding:8px;text-align:center}
+.view3d .stage{display:flex;align-items:stretch;gap:6px}
+.view3d svg{--ink:#3b2f22;--head:#2f3236;flex:1;min-width:0;width:100%;height:auto;max-height:420px;display:block;touch-action:none;cursor:grab}
+#sec{--fabric:#498195;--lining:#c1846c}
+#v3a,#v3b{--fabric:#498195}
+#v3{--fabric:#c1846c}
+.view3d .duo{flex:1;display:flex;gap:6px;min-width:0}
+.view3d .duo figure{margin:0;flex:1;min-width:0;display:flex;flex-direction:column}
+.view3d .duo svg{max-height:none}
+.view3d figcaption{font-size:.82rem;color:#5b6775;margin-top:2px}
+.view3d .incl{display:flex;flex-direction:column;align-items:center;justify-content:space-between;font-size:.72rem;color:#5b6775;width:44px;padding:4px 0;flex:none}
+.view3d .incl input{writing-mode:vertical-lr;direction:rtl;flex:1;width:24px;min-height:140px;margin:6px 0;accent-color:#0f6f86}
+.view3d button{margin-top:8px}
+@media(max-width:760px){.view3d .duo{flex-direction:column}.view3d .duo svg{max-height:300px}}
+@media(max-width:760px){body.th .card.wz-prof .prof.view3d .duo svg{max-height:15vh!important}body.th .card.wz-prof.zoom .prof.view3d .duo svg{max-height:27vh!important}body.th .card.wz-prof .view3d .incl input{min-height:60px}}
