@@ -7,7 +7,7 @@
   var L = EN ? {
     prev: 'Previous', next: 'Next', start: 'Start', see: 'See the summary', back: 'Back to the summary',
     intro: 'Before you start', recap: 'Summary', adv: 'Advanced settings (optional)', advLead: 'Rarely changed: you can skip straight to the next step.',
-    ais: 'Ease allowances', pcs: 'Pieces to download', seam: 'Seam allowance', cal: 'Print calibration', mes: 'Measurements', edit: 'Edit', fill: 'To fill in', none: 'none', yes: 'yes', no: 'no',
+    ais: 'Ease allowances', pcs: 'Pieces to download', seam: 'Seam allowance', cal: 'Print calibration', calQ: 'Is the printed check square the wrong size? Adjust the calibration', mes: 'Measurements', edit: 'Edit', fill: 'To fill in', none: 'none', yes: 'yes', no: 'no',
     priv: 'Your measurements are kept only in this browser, on this device. Nothing is sent to the site.', clear: 'Clear my measurements',
     resume: 'Continue with your measurements from ', restart: 'Start over', nextM: 'Next: measurements', resumeS: 'Resume your measurements from ', hint: 'Tap the preview to enlarge or shrink it.', showPcs: 'Show the pattern pieces', hidePcs: 'Hide the pattern pieces',
     one: 'Your measurement', kofn: function (k, n) { return 'Measurement ' + k + ' of ' + n; },
@@ -18,12 +18,12 @@
     stat: { petite: 'Petite', short: 'Short', moyenne: 'Average', grande: 'Tall' },
     recapStd: function (sz, st, n, lv) { return 'Pattern based on size ' + sz + ', ' + st + ' height, with ' + (n ? n + ' personal measurement' + (n > 1 ? 's' : '') : 'no personal measurement') + ': ' + ['ready-to-wear', 'fitted', 'made to measure'][lv] + '.'; },
     stdAfter: 'Choose your size and height to pre-fill your measurements, then correct any you wish. The pattern updates with every change.',
-    introPrio: function (a, b) { return 'You can go from ready-to-wear to made to measure. The ' + a + ' measurements to check first fit the jacket to your figure; the other ' + b + ' make it truly made to measure.'; },
-    introTape: 'You need a tape measure and about 10 minutes; help from another person is a plus. Take your measurements in underwear or very thin clothing, with the tape flat against the body, not tight.', introBra: ' For the bust measurements, wear a bra.'
+    introPrio: function (a, b, d) { var w = d ? 'dress' : 'jacket'; return 'You can go from ready-to-wear to made to measure. ' + a + ' measurements to check first, which fit the ' + w + ' to your figure; the other ' + b + ' make it a truly made-to-measure ' + w + '.'; },
+    introTape: 'A tape measure and about 10 minutes; help from another person is a plus. Take your measurements in underwear or very thin clothing, with the tape flat against the body, not tight.', introBra: ' For the bust measurements, wear a bra.'
   } : {
     prev: 'Précédent', next: 'Suivant', start: 'Commencer', see: 'Voir le récapitulatif', back: 'Retour au récapitulatif',
     intro: 'Avant de commencer', recap: 'Récapitulatif', adv: 'Réglages avancés (facultatif)', advLead: 'Rarement modifiés : vous pouvez passer directement à la suite.',
-    ais: 'Aisances', pcs: 'Pièces à télécharger', seam: 'Marge de couture', cal: 'Étalonnage d’impression', mes: 'Mesures', edit: 'Modifier', fill: 'À renseigner', none: 'aucune', yes: 'oui', no: 'non',
+    ais: 'Aisances', pcs: 'Pièces à télécharger', seam: 'Marge de couture', cal: 'Étalonnage d’impression', calQ: 'Le carré de contrôle imprimé n’a pas la bonne taille ? Régler l’étalonnage', mes: 'Mesures', edit: 'Modifier', fill: 'À renseigner', none: 'aucune', yes: 'oui', no: 'non',
     priv: 'Vos mesures sont gardées uniquement dans ce navigateur, sur cet appareil. Rien n’est envoyé au site.', clear: 'Effacer mes mesures',
     resume: 'Reprendre avec vos mesures du ', restart: 'Recommencer', nextM: 'Suivant : les mesures', resumeS: 'Reprendre vos mesures du ', hint: 'Touchez l’aperçu pour l’agrandir ou le réduire.', showPcs: 'Voir les pièces du patron', hidePcs: 'Masquer les pièces du patron',
     one: 'Votre mesure', kofn: function (k, n) { return 'Mesure ' + k + ' sur ' + n; },
@@ -34,8 +34,8 @@
     stat: { petite: 'Petite', short: 'Petite', moyenne: 'Moyenne', grande: 'Grande' },
     recapStd: function (sz, st, n, lv) { return 'Patron établi à partir de la taille ' + sz + ', stature ' + st + ', ' + (n ? 'avec ' + n + ' mesure' + (n > 1 ? 's' : '') + ' personnalisée' + (n > 1 ? 's' : '') : 'sans mesure personnalisée') + ' : ' + ['prêt-à-porter', 'ajusté', 'sur-mesure'][lv] + '.'; },
     stdAfter: 'Choisissez votre taille et votre stature pour préremplir vos mesures, puis corrigez celles que vous souhaitez. Le patron se modifie à chaque réglage.',
-    introPrio: function (a, b) { return 'Vous pouvez aller du prêt-à-porter au sur-mesure. Les ' + a + ' mesures à vérifier en priorité ajustent la veste à votre silhouette ; les ' + b + ' autres en font une veste vraiment sur mesure.'; },
-    introTape: 'Il vous faut un mètre ruban et environ 10 minutes ; l’aide d’une autre personne est un plus. Prenez vos mesures en sous-vêtements ou avec des vêtements très fins, le mètre ruban à plat contre le corps, sans serrer.', introBra: ' Pour les mesures de poitrine, portez un soutien-gorge.'
+    introPrio: function (a, b, d) { var w = d ? 'robe' : 'veste'; return 'Vous pouvez aller du prêt-à-porter au sur-mesure. ' + a + ' mesures à vérifier en priorité qui ajustent la ' + w + ' à votre silhouette ; les ' + b + ' autres en font une ' + w + ' vraiment sur mesure.'; },
+    introTape: 'Un mètre ruban et environ 10 minutes ; l’aide d’une autre personne est un plus. Prenez vos mesures en sous-vêtements ou avec des vêtements très fins, le mètre ruban à plat contre le corps, sans serrer.', introBra: ' Pour les mesures de poitrine, portez un soutien-gorge.'
   };
   var $ = function (id) { return document.getElementById(id); };
   var C = window.WZ_CFG;
@@ -102,11 +102,14 @@
   var piecesDiv = $('pieces') && $('pieces').querySelector('.grp') ? $('pieces') : null;
   var seamN = seamNodes(false), calN = calNodes(document.querySelector('label[for="v_meas"]'), false);
 
-  function labelText(id) { var l = form.querySelector('label[for="v_' + id + '"]'); if (!l) return id; var c = l.cloneNode(true); c.querySelectorAll('small').forEach(function (s) { s.remove(); }); return c.textContent.replace(/\s+/g, ' ').trim(); }
+  var LBC = {};
+  function labelText(id) { var l = form.querySelector('label[for="v_' + id + '"]'); if (!l) return LBC[id] || id; var c = l.cloneNode(true); c.querySelectorAll('small').forEach(function (s) { s.remove(); }); return c.textContent.replace(/\s+/g, ' ').trim(); }
+  (C.measures || []).forEach(function (id) { var l = form.querySelector('label[for="v_' + id + '"]'); if (l) { var c = l.cloneNode(true); c.querySelectorAll('small').forEach(function (x) { x.remove(); }); LBC[id] = c.textContent.replace(/\s+/g, ' ').trim(); } });
   function unitOf(id) { var u = $('v_' + id).parentNode.querySelector('.u'); return u ? u.textContent.trim() : ''; }
   function fmt(id) { var e = $('v_' + id); if (e.tagName === 'SELECT') return e.options[e.selectedIndex].textContent.trim(); if (e.value.trim() === '') return ''; if (window.UNITS && window.UNITS.active(e)) return window.UNITS.fmtCm(e.value); if (window.UNITS && window.UNITS.activeMm && window.UNITS.activeMm(e)) return window.UNITS.fmtMm(e.value); var v = e.value.replace('.', ','); var u = unitOf(id); return v + (u ? (u === '°' || u === '%' ? '' : ' ') + u : ''); }
   function nodeOf(t) {
     if (typeof t !== 'string') return null;
+    if (t.charAt(0) === '#') return $(t.slice(1));
     if (t.charAt(0) === '@') { var e = $(t.slice(1)); return e ? e.closest('.pieces') : null; }
     if (t.charAt(0) === '+') { var e2 = $(t.slice(1)); var b = e2 ? e2.closest('.pieces') : null; return b ? b.nextElementSibling : null; }
     if (t.charAt(0) === '~') { var r = form.querySelector('input[name="' + t.slice(1) + '"]'); return r ? r.closest('.pieces') : null; }
@@ -129,10 +132,10 @@
 
   /* 0. accueil */
   var s0 = step('intro', L.intro, '', 'intro');
-  if (STD) { var h0 = s0.querySelector('h2'); if (h0) h0.insertAdjacentHTML('beforebegin', '<p class="cq-lead">' + L.stdAfter + '</p>'); }
+  
   var mids = C.measures, nM = STD ? 1 : mids.length;
   var ul = (C.intro.list && nM > 1 && !STD) ? '<ol class="wz-list">' + mids.map(function (id) { return '<li>' + labelText(id) + '</li>'; }).join('') + '</ol>' : '';
-  s0.insertAdjacentHTML('beforeend', (STD ? '<p>' + L.introPrio(STD.prio.length, C.measures.length - STD.prio.length) + '</p><p>' + L.introTape + (STD.genre === 'femme' ? L.introBra : '') + '</p>' : C.intro.lead + ul + C.intro.after) + (UI ? '' : '<div class="wz-resume" hidden></div>'));
+  s0.insertAdjacentHTML('beforeend', (STD ? '<p>' + L.stdAfter + '</p><p>' + (STD.prioText || L.introPrio(STD.prio.length, C.measures.length - STD.prio.length, /robe/.test(document.body.getAttribute('data-modele') || location.pathname))) + '</p><p>' + L.introTape + (STD.genre === 'femme' ? L.introBra : '') + (STD.tapeExtra || '') + '</p>' : C.intro.lead + ul + C.intro.after) + (UI ? '' : '<div class="wz-resume" hidden></div>'));
   if (UI) sS.insertAdjacentHTML('beforeend', '<div class="wz-resume" hidden></div>');
 
   /* mesures */
@@ -140,9 +143,9 @@
   function buildStd() {
     var T = window.TAILLES_STD[STD.genre], statKeys = Object.keys(T.statures), sizes = Object.keys(T.tailles[T.statures[statKeys[0]]]);
     var s = step('m0', L.mes, L.mes, 'mes');
-    var EQ = (window.TAILLES_STD.equivalences || {})[STD.genre] || {};
-    var sizeLabel = function (z) { var q = EN && EQ[z]; if (!q) return z; return STD.genre === 'homme' ? z + ' (UK/US ' + q.UK_US_poitrine_pouces + ')' : z + ' (UK ' + q.UK + ' · US ' + q.US + ')'; };
-    var statLabel = function (k) { var nm = (EN && STD.genre === 'homme' && k === 'petite') ? L.stat.short : L.stat[k]; return nm + ' (' + T.statures[k] + ' cm)'; };
+    var GK = T.kind || STD.genre, EQ = (window.TAILLES_STD.equivalences || {})[STD.genre] || {};
+    var sizeLabel = function (z) { var q = EN && EQ[z]; if (!q) return z; return GK === 'homme' ? z + ' (UK/US ' + q.UK_US_poitrine_pouces + ')' : z + ' (UK ' + q.UK + ' · US ' + q.US + ')'; };
+    var statLabel = function (k) { var nm = (EN && GK === 'homme' && k === 'petite') ? L.stat.short : L.stat[k]; return nm + ' (' + T.statures[k] + ' cm)'; };
     var h = '<section class="wz-blk wz-b1"><h3>' + L.b1 + '</h3><div class="wz-stdrow"><label for="wz-size">' + L.sizeL + '</label><select id="wz-size"><option value="">' + L.pick + '</option>' + sizes.map(function (z) { return '<option value="' + z + '">' + sizeLabel(z) + '</option>'; }).join('') + '</select>' +
       '<label for="wz-stat">' + L.statL + '</label><select id="wz-stat"><option value="">' + L.pick + '</option>' + statKeys.map(function (k) { return '<option value="' + k + '">' + statLabel(k) + '</option>'; }).join('') + '</select></div>' +
       '<p class="wz-stdmsg" id="wz-stdmsg" role="status" aria-live="polite"></p></section>';
@@ -195,7 +198,7 @@
       C.measures.forEach(function (id) { var e = $('v_' + id); if (e) e.dispatchEvent(new Event('input', { bubbles: true })); });
       save();
     }
-    [zs, zt].forEach(function (e) { e.addEventListener('change', function () { msg.textContent = ''; fill(); }); });
+    [zs, zt].forEach(function (e) { e.addEventListener('change', function () { msg.textContent = (zs.value && zt.value) ? '' : L.needSize; fill(); }); });
     s.dataset.std = '1';
     return s;
   }
@@ -208,6 +211,7 @@
     var side = document.createElement('div'); side.className = 'wz-side';
     if (g.text) side.insertAdjacentHTML('beforeend', '<p class="wz-expl">' + g.text + '</p>');
     side.appendChild(fld(id));
+    ((C.companions && C.companions[id]) || []).forEach(function (c) { var cf = fld(c); if (cf) side.appendChild(cf); });   /* champs affichés sous cette mesure (ex. aisance sous le tour de tête) */
     wrap.appendChild(side); s.appendChild(wrap);
   });
 
@@ -227,13 +231,14 @@
   if (C.aisances && C.aisances.length) { C.aisances.forEach(function (id) { sA.appendChild(fld(id)); }); }
   if (piecesDiv) { sA.insertAdjacentHTML('beforeend', '<h3>' + L.pcs + '</h3>'); sA.appendChild(piecesDiv); }
   sA.insertAdjacentHTML('beforeend', '<h3>' + L.seam + '</h3>'); seamN.forEach(function (n) { sA.appendChild(n); });
-  sA.insertAdjacentHTML('beforeend', '<h3>' + L.cal + '</h3>'); calN.forEach(function (n) { sA.appendChild(n); });
+  /* étalonnage : on ne connaît la valeur qu'après une première impression, donc il vient avec le téléchargement (étape finale) */
+  var calBox = document.createElement('details'); calBox.className = 'wz-cal'; calBox.innerHTML = '<summary>' + L.calQ + '</summary>'; calN.forEach(function (n) { calBox.appendChild(n); });
 
   /* récapitulatif */
   var sR = step('recap', L.recap, L.recap, 'recap');
   var recap = document.createElement('div'); recap.className = 'wz-recap'; sR.appendChild(recap);
   var dls = document.createElement('div'); dls.className = 'wz-dls'; var tipP = dlP.previousElementSibling; if (tipP && tipP.classList.contains('dltip')) dls.appendChild(tipP); dls.appendChild(dlP); if (npgP) dls.appendChild(npgP); dls.appendChild(dl1P); dls.appendChild(msg); if (lastP) dls.appendChild(lastP);
-  sR.appendChild(dls);
+  sR.appendChild(dls); sR.appendChild(calBox);
   /* « Un problème ? » et « Vous avez réalisé ce modèle ? » : seulement à l’étape de téléchargement */
   var pbN = document.querySelector('p.note'); var cuN = document.getElementById('cpuserP'); if (cuN) sR.appendChild(cuN); if (pbN && pbN.querySelector('#cpset')) sR.appendChild(pbN);
   var apN = document.getElementById('appel-photo'); if (apN) sR.appendChild(apN);
@@ -276,6 +281,8 @@
     nav.classList.toggle('single', !UI && n === 0);
     if (!opts || !opts.quiet) { try { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { } var f = s.querySelector('input[type="number"]'); if (f && n > i0 && n <= iM && !s.dataset.std && !(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) { try { f.focus({ preventScroll: true }); f.select(); } catch (e) { } } }
   }
+  window.WZ_RECAP = function () { go(iR); };
+  window.WZ_BUILD_RECAP = function () { buildRecap(); return recap; };
   bNext.addEventListener('click', function () {
     if (steps[cur].dataset.std) {
       var empty = Array.prototype.slice.call(steps[cur].querySelectorAll('input[id^="v_"]')).some(function (i) { return i.value.trim() === ''; });
@@ -311,7 +318,7 @@
     if (!stdState) return '';
     var n = 0, ch = {}; Object.keys(stdState.base).forEach(function (id) { var e = $('v_' + id); if (e && e.value !== stdState.base[id] && parseFloat(e.value) !== parseFloat(stdState.base[id])) { n++; ch[id] = 1; } });
     var allP = STD.prio.every(function (id) { return ch[id]; }), allM = C.measures.every(function (id) { return ch[id]; }), lv = allM ? 2 : (allP ? 1 : 0);
-    var T = window.TAILLES_STD[STD.genre], nm = (EN && STD.genre === 'homme' && stdState.stat === 'petite') ? L.stat.short : L.stat[stdState.stat];
+    var T = window.TAILLES_STD[STD.genre], nm = (EN && (T.kind || STD.genre) === 'homme' && stdState.stat === 'petite') ? L.stat.short : L.stat[stdState.stat];
     return '<p class="wz-stdline">' + L.recapStd(stdState.size, nm.toLowerCase(), n, lv) + '</p>';
   }
   function buildRecap() {
@@ -369,9 +376,8 @@
       nav.parentNode.insertBefore(r0, nav.nextSibling);
       $('wz-resume').addEventListener('click', function () { apply(saved); go(iR); });
     } else {
-      r0.innerHTML = '<p><button type="button" class="wz-big" id="wz-resume">' + L.resume + ds + '</button> <button type="button" class="wz-alt" id="wz-restart">' + L.restart + '</button></p>';
+      r0.innerHTML = '<p><button type="button" class="wz-big" id="wz-resume">' + L.resume + ds + '</button></p>';
       $('wz-resume').addEventListener('click', function () { apply(saved); go(iR); });
-      $('wz-restart').addEventListener('click', function () { reset(); go(i0 + 1); });
     }
   }
 
@@ -401,7 +407,7 @@
       if (mq.matches) { if (prof.parentNode !== box) { box.appendChild(prof); box.insertAdjacentHTML('afterbegin', '<p class="wz-pvhint"><small>' + L.hint + '</small></p>'); } }
       else if (prof.parentNode === box) { home.insertBefore(prof, nextSib); box.innerHTML = ''; box.classList.remove('zoom'); }
     };
-    box.addEventListener('click', function () { if (mq.matches) box.classList.toggle('zoom'); });
+    box.addEventListener('click', function (ev) { if (ev.target.closest && ev.target.closest('button,.incl')) return; if (mq.matches) box.classList.toggle('zoom'); });
     if (mq.addEventListener) mq.addEventListener('change', place); else mq.addListener(place);
     place();
   }

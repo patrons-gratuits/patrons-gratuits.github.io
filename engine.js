@@ -293,10 +293,10 @@
           }
           case 'intersectXY': p = { x: P(e.firstPoint).x, y: P(e.secondPoint).y }; break;
           case 'lineIntersect': {
-            const a1 = P(e.p1Line1), a2 = P(e.p1Line2);
+            const a1 = P(e.p1Line1), a2 = P(e.p2Line1);
             const d = { x: a2.x - a1.x, y: a2.y - a1.y }, n = Math.hypot(d.x, d.y);
             if (n < 1e-12) throw new Error('Droites parallèles');
-            p = intersectLines(a1, { x: d.x / n, y: d.y / n }, P(e.p2Line1), P(e.p2Line2)); break;
+            p = intersectLines(a1, { x: d.x / n, y: d.y / n }, P(e.p1Line2), P(e.p2Line2)); break;
           }
           case 'lineIntersectAxis': {
             const b = P(e.basePoint); const a = F(e.angle);
