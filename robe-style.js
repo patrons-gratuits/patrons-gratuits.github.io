@@ -8,6 +8,7 @@
   var T = EN ? {
     title: 'Your style', lead: 'Design a dress that suits you: the sketch shows each of your choices. The measurements come next.',
     len: 'Length', mini: 'Mini', moy: 'Midi', lon: 'Maxi',
+    rall: 'Starting length (no adjustment): %b, from the top of the shoulder to the hem. With your setting: %t.', rall0: 'no adjustment',
     lenInfo: '%n: %d, from the top of the shoulder to the hem', lenHint: 'To check, measure a dress you like, or measure on yourself from the top of the shoulder, next to the neck, down to where you want the hem, then adjust with the length setting.',
     neck: 'Necklines', ed: 'Front neckline', eb: 'Back neckline', orig: 'as designed', low: 'lowered by %d', rai: 'raised by %d',
     bra: 'If you wear a bra, do not lower the back neckline by more than about 6 cm, or the strap will show.',
@@ -18,6 +19,7 @@
   } : {
     title: 'Votre style', lead: 'Composez une robe qui vous ressemble : le croquis intègre chacun de vos choix. Viennent ensuite les mesures.',
     len: 'Longueur', mini: 'Mini', moy: 'Moyenne', lon: 'Longue',
+    rall: 'Longueur de départ (sans rallonge) : %b, du haut de l’épaule au bas de la robe. Avec votre réglage : %t.', rall0: 'sans rallonge',
     lenInfo: '%n : %d, du haut de l’épaule au bas de la robe', lenHint: 'Pour vérifier, mesurez une robe que vous aimez, ou mesurez sur vous du haut de l’épaule, au ras du cou, jusqu’à l’endroit voulu, puis corrigez avec la rallonge.',
     neck: 'Encolures', ed: 'Encolure devant', eb: 'Encolure dos', orig: 'd’origine', low: 'descendue de %d', rai: 'remontée de %d',
     bra: 'Si vous portez un soutien-gorge, ne descendez pas l’encolure dos de plus de 6 cm environ : l’attache deviendrait visible.',
@@ -62,6 +64,15 @@
     return T.lenInfo.replace('%n', nm).replace('%d', d);
   }
 
+  function rallHint() {
+    var e = document.getElementById('v_M_LongueurDevantTaille'), m = e ? parseFloat(e.value) : NaN; if (!(m > 0)) m = 40;
+    var r = document.getElementById('v_P_Rallonge'), ra = r ? parseFloat(r.value) : 0; if (!isFinite(ra)) ra = 0;
+    var b = Math.round(m * (1 + K[st.longueur])), f = function (v) { return (window.UNITS && window.UNITS.mode() === 'in') ? window.UNITS.fmtCm(v) : v + ' ' + T.cm; };
+    var h = document.getElementById('st-rallhint'), w = document.getElementById('w_P_Rallonge');
+    if (!w) return;
+    if (!h) { h = document.createElement('p'); h.className = 'hint'; h.id = 'st-rallhint'; h.style.margin = '2px 0 6px'; h.style.fontWeight = 'normal'; var lb = w.querySelector('label'); if (lb && lb.nextSibling) w.insertBefore(h, lb.nextSibling); else w.appendChild(h); }
+    h.textContent = T.rall.replace('%b', f(b)).replace('%t', f(Math.round(b + ra)));
+  }
   var sk = document.createElement('div');
   sk.className = 'card sticky cq'; sk.id = 'sketchcard';
   sk.innerHTML = '<div class="cq-views" role="group"><button type="button" id="st-vf" aria-pressed="true">' + T.face + '</button><button type="button" id="st-vd" aria-pressed="false">' + T.dos + '</button></div>' +
@@ -112,7 +123,7 @@
     readDom();
     $('st-pp').hidden = st.poche !== 'passepoil';
     $('st-ed-v').textContent = neckTxt(st.ed); $('st-eb-v').textContent = neckTxt(st.eb);
-    $('st-lenv').textContent = lenLabel();
+    $('st-lenv').textContent = lenLabel(); rallHint();
     $('st-vf').setAttribute('aria-pressed', String(view === 'face')); $('st-vd').setAttribute('aria-pressed', String(view === 'dos'));
     lsSet(st);
     window.CroquisRobe.draw($('st-svg'), { vue: view, longueur: st.longueur, encolureDevant: st.ed, encolureDos: st.eb, poche: st.poche, nbPoches: st.nb, anglePoche: st.ang });
@@ -120,11 +131,13 @@
     $('st-leg').innerHTML = '<span>' + (view === 'face' ? T.lr : T.rl).join('</span><span>') + '</span>';
     if (fromUser) window.dispatchEvent(new Event('sah-style'));
   }
-  document.addEventListener('input', function (ev) { var i = ev.target && ev.target.id; if (i === 'v_M_LongueurDevantTaille' || i === 'v_P_Rallonge') { if (root) $('st-lenv').textContent = lenLabel(); } });
+  document.addEventListener('input', function (ev) { var i = ev.target && ev.target.id; if (i === 'v_M_LongueurDevantTaille' || i === 'v_P_Rallonge') { if (root) { $('st-lenv').textContent = lenLabel(); rallHint(); } } });
   document.addEventListener('unitschange', function () { if (root) render(); });
 
   window.SAH_STYLE_UI = {
     title: T.title, build: build, fromUrl: false,
+    share: function () { return { v: st, d: DEF }; },
+    setShare: function (s) { s = s || {}; Object.keys(DEF).forEach(function (k) { st[k] = s[k] !== undefined ? s[k] : DEF[k]; }); if (root) { applyDom(); render(true); } },
     reset: function () { lsDel(); Object.keys(DEF).forEach(function (k) { st[k] = DEF[k]; }); if (root) { applyDom(); render(true); } },
     recap: function () {
       var rows = [];

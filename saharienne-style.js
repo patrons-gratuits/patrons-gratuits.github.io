@@ -376,6 +376,16 @@
     },
     links: function () { return lastLinks.slice(); },
     cartPdf: function () { cartPdf(); },
+    share: function () { return { v: lsGet() || {}, d: DEF, ver: PV }; },
+    setShare: function (s, ver) {
+      s = s || {};
+      if (FEM && (ver === 's' || ver === 'd')) { PV = ver; try { localStorage.setItem(VKEY, PV); } catch (e) { } }
+      Object.keys(DEF).forEach(function (k) { st[k] = s[k] !== undefined ? s[k] : DEF[k]; });
+      if (s.emp === undefined) st.emp = PV === 'd' && !ROBE;
+      if (PV !== 'd') st.emp = false;
+      if (st.same && (st.pd === 'k' || st.pg === 'k')) st.same = false;
+      if (root) { applyDom(); render(); }
+    },
     smalls: function () {
       var d = pocketDims();
       return { title: T.smTitle, intro: T.smIntro, dl: T.smDl, items: lastSmall.map(function (x) {

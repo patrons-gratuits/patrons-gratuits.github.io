@@ -80,3 +80,14 @@ html[data-wz-step="recap"] .wz-pair svg{max-height:32vh;width:100%;height:auto}
 .pv-ft button{width:auto;margin:0;flex:0 0 auto}
 @media(max-width:480px){.pv-ft button{flex:1 1 100%}}
 .wz-note{margin:.6rem 0;padding:.5rem .7rem;border-left:3px solid var(--acc,#d9480f);background:rgba(217,72,15,.07)}
+
+/* téléphone : « Face » et « Dos » de part et d'autre du croquis, pour laisser toute la hauteur à l'image */
+@media(max-width:760px){
+  #sketchcard .cq-views{position:absolute;top:30px;left:6px;right:6px;margin:0;justify-content:space-between;z-index:2;pointer-events:none}
+  #sketchcard .cq-views button,#sketchcard .cq-views button:first-child,#sketchcard .cq-views button:last-child{pointer-events:auto;min-width:48px;min-height:36px;padding:4px 12px;font-size:.85rem;border-radius:999px;border:1px solid var(--ac);background:var(--card,#fff)}
+  #sketchcard .cq-views button[aria-pressed="true"]{background:var(--ac);color:#fff}
+  body.th .card.wz-pv .cq-svg{max-height:32vh}
+  body.th .card.wz-pv.zoom .cq-svg{max-height:70vh}
+  body.th .card.wz-pv.kb .cq-svg{max-height:13vh}
+  body.th .card.wz-pv:not(.zoom) .cq-note{display:none}
+}

@@ -97,9 +97,14 @@
       PW = Math.max(wmax + 2 * MARGIN + 20, Math.sqrt(area * 1.35 * 1.5) + 2 * MARGIN);
       PW = Math.max(PW, Math.max(wmax, HMIN) + 2 * (TSQ + 6) + 2 * MARGIN); // place pour le carré d'essai à côté d'une petite pièce
       PH = 1e5; NOVC = true;
-      const L1 = layout(pieces, 1);
-      let ymax = 0; L1.pages.forEach(pg => pg.items.forEach(it => { ymax = Math.max(ymax, it.py + it.h + L1.head); }));
-      ymax = Math.max(ymax, TSQ + 40);
+      /* Largeur de page : on essaie plusieurs largeurs et on garde celle qui donne la plus petite surface totale
+         (l'impression grand format se facture à la surface ; sans effet sur la vidéoprojection). */
+      const hOf = (W) => { PW = W; const L = layout(pieces, 1); let ym = 0; L.pages.forEach(pg => pg.items.forEach(it => { ym = Math.max(ym, it.py + it.h + L.head); })); return Math.max(ym, TSQ + 40); };
+      const floorW = Math.max(wmax + 2 * MARGIN + 20, Math.max(wmax, HMIN) + 2 * (TSQ + 6) + 2 * MARGIN), W0 = PW;
+      const score = (W, y) => { const H = y + 2 * MARGIN + 24, r = Math.max(W / H, H / W); return W * H * (1 + 0.1 * Math.max(0, r - 1.5)); }; // léger malus aux pages trop allongées
+      let bestW = W0, bestY = hOf(W0), bestA = score(bestW, bestY);
+      for (let W = floorW; W <= W0 * 2.2; W += 12) { const y = hOf(W), a = score(W, y); if (a < bestA - 1) { bestA = a; bestW = W; bestY = y; } }
+      PW = bestW; const ymax = bestY;
       NOVC = false; PH = ymax + 2 * MARGIN + 24;
       return build1(pieces, Object.assign({}, opts, { single: false, scale: 1, proj: true }));
     } finally { PW = A; PH = B; NOVC = false; }
