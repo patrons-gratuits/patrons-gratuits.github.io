@@ -164,6 +164,14 @@
       surf.push(a);
     }
     mesh(surf, fab, fab, faces, [cx * 0.5, 0, P.H * 0.3]);
+    if (P.petales && o.unPetale) faces.forEach(function (f) {         // schéma : un pétale d'une autre couleur pour montrer les parties du béret
+      var k = Math.round(((f.i + .5) / NA) * P.petales) % P.petales, nj = surf[0].length - 1;
+      if (k === 0 && f.j < nj - 2) f.fill = shade(o.unPetale, f.ext ? f.lum : f.lum * 0.8);
+    });
+    if (P.petales && o.alterne) faces.forEach(function (f) {          // deux tissus en alternance, un pétale sur deux
+      var k = Math.round(((f.i + .5) / NA) * P.petales) % P.petales, nj = surf[0].length - 1;
+      if (f.j < nj - 2) f.fill = shade(o.alterne[k % 2], f.ext ? f.lum : f.lum * 0.8);
+    });
     faces.sort(function (a, b) { return b.d - a.d; });
     function poly(S, fill) { out.push('<polygon points="' + S.map(function (p) { return p.x.toFixed(2) + ',' + p.y.toFixed(2); }).join(' ') + '" fill="' + fill + '" stroke="' + fill + '" stroke-width=".08"/>'); }
     var hz = -P.Hb;                                             // la tête commence sous le bandeau
@@ -186,7 +194,8 @@
         '<rect x="0" y="3.4" width="6" height=".5" fill="#1d2a30" opacity=".35"/><rect x="3.4" y="0" width=".5" height="6" fill="#1d2a30" opacity=".35"/></pattern>';
       out.push(defs + '</defs>');
     }
-    var T = tete(2 * P.r, 2 * P.r * 0.8, P.H + P.dome);
+    var AZt = AZ; if (o.teteDeFace) AZ = 0;                      // schéma : la tête reste de face quand on tourne le béret
+    var T = tete(2 * P.r, 2 * P.r * 0.8, P.H + P.dome); AZ = AZt;
     var ty = (-P.Hb + 2).toFixed(2);
     T.forEach(function (dd) { out.push('<path d="' + dd + '" fill="' + head + '" transform="translate(0,' + (-hz * Math.cos(EL)).toFixed(2) + ')"/>'); });
     pres.forEach(function (f) {

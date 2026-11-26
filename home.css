@@ -10,7 +10,7 @@ body.home main{max-width:1060px}
 .hero2-ph{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:10px;height:340px}
 .hero2-ph img{width:100%;height:100%;min-height:0;aspect-ratio:auto;object-fit:cover;border-radius:12px;display:block;box-shadow:0 4px 14px rgba(0,0,0,.16)}
 .hero2-ph img:first-child{grid-row:1 / span 2}
-.steps{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.steps{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .steps li{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px 14px 62px;position:relative;line-height:1.35}
 .steps .n{position:absolute;left:14px;top:12px;width:38px;height:38px;border-radius:50%;background:var(--brand);color:#fff;font:700 1.35rem/38px "Titres",Georgia,serif;text-align:center}
 .steps b{display:block;font-size:1.02rem}

@@ -5,8 +5,8 @@ document.addEventListener("click",function(e){document.querySelectorAll("details
 
 (function(){
 var EN=/^en/i.test(document.documentElement.lang||'');
-var T=EN?{ok:'Settings copied and the form is open: paste them into your message (Ctrl+V).',okp:'The form is open with your settings already in it.',lnk:'Open “Give feedback”',ko:'Copy failed: select and copy the text below.',pg:'Page',dt:'Date',ur:'Address',cf:'Settings',br:'Browser',ver:'Site version',yes:'yes',no:'no',head:'Settings for my pattern',cu:'Copy / Paste my settings',cum:'Settings copied: you can paste them anywhere (word processor, notes…).',cus:'Feedback: copy settings',nm:'Pattern'}
-:{ok:'Réglages copiés et formulaire ouvert : collez-les dans votre message (Ctrl+V).',okp:'Le formulaire est ouvert, vos réglages y sont déjà.',lnk:'Ouvrir « Donner votre avis »',ko:'Copie impossible : sélectionnez et copiez le texte ci-dessous.',pg:'Page',dt:'Date',ur:'Adresse',cf:'Réglages',br:'Navigateur',ver:'Version du site',yes:'oui',no:'non',head:'Réglages de mon patron',cu:'Copier / Coller mes réglages',cum:'Réglages copiés : vous pouvez les coller où vous voulez (traitement de texte, notes…).',cus:'Problème : rapporter mes réglages',nm:'Patron'};
+var T=EN?{ok:'Settings copied and the form is open: paste them into your message (Ctrl+V).',okp:'The form is open with your settings already in it.',lnk:'Open “Give feedback”',ko:'Copy failed: select and copy the text below.',pg:'Page',dt:'Date',ur:'Address',cf:'Settings',br:'Browser',ver:'Site version',yes:'yes',no:'no',head:'Settings for my pattern',cu:'Copy my settings as text',cum:'Settings copied: you can paste them anywhere (word processor, notes…).',cus:'Feedback: copy settings',nm:'Pattern'}
+:{ok:'Réglages copiés et formulaire ouvert : collez-les dans votre message (Ctrl+V).',okp:'Le formulaire est ouvert, vos réglages y sont déjà.',lnk:'Ouvrir « Donner votre avis »',ko:'Copie impossible : sélectionnez et copiez le texte ci-dessous.',pg:'Page',dt:'Date',ur:'Adresse',cf:'Réglages',br:'Navigateur',ver:'Version du site',yes:'oui',no:'non',head:'Réglages de mon patron',cu:'Copier mes réglages en texte',cum:'Réglages copiés : vous pouvez les coller où vous voulez (traitement de texte, notes…).',cus:'Problème : rapporter mes réglages',nm:'Patron'};
 var VER='2026-11-15';
 function txt(n){return (n.textContent||'').replace(/\s+/g,' ').trim();}
 function lab(e){
@@ -17,12 +17,13 @@ function lab(e){
  var p=e.previousSibling;while(p){var t2=(p.nodeType===3?p.textContent:p.textContent||'').replace(/\s+/g,' ').trim();if(t2)return t2.slice(-60);p=p.previousSibling;}
  return e.id||e.name||'?';
 }
-function collect(user){
+function collect(user,noM){
  var out=[],seen={},m=document.querySelector('main');if(!m)return out;
  m.querySelectorAll('input,select,textarea').forEach(function(e){
   if(e.closest('[hidden]'))return;
   var ty=(e.type||'').toLowerCase();
   if(e.classList.contains('uin'))return;
+  if(noM&&window.WZ_CFG&&window.WZ_CFG.measures&&e.id&&e.id.slice(0,2)==='v_'&&window.WZ_CFG.measures.indexOf(e.id.slice(2))>-1)return;
   if(user&&(e.classList.contains('units-sel')||e.classList.contains('paper-sel')))return;
   if(['file','button','submit','reset','hidden','image'].indexOf(ty)>-1)return;
   var v,l;
@@ -55,24 +56,17 @@ function build(){
   T.br+' : '+navigator.userAgent,'',T.cf+' :'];
  return s.concat(collect().map(function(x){return '- '+x;})).join('\n');
 }
-function buildUser(){
+function buildUser(noM){
  var h=document.querySelector('h1'),d=new Date();
  var ds=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
  var s=[T.nm+' : '+(h?txt(h):document.title),ds,location.href.split('#')[0],''];
- return s.concat(collect(true).map(function(x){return '- '+x;})).join('\n');
+ return s.concat(collect(true,noM).map(function(x){return '- '+x;})).join('\n');
 }
+window.SITE_COPYSETTINGS={build:function(withM){return buildUser(!withM);},ok:T.cum,ko:T.ko};
 function init(){
  var b=document.getElementById('cpset');if(!b)return;
  b.textContent=T.cus;
- var np=b.closest('p.note')||b.parentNode,up=document.createElement('p');up.id='cpuserP';up.className='cpuser';
- up.innerHTML='<button type="button" id="cpuser"></button> <span id="cpumsg" role="status"></span>';
- np.parentNode.insertBefore(up,np);
- var ub=up.querySelector('button'),um=up.querySelector('span');ub.textContent=T.cu;
- ub.addEventListener('click',function(){var t=buildUser();
-  function ok(){um.textContent=T.cum;}
-  function fb2(){var a=document.getElementById('cpta2');if(!a){a=document.createElement('textarea');a.id='cpta2';a.readOnly=true;a.rows=10;a.style.cssText='width:100%;margin-top:8px;font:12px monospace';up.appendChild(a);}a.value=t;a.focus();a.select();try{if(document.execCommand('copy')){ok();return;}}catch(e){}um.textContent=T.ko;}
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb2);}else fb2();
- });
+
 
  var msg=document.getElementById('cpmsg');
  b.addEventListener('click',function(){
