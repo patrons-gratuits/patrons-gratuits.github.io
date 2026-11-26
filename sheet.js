@@ -356,8 +356,8 @@
           c += `${f(a[0])} ${f(a[1])} m ${f(a[0] + u[0] * 7 + nn[0] * 3)} ${f(a[1] + u[1] * 7 + nn[1] * 3)} l ${f(a[0] + u[0] * 7 - nn[0] * 3)} ${f(a[1] + u[1] * 7 - nn[1] * 3)} l h f\n`;
           const mx = (a[0] + b[0]) / 2 + 5, my = (a[1] + b[1]) / 2 - 2;
           c += `0 g BT /F1 7 Tf ${f(mx)} ${f(my)} Td (${esc(T.drfil)}) Tj ET\n`;
-          const lines = [[o.lbl, COL.blk, 10]].concat(it.ov.map(g => [g.name, STY[g.cat].tcol, 8]));
-          lines.forEach(([t, col, z], j) => { c += `${rg(col)} rg BT /F2 ${z} Tf ${f((a[0] + b[0]) / 2 + 5)} ${f((a[1] + b[1]) / 2 + 9 + (lines.length - 1 - j) * 11)} Td (${esc(t)}) Tj ET\n`; }); c += '0 g\n';
+          const lines = [[o.lbl, COL.blk, 10]].concat(it.ov.map(g => [g.name, STY[g.cat].tcol, 10]));
+          lines.forEach(([t, col, z], j) => { c += `${rg(col)} rg BT /F2 ${z} Tf ${f((a[0] + b[0]) / 2 + 5)} ${f((a[1] + b[1]) / 2 + 9 + (lines.length - 1 - j) * 12)} Td (${esc(t)}) Tj ET\n`; }); c += '0 g\n';
         }
         o.marks.forEach(m => { const t = '(' + m.t + ')'; if (m.p[0] >= gx && m.p[0] <= gx + SW && m.p[1] >= gy && m.p[1] <= gy + SH) c += `0 g BT /F1 9 Tf ${f(parseFloat(px(m.p[0])) - tw(t, 9) / 2)} ${f(parseFloat(py(m.p[1])) - 3)} Td (${esc(t)}) Tj ET\n`; });
         if (o.fold && o.fold.mid[0] >= gx && o.fold.mid[0] <= gx + SW && o.fold.mid[1] >= gy && o.fold.mid[1] <= gy + SH) c += `0 g BT /F1 7 Tf ${f(parseFloat(px(o.fold.mid[0])) - tw(T.placepli, 7) / 2)} ${f(parseFloat(py(o.fold.mid[1])))} Td (${esc(T.placepli)}) Tj ET\n`;
