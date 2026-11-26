@@ -39,7 +39,7 @@ function mount(root){
   const fig=document.createElement('div');fig.className='mc-fig';
   const sv=document.createElementNS(NS,'svg');sv.setAttribute('viewBox','172 48 590 664');sv.setAttribute('role','img');sv.setAttribute('aria-label',L.alt);
   fig.appendChild(sv);root.appendChild(fig);
-  const note=document.createElement('p');note.className='cq-note';note.textContent=root.dataset.lang==='en'?'Illustration colour: choose your own fabric.':'Couleur d’illustration : choisissez votre tissu.';root.appendChild(note);
+  
   const ctl=document.createElement('div');ctl.className='mc-ctl';root.appendChild(ctl);
   function seg(key,label,opts){
     const w=document.createElement('div');w.className='mc-seg';w.setAttribute('role','group');w.setAttribute('aria-label',label);

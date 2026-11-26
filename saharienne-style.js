@@ -104,7 +104,7 @@
   var sk = document.createElement('div');
   sk.className = 'card sticky cq'; sk.id = 'sketchcard';
   sk.innerHTML = '<div class="cq-views" role="group"><button type="button" id="st-vf" aria-pressed="true">' + T.face + '</button><button type="button" id="st-vd" aria-pressed="false">' + T.dos + '</button></div>' +
-    '<svg id="st-svg" class="cq-svg" viewBox="50 30 300 345" role="img" aria-label="' + T.alt + '"></svg><div class="cq-leg" id="st-leg"></div><p class="cq-cap" id="st-cap" aria-hidden="true"></p><p class="cq-note">' + (EN ? 'Illustration colour: choose your own fabric.' : 'Couleur d’illustration : choisissez votre tissu.') + '</p>';
+    '<svg id="st-svg" class="cq-svg" viewBox="50 30 300 345" role="img" aria-label="' + T.alt + '"></svg><div class="cq-leg" id="st-leg"></div><p class="cq-cap" id="st-cap" aria-hidden="true"></p>';
   var prevCard = document.querySelector('.grid > .card.sticky');
   if (prevCard) prevCard.parentNode.insertBefore(sk, prevCard);
 

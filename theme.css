@@ -1,9 +1,9 @@
 /* Thème commun : bleu, fuchsia, titres en Caladea (OFL), en-tête en bandeau. S'applique aux pages ayant <body class="th"> */
 @font-face{font-family:"Titres";src:url(fonts/caladea-bold-latin.woff) format("woff");font-weight:700;font-style:normal;font-display:swap}
-body.th{--fu-soft:#f4e0ea;--fu:#c0307a;--ac:#00758F;--ac2:#0B3C5D;--brand:#0095B6;--bg:#f4f9fb;--bd:#cfe2ea;--ph:#e6eff2;--sand:#e0f2f7;--sand2:#c6e5ee}
-body.th #langbar{background:#dff0f5}
-@media(prefers-color-scheme:dark){body.th{--fu-soft:#3a2832;--fu:#f28db8;--ac:#45b8d6;--ac2:#a5d8e8;--brand:#2ab0d1;--bg:#12181a;--card:#1b2427;--bd:#2d3b41;--ph:#243036;--sand:#16262c;--sand2:#1d3640}
- body.th #langbar{background:#1d3640}
+body.th{--fu-soft:#f5e6de;--fu:#a35a40;--ac:#3d6f81;--ac2:#2f5867;--brand:#498195;--bg:#f4f9fb;--bd:#d3e1e6;--ph:#e6eff2;--sand:#e4eef1;--sand2:#cfe0e5}
+body.th #langbar{background:#e4eef1}
+@media(prefers-color-scheme:dark){body.th{--fu-soft:#3a2b25;--fu:#e3a98e;--ac:#8cbccb;--ac2:#b6d3dc;--brand:#7fb0c0;--bg:#12181a;--card:#1b2427;--bd:#2d3b41;--ph:#243036;--sand:#1b2a30;--sand2:#22363d}
+ body.th #langbar{background:#22363d}
  body.th .btn,body.th button,body.th .tile .go,body.th .lang .cur{color:#06222b}}
 body.th h1,body.th h2,body.th h3{font-family:"Titres",Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:.005em}
 body.th h1{color:var(--ac2)}
@@ -18,10 +18,10 @@ body.th .tile .ph{background:var(--fu-soft)}
 body.th .tile h3{font-size:1.2rem}
 
 /* En-tête : bandeau bleu marine, nom en signature, menu sur une ligne */
-body.th header{background:#0B3C5D;border-bottom:0;--hl:#f28db8}
-@media(prefers-color-scheme:dark){body.th header{background:#0e2c3d}}
+body.th header{background:#2f5867;border-bottom:0;--hl:#e3a98e}
+@media(prefers-color-scheme:dark){body.th header{background:#1f3c47}}
 body.th header nav{max-width:1100px;padding:12px 18px;gap:4px 6px;align-items:center}
-body.th header nav b{order:0;margin-right:26px;font:700 1.55rem/1 "Titres",Georgia,"Times New Roman",serif;letter-spacing:.01em;color:#fff;position:relative;padding-bottom:8px}
+body.th header nav b{order:0;margin-right:26px;font:700 1.55rem/1.05 "Titres",Georgia,"Times New Roman",serif;letter-spacing:.01em;color:#fff;position:relative;padding-bottom:8px}
 body.th header nav b::after{content:"";position:absolute;left:0;right:0;bottom:0;border-bottom:2px dashed var(--hl)}
 body.th .brk{display:none}
 body.th header nav>a,body.th header nav>details{order:1}
@@ -35,8 +35,8 @@ body.th header nav details.dd .dm a:hover{background:var(--ph)}
 body.th header nav details.dd .dm a.on{color:var(--ac);font-weight:600;background:none;box-shadow:none}
 body.th .lang{order:2;margin-left:auto;border-color:rgba(255,255,255,.7)}
 body.th .lang a{color:#fff}
-body.th .lang .cur{background:#fff;color:#0B3C5D}
-@media(prefers-color-scheme:dark){body.th .lang .cur{background:#fff;color:#0e2c3d}}
+body.th .lang .cur{background:#fff;color:#2f5867}
+@media(prefers-color-scheme:dark){body.th .lang .cur{background:#fff;color:#1f3c47}}
 @media(max-width:900px){
  body.th header nav b{font-size:1.35rem;margin-right:0}
  body.th .lang{order:1}

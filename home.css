@@ -77,7 +77,9 @@ body.home .gal.mosaic figure.here .ph{display:flex;align-items:center;justify-co
 
 .hero-intro{margin:4px 2px 12px}.hero-kick{margin:0 0 .15em;color:var(--ac2);font-size:1rem;font-weight:600}.hero-desc{margin:0;color:var(--mut,#555);font-size:.95rem}
 
-body.home .tile .ph .bm-mini{display:block;width:100%;height:100%;background:#fff}
+body.home .tile .ph .bm-mini{display:block;width:100%;height:100%;background:transparent}
 
 .hero2 .hero-new{display:block;margin:.9em 0 0;font-size:.95rem;color:var(--ac2);font-weight:600}.hero2 .hero-new:hover{text-decoration:underline}
 @media(max-width:760px){.hero3 .hero-new{order:6;align-self:center;margin:0 0 1em;text-align:center}}
+
+body.home .tile .ph{background:#e4eef1;padding:14px;box-sizing:border-box;border:0}body.home .tile .ph img[src$=".svg"]{object-fit:contain}
