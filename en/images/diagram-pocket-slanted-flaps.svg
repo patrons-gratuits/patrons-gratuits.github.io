@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 558 225" width="558" height="225">
+<defs><pattern id="tw" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#000" stroke-opacity=".07" stroke-width="2"/></pattern></defs>
+<rect width="558" height="225" rx="10" fill="#c1846c"/><rect width="558" height="225" rx="10" fill="url(#tw)"/>
+<g transform="translate(0,17)">
+<g transform="translate(36.0,23.4)"><clipPath id="c0"><path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z" transform="translate(2.5,3.5)" fill="#5e3426" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z" fill="#cd977f" stroke="#5e3426" stroke-opacity=".55" stroke-width="1"/>
+<path d="M122.0,38.2 L122.0,139.9 L4.0,139.9 L4.0,4.0" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/>
+<path d="M-1.8,-14.4 L127.8,19.8 L127.8,69.3 L-1.8,35.1 Z" transform="translate(2,3)" fill="#5e3426" opacity=".5"/>
+<path d="M-1.8,-14.4 L127.8,19.8 L127.8,69.3 L-1.8,35.1 Z" fill="#d5a28c" stroke="#5e3426" stroke-opacity=".6"/>
+<path d="M121.3,21.2 L121.3,61.8 L4.7,33.7 L4.7,-6.9" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/>
+<line x1="-1.8" y1="-11.4" x2="127.8" y2="22.8" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/></g>
+<g transform="translate(216.0,23.4)"><clipPath id="c1"><path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z" transform="translate(2.5,3.5)" fill="#5e3426" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z" fill="#cd977f" stroke="#5e3426" stroke-opacity=".55" stroke-width="1"/>
+<path d="M122.0,38.2 L122.0,139.9 L4.0,139.9 L4.0,4.0" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/>
+<path d="M-1.8,-14.4 L127.8,19.8 L127.8,53.1 L111.6,69.3 L14.4,39.4 L-1.8,18.9 Z" transform="translate(2,3)" fill="#5e3426" opacity=".5"/>
+<path d="M-1.8,-14.4 L127.8,19.8 L127.8,53.1 L111.6,69.3 L14.4,39.4 L-1.8,18.9 Z" fill="#d5a28c" stroke="#5e3426" stroke-opacity=".6"/>
+<path d="M121.3,21.8 L121.3,49.1 L106.7,62.4 L19.3,37.9 L4.7,21.1 L4.7,-6.2" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/>
+<line x1="-1.8" y1="-11.4" x2="127.8" y2="22.8" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/></g>
+<g transform="translate(396.0,23.4)"><clipPath id="c2"><path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z" transform="translate(2.5,3.5)" fill="#5e3426" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,34.2 L126.0,144.0 L0.0,144.0 Z" fill="#cd977f" stroke="#5e3426" stroke-opacity=".55" stroke-width="1"/>
+<path d="M122.0,38.2 L122.0,139.9 L4.0,139.9 L4.0,4.0" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/>
+<path d="M-1.8,-14.4 L127.8,19.8 L127.8,53.1 L127.6,55.6 L127.0,58.1 L126.0,60.5 L124.7,62.6 L123.1,64.6 L121.1,66.2 L119.0,67.5 L116.6,68.5 L114.1,69.1 L111.6,69.3 L14.4,39.4 L11.9,39.2 L9.4,38.6 L7.0,37.6 L4.9,36.3 L2.9,34.6 L1.3,32.7 L-0.0,30.5 L-1.0,28.2 L-1.6,25.7 L-1.8,18.9 Z" transform="translate(2,3)" fill="#5e3426" opacity=".5"/>
+<path d="M-1.8,-14.4 L127.8,19.8 L127.8,53.1 L127.6,55.6 L127.0,58.1 L126.0,60.5 L124.7,62.6 L123.1,64.6 L121.1,66.2 L119.0,67.5 L116.6,68.5 L114.1,69.1 L111.6,69.3 L14.4,39.4 L11.9,39.2 L9.4,38.6 L7.0,37.6 L4.9,36.3 L2.9,34.6 L1.3,32.7 L-0.0,30.5 L-1.0,28.2 L-1.6,25.7 L-1.8,18.9 Z" fill="#d5a28c" stroke="#5e3426" stroke-opacity=".6"/>
+<path d="M121.3,24.2 L121.3,51.5 L121.1,53.6 L120.6,55.6 L119.7,57.5 L118.5,59.3 L117.0,60.9 L115.3,62.3 L113.4,63.3 L111.2,64.1 L109.0,64.6 L106.7,64.8 L19.3,40.3 L17.0,40.1 L14.8,39.6 L12.6,38.8 L10.7,37.7 L9.0,36.4 L7.5,34.8 L6.3,33.0 L5.4,31.1 L4.9,29.0 L4.7,23.5 L4.7,-3.8" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/>
+<line x1="-1.8" y1="-11.4" x2="127.8" y2="22.8" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/></g>
+</g>
+</svg>

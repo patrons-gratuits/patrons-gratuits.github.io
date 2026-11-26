@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+<defs><pattern id="tw" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#000" stroke-opacity=".07" stroke-width="2"/></pattern></defs>
+<rect width="300" height="300" fill="#498195"/><rect width="300" height="300" fill="url(#tw)"/>
+<g transform="translate(52.3,38.4) scale(1.55)"><clipPath id="c0"><path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z" transform="translate(2.5,3.5)" fill="#23414c" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z" fill="#5b93a6" stroke="#23414c" stroke-opacity=".55" stroke-width="1"/>
+<path d="M122.0,4.0 L122.0,139.9 L4.0,139.9 L4.0,4.0" fill="none" stroke="#efe3cf" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/></g></svg>

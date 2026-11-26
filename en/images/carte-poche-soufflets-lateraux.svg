@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+<defs><pattern id="tw" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#000" stroke-opacity=".07" stroke-width="2"/></pattern></defs>
+<rect width="300" height="300" fill="#c1846c"/><rect width="300" height="300" fill="url(#tw)"/>
+<g transform="translate(42.3,30.4) scale(1.55)"><clipPath id="c0"><path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z"/></clipPath>
+<path d="M11.0,10.0 L137.0,10.0 L137.0,154.0 L11.0,154.0 Z" fill="#5e3426" opacity=".45"/>
+<path d="M126.0,0.0 L126.0,144.0 L135.0,151.0 L135.0,7.0 Z" fill="#a96d56" stroke="#a96d56" stroke-width=".6"/>
+<path d="M126.0,144.0 L0.0,144.0 L9.0,151.0 L135.0,151.0 Z" fill="#94604b" stroke="#94604b" stroke-width=".6"/>
+<line x1="130.5" y1="3.5" x2="130.5" y2="147.5" stroke="#e9c2b1" stroke-opacity=".7" stroke-width="1" stroke-linecap="round"/>
+<line x1="130.5" y1="147.5" x2="4.5" y2="147.5" stroke="#e9c2b1" stroke-opacity=".7" stroke-width="1" stroke-linecap="round"/>
+<path d="M126.0,0.0 l9,7" stroke="#5e3426" stroke-opacity=".7"/>
+<path d="M131.8,7.0 L131.8,151.0 L5.8,151.0" fill="none" stroke="#fbf1e4" stroke-width="1.1" stroke-dasharray="4 3" opacity=".8"/>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z" fill="#cd977f" stroke="#5e3426" stroke-opacity=".55" stroke-width="1"/>
+<path d="M122.0,4.0 L122.0,139.9 L4.0,139.9 L4.0,4.0" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/></g></svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 558 225" width="558" height="225">
+<defs><pattern id="tw" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#000" stroke-opacity=".07" stroke-width="2"/></pattern></defs>
+<rect width="558" height="225" rx="10" fill="#498195"/><rect width="558" height="225" rx="10" fill="url(#tw)"/>
+<g transform="translate(0,17)">
+<g transform="translate(36.0,23.4)"><clipPath id="c0"><path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z" transform="translate(2.5,3.5)" fill="#23414c" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,144.0 L0.0,144.0 Z" fill="#5b93a6" stroke="#23414c" stroke-opacity=".55" stroke-width="1"/>
+<path d="M0,0 L126,0.0 L126,21.6 L0,21.6 Z" fill="#6aa2b4"/>
+<line x1="0" y1="23.6" x2="126" y2="23.6" stroke="#000" stroke-opacity=".15" stroke-width="3"/>
+<line x1="0" y1="21.6" x2="126" y2="21.6" stroke="#23414c" stroke-width="1.4"/>
+<path d="M122.0,4.0 L122.0,139.9 L4.0,139.9 L4.0,4.0" fill="none" stroke="#efe3cf" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/></g>
+<g transform="translate(216.0,23.4)"><clipPath id="c1"><path d="M0.0,0.0 L126.0,0.0 L126.0,112.5 L94.5,144.0 L31.5,144.0 L0.0,112.5 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,112.5 L94.5,144.0 L31.5,144.0 L0.0,112.5 Z" transform="translate(2.5,3.5)" fill="#23414c" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,112.5 L94.5,144.0 L31.5,144.0 L0.0,112.5 Z" fill="#5b93a6" stroke="#23414c" stroke-opacity=".55" stroke-width="1"/>
+<path d="M0,0 L126,0.0 L126,21.6 L0,21.6 Z" fill="#6aa2b4"/>
+<line x1="0" y1="23.6" x2="126" y2="23.6" stroke="#000" stroke-opacity=".15" stroke-width="3"/>
+<line x1="0" y1="21.6" x2="126" y2="21.6" stroke="#23414c" stroke-width="1.4"/>
+<path d="M122.0,4.0 L122.0,110.1 L92.1,139.9 L33.9,139.9 L4.0,110.1 L4.0,4.0" fill="none" stroke="#efe3cf" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/></g>
+<g transform="translate(396.0,23.4)"><clipPath id="c2"><path d="M0.0,0.0 L126.0,0.0 L126.0,115.2 L125.8,119.0 L125.0,122.7 L123.8,126.2 L122.1,129.6 L120.0,132.7 L117.6,135.6 L114.7,138.0 L111.6,140.1 L108.2,141.8 L104.7,143.0 L101.0,143.8 L97.2,144.0 L28.8,144.0 L25.0,143.8 L21.3,143.0 L17.8,141.8 L14.4,140.1 L11.3,138.0 L8.4,135.6 L6.0,132.7 L3.9,129.6 L2.2,126.2 L1.0,122.7 L0.2,119.0 L0.0,115.2 Z"/></clipPath>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,115.2 L125.8,119.0 L125.0,122.7 L123.8,126.2 L122.1,129.6 L120.0,132.7 L117.6,135.6 L114.7,138.0 L111.6,140.1 L108.2,141.8 L104.7,143.0 L101.0,143.8 L97.2,144.0 L28.8,144.0 L25.0,143.8 L21.3,143.0 L17.8,141.8 L14.4,140.1 L11.3,138.0 L8.4,135.6 L6.0,132.7 L3.9,129.6 L2.2,126.2 L1.0,122.7 L0.2,119.0 L0.0,115.2 Z" transform="translate(2.5,3.5)" fill="#23414c" opacity=".45"/>
+<path d="M0.0,0.0 L126.0,0.0 L126.0,115.2 L125.8,119.0 L125.0,122.7 L123.8,126.2 L122.1,129.6 L120.0,132.7 L117.6,135.6 L114.7,138.0 L111.6,140.1 L108.2,141.8 L104.7,143.0 L101.0,143.8 L97.2,144.0 L28.8,144.0 L25.0,143.8 L21.3,143.0 L17.8,141.8 L14.4,140.1 L11.3,138.0 L8.4,135.6 L6.0,132.7 L3.9,129.6 L2.2,126.2 L1.0,122.7 L0.2,119.0 L0.0,115.2 Z" fill="#5b93a6" stroke="#23414c" stroke-opacity=".55" stroke-width="1"/>
+<path d="M0,0 L126,0.0 L126,21.6 L0,21.6 Z" fill="#6aa2b4"/>
+<line x1="0" y1="23.6" x2="126" y2="23.6" stroke="#000" stroke-opacity=".15" stroke-width="3"/>
+<line x1="0" y1="21.6" x2="126" y2="21.6" stroke="#23414c" stroke-width="1.4"/>
+<path d="M122.0,4.0 L122.0,115.2 L121.7,118.4 L121.1,121.6 L120.1,124.7 L118.6,127.6 L116.8,130.3 L114.7,132.7 L112.3,134.8 L109.6,136.6 L106.7,138.1 L103.6,139.1 L100.4,139.7 L97.2,139.9 L28.8,139.9 L25.6,139.7 L22.4,139.1 L19.3,138.1 L16.4,136.6 L13.7,134.8 L11.3,132.7 L9.2,130.3 L7.4,127.6 L5.9,124.7 L4.9,121.6 L4.3,118.4 L4.0,115.2 L4.0,4.0" fill="none" stroke="#efe3cf" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/></g>
+</g>
+</svg>
