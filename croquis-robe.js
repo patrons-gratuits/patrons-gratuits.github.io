@@ -195,7 +195,8 @@
   function render(o) {
     o = o || {};
     var back = o.vue === 'dos';
-    return DEFS + figure(back) + dress(o, back) + arms();
+    var nu = o.silhouette === false;   /* silhouette:false : la robe seule, sans le corps */
+    return DEFS + (nu ? '' : figure(back)) + dress(o, back) + (nu ? '' : arms());
   }
   function describe(o) {
     var L = { mini: 'mini', moyenne: 'longueur moyenne', longue: 'longue' }[o.longueur] || 'mini';
