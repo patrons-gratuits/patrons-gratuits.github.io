@@ -25,6 +25,27 @@
     if (p.ann) wrap(p.ann, 6, mw).forEach(t => lines.push([t, 6]));
     return { lines, h: lines.reduce((a, l) => a + l[1] * 1.2, 0) + 6 };
   }
+  /* nom court de la pièce, écrit dans la pièce : taille minimale LBL_MIN ; sinon placé sous la pièce */
+  const LBL_MIN = 10, LBL_SIZES = [14, 12, 11, 10];
+  function inPolyF(q, x, y) { let c = false; for (let i = 0, j = q.length - 1; i < q.length; j = i++) { if ((q[i].y > y) !== (q[j].y > y) && x < ((q[j].x - q[i].x) * (y - q[i].y)) / (q[j].y - q[i].y) + q[i].x) c = !c; } return c; }
+  function lblWords(p) { return String(p.lbl).replace(/ (\d)$/, '\u00a0$1').split(' '); }
+  function lblSplit(words, n) { const ls = []; let k = 0; for (let r = 0; r < n; r++) { const rest = words.length - k, take = Math.ceil(rest / (n - r)); ls.push(words.slice(k, k + take).join(' ')); k += take; } return ls.filter(Boolean); }
+  /* (cx, cy) : point du fil droit en cm ; le nom commence 5 pt à droite et au-dessus du fil droit */
+  function lblBest(p, cx, cy) {
+    if (!p.lbl) return null; const words = lblWords(p);
+    const fits = (ls, s, side) => ls.every((l, i) => { const w = tw(l, s) / PT, y = -7 - (ls.length - 1 - i) * (s + 1.5), x0 = side > 0 ? cx + 5 / PT : cx - 5 / PT - w; return [-0.1, w / 2, w + 0.15].every(dx => [0, -s * 0.7].every(dy => inPolyF(p.poly, x0 + dx, cy + (y + dy) / PT))); });
+    for (const s of LBL_SIZES) for (const n of [1, 2, 3]) for (const side of [1, -1]) { const ls = lblSplit(words, n); if (fits(ls, s, side)) return { ls, s, side }; }
+    return null;
+  }
+  function grainCtr(p) { // centre prévu du fil droit (sans la recherche en cas de pièce non convexe)
+    const xs = p.poly.map(q => q.x), ys = p.poly.map(q => q.y); let cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    if (p.fold) cy = Math.min(...ys) + 2.6;
+    else if (p.grainTop) { let yt = Infinity; for (let i = 0, n = p.poly.length; i < n; i++) { const u = p.poly[i], v = p.poly[(i + 1) % n]; if ((u.x - cx) * (v.x - cx) <= 0 && u.x !== v.x) { const yy = u.y + (v.y - u.y) * (cx - u.x) / (v.x - u.x); if (yy < yt) yt = yy; } } if (isFinite(yt)) cy = yt + 2.6; }
+    return [cx, cy];
+  }
+  function lblOutside(p, w) { // lignes du nom placé sous la pièce, largeur max w (pt)
+    const words = lblWords(p); for (let n = 1; n <= 3; n++) { const ls = lblSplit(words, n); if (ls.every(l => tw(l, LBL_MIN) <= w)) return ls; } return lblSplit(words, 3);
+  }
   function layout(pieces, sc, band) {
     sc = sc || 1; band = band || 0;
     const usableW = PW / sc - 2 * MARGIN, usableH = PH / sc - 2 * MARGIN;
@@ -36,7 +57,9 @@
       for (const l of (p.internal || [])) for (const q of l) { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }
       for (const q of p.poly) { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }
       const pw = (x1 - x0) * PT;
-      return { p, x0, y0, pw, w: Math.max(pw, HMIN), h: (y1 - y0) * PT };
+      const it = { p, x0, y0, pw, w: Math.max(pw, HMIN), h: (y1 - y0) * PT, ex: 0 };
+      if (p.lbl) { const g = grainCtr(p); if (!lblBest(p, g[0], g[1])) { it.out = lblOutside(p, it.w); it.ex = it.out.length * (LBL_MIN * 1.2) + 4; } }
+      return it;
     });
     const head = items.reduce((m, it) => Math.max(m, hdr(it.p, Math.min(it.w, 15 * PT), '00/00/0000').h), 30);
     items.sort((a, b) => b.h - a.h);
@@ -46,9 +69,10 @@
     newPage(); y = band;
     // le carré d'essai 5x5 cm occupe l'angle haut-gauche de la page 1 : on le réserve en haut
     const big = items.filter(it => it.w > usableW || it.h + head > usableH);
+    big.forEach(it => { it.ex = 0; delete it.out; }); // pièces découpées en pages : leur nom reste dans la pièce
     for (const it of items) {
       if (big.includes(it)) continue;
-      const need = it.h + head;
+      const need = it.h + head + it.ex;
       if (x > 0 && x + it.w > usableW) { y += rowH + gap; x = 0; rowH = 0; }
       if (y + need > usableH && (x > 0 || y > 0)) newPage();
       it.px = x; it.py = y; page.items.push(it);
@@ -58,7 +82,7 @@
     for (const pg of pages) {
       if (!pg.items.length) continue;
       let bx0 = 1e9, by0 = 1e9, bx1 = -1e9, by1 = -1e9;
-      for (const it of pg.items) { bx0 = Math.min(bx0, it.px); by0 = Math.min(by0, it.py); bx1 = Math.max(bx1, it.px + it.w); by1 = Math.max(by1, it.py + it.h + head); }
+      for (const it of pg.items) { bx0 = Math.min(bx0, it.px); by0 = Math.min(by0, it.py); bx1 = Math.max(bx1, it.px + it.w); by1 = Math.max(by1, it.py + it.h + head + it.ex); }
       const top = pg === pages[0] ? band : 0, dx = (usableW - (bx1 - bx0)) / 2 - bx0, dy = top + (usableH - top - (by1 - by0)) / 2 - by0;
       for (const it of pg.items) { it.px += Math.max(dx, -it.px); if (!NOVC) it.py += Math.max(dy, top - it.py); }
     }
@@ -66,7 +90,7 @@
     const S = TSQ, T = { page: 0, x: 0, y: 0 };
     const cand = [[usableW - S, band], [usableW - S, usableH - S - 12], [0, usableH - S - 12], [0, band]];
     const free = cand.find(([cx, cy]) => pages[0].items.every(it => {
-      const ix = it.px, iy = it.py, iw = it.w, ih = it.h + head;
+      const ix = it.px, iy = it.py, iw = it.w, ih = it.h + head + it.ex;
       return cx + S <= ix || cx >= ix + iw || cy + S + 12 <= iy || cy >= iy + ih;
     }));
     const host = pages[0].items[0];
@@ -318,14 +342,20 @@
         c += `${X(gx)} ${Y(gy - gl / 2)} m ${X(gx - 3)} ${Y(gy - gl / 2 + 7)} l ${X(gx + 3)} ${Y(gy - gl / 2 + 7)} l h f\n`;
         text('Grainline', gx + 5, gy + 3, 7);
         }
-        if (p.lbl) { // nom court de la pièce, à l'intérieur de la pièce (sur 1 à 3 lignes selon la place)
-          const xa = gx + 5, words = p.lbl.replace(/ (\d)$/, '\u00a0$1').split(' ');
-          const split = n => { const ls = []; let k = 0; for (let r = 0; r < n; r++) { const rest = words.length - k, take = Math.ceil(rest / (n - r)); ls.push(words.slice(k, k + take).join(' ')); k += take; } return ls.filter(Boolean); };
-          const fits = (ls, s) => ls.every((l, i) => { const w = tw(l, s) / PT, y = gy - 7 - (ls.length - 1 - i) * (s + 1.5); return [0, w / 2, w].every(dx => [0, -s * 0.7].every(dy => inPoly(p.poly, it.x0 + (xa - ox) / PT + dx, it.y0 + (y + dy - oy) / PT))); });
-          let best = null;
-          outer2: for (const s of [14, 12, 11, 10, 9, 8, 7, 6.5, 6, 5.5]) for (const n of [1, 2, 3]) { const ls = split(n); if (fits(ls, s)) { best = { ls, s }; break outer2; } }
-          if (!best) best = { ls: split(Math.min(3, words.length)), s: 5.5 };
-          best.ls.forEach((l, i) => text(l, xa, gy - 7 - (best.ls.length - 1 - i) * (best.s + 1.5), best.s));
+        if (p.lbl) { // nom court de la pièce : dans la pièce à 10 pt minimum, sinon juste sous la pièce
+          const xa = gx + 5, tiledPc = T_ && T_.tmode !== 0;
+          let best = it.out ? null : lblBest(p, it.x0 + (gx - ox) / PT, it.y0 + (gy - oy) / PT);
+          if (best) best.ls.forEach((l, i) => text(l, best.side > 0 ? xa : gx - 5 - tw(l, best.s), gy - 7 - (best.ls.length - 1 - i) * (best.s + 1.5), best.s));
+          else if (tiledPc) { // pièce étroite découpée en pages : on cherche, le long de la pièce, un endroit où le nom tient à 10 pt, dans la page
+            const words = lblWords(p), cyE = it.y0 + (gy - oy) / PT, cxE = it.x0 + (gx - ox) / PT; let hit = null;
+            const fitsAt = (ls, s, xs) => ls.every((l, i) => { const w = tw(l, s) / PT, y = -7 - (ls.length - 1 - i) * (s + 1.5); return [-0.1, w / 2, w + 0.15].every(dx => [0, -s * 0.7].every(dy => inPolyF(p.poly, xs + dx, cyE + (y + dy) / PT))); });
+            outer3: for (const s of LBL_SIZES) for (const n of [1, 2, 3]) { const ls = lblSplit(words, n), wmax = Math.max(...ls.map(l => tw(l, s))); let cand = [];
+              for (let xs = it.x0; xs <= it.x0 + it.pw / PT; xs += 0.25) { const gxx = ox + (xs - it.x0) * PT; if (gxx >= 6 && gxx + wmax <= T_.winW - 6 && fitsAt(ls, s, xs)) cand.push([Math.abs(xs - cxE), xs, ls, s]); }
+              if (cand.length) { cand.sort((a, b) => a[0] - b[0]); hit = cand[0]; break outer3; } }
+            if (hit) hit[2].forEach((l, i) => text(l, ox + (hit[1] - it.x0) * PT, gy - 7 - (hit[2].length - 1 - i) * (hit[3] + 1.5), hit[3]));
+            else { const ls = lblSplit(words, Math.min(3, words.length)); ls.forEach((l, i) => text(l, xa, gy - 7 - (ls.length - 1 - i) * (LBL_MIN + 1.5), LBL_MIN)); }
+          }
+          else { const ls = it.out || lblOutside(p, it.w); ls.forEach((l, i) => text(l, ox + Math.max(0, (it.pw - tw(l, LBL_MIN)) / 2), oy + it.h + 4 + LBL_MIN + i * LBL_MIN * 1.2, LBL_MIN)); }
         }
         }
         (p.marks || []).forEach(m => { const t = '(' + m.t + ')', s = 9; text(t, ox + (m.x - it.x0) * PT - tw(t, s) / 2, oy + (m.y - it.y0) * PT + s * 0.35, s); });
