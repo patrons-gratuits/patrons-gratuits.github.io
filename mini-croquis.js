@@ -53,7 +53,7 @@ function mount(root){
               man:seg('man',L.man,[['l',L.longues],['c',L.courtes]]),
               cart:seg('cart',L.cart,[['0',L.sans],['1',L.avec]]),
               rab:seg('rab',L.rab,[['p',L.p],['d',L.d],['a',L.a],['c',L.c]])};
-  const help=document.createElement('p');help.className='mc-help';help.textContent=L.aide;root.appendChild(help);
+
   // bouton principal : soit un lien placé ailleurs dans la page (data-cta="id"), soit créé ici
   let cta=root.dataset.cta?document.getElementById(root.dataset.cta):null;
   if(!cta){cta=document.createElement('a');cta.className='mc-cta';cta.textContent=L.cta;root.appendChild(cta);}
