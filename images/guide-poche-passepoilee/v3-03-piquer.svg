@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <path d="M60,58 H300 V220 H60 Z" fill="#efe3cf" stroke="#94604b"/>
+    <rect x="90" y="104" width="180" height="12" fill="none" stroke="#4a2a1e" stroke-width="2" stroke-dasharray="5 2"/>
+    <line x1="108" y1="110" x2="252" y2="110" stroke="#94604b" stroke-dasharray="6 4"/>
+    <text x="180" y="80" text-anchor="middle" fill="#5e3426">piquer tout le tour du cadre,</text>
+    <text x="180" y="96" text-anchor="middle" fill="#5e3426" font-size="12">en pivotant aiguille piquée aux coins</text>
+    <text x="180" y="140" text-anchor="middle" fill="#5e3426" font-size="12">partir d&#8217;un grand côté, finir en chevauchant</text>
+    <text x="180" y="156" text-anchor="middle" fill="#5e3426" font-size="12">quelques points ; petits points</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue avec rabat – étape 3 : piquer</text>
+  </g>
+</svg>

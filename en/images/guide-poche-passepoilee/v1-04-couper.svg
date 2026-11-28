@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs><marker id="fl" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#fbf1e4"/></marker></defs>
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <!-- passepoil rabattu vers le bas : bords bruts relevés sous la piqûre -->
+    <rect x="62" y="128" width="236" height="36" fill="#94604b"/>
+    <rect x="62" y="128" width="236" height="18" fill="#a8705a"/>
+    <line x1="62" y1="146" x2="298" y2="146" stroke="#5e3426" stroke-width="1.2"/>
+    <line x1="62" y1="164" x2="298" y2="164" stroke="#dcae99" stroke-width="2"/>
+    <!-- piqûres -->
+    <line x1="90" y1="92" x2="270" y2="92" stroke="#fbf1e4" stroke-width="1.6" stroke-dasharray="5 3"/>
+    <line x1="90" y1="128" x2="270" y2="128" stroke="#fbf1e4" stroke-width="1.6" stroke-dasharray="5 3"/>
+    <g fill="#fbf1e4"><circle cx="90" cy="92" r="2.5"/><circle cx="270" cy="92" r="2.5"/><circle cx="90" cy="128" r="2.5"/><circle cx="270" cy="128" r="2.5"/></g>
+    <!-- coupe -->
+    <g stroke="#4a2a1e" stroke-width="2" fill="none">
+      <line x1="108" y1="110" x2="252" y2="110"/>
+      <polyline points="90.8,93 108,110 90.8,127"/>
+      <polyline points="269.2,93 252,110 269.2,127"/>
+    </g>
+    <path d="M318,116 Q332,128 318,140" fill="none" stroke="#fbf1e4" stroke-width="1.5" marker-end="url(#fl)"/>
+    <text x="180" y="44" text-anchor="middle" fill="#fbf1e4">rabattre les bords bruts du passepoil vers le bas,</text>
+    <text x="180" y="60" text-anchor="middle" fill="#fbf1e4">couper le vêtement entre les piqûres</text>
+    <text x="180" y="188" text-anchor="middle" fill="#fbf1e4">les Y vont jusqu&#8217;au dernier point de piqûre,</text>
+    <text x="180" y="204" text-anchor="middle" fill="#fbf1e4">sans le couper ; ne pas couper le passepoil</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Un passepoil – étape 4 : couper</text>
+  </g>
+</svg>

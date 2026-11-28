@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <path d="M60,58 H300 V220 H60 Z" fill="#efe3cf" stroke="#94604b"/>
+    <rect x="90" y="104" width="180" height="12" fill="none" stroke="#94604b" stroke-width="1.6" stroke-dasharray="5 2"/>
+    <g stroke="#4a2a1e" stroke-width="2" fill="none">
+      <line x1="96" y1="110" x2="264" y2="110"/>
+      <polyline points="90.8,104.4 108,110 90.8,115.6"/>
+      <polyline points="269.2,104.4 252,110 269.2,115.6"/>
+    </g>
+    <text x="180" y="80" text-anchor="middle" fill="#5e3426">couper le dessus de poche retourné</text>
+    <text x="180" y="96" text-anchor="middle" fill="#5e3426" font-size="12">et le vêtement, le long de la ligne de coupe</text>
+    <text x="180" y="140" text-anchor="middle" fill="#5e3426" font-size="12">Y jusqu&#8217;aux coins de la piqûre,</text>
+    <text x="180" y="156" text-anchor="middle" fill="#5e3426" font-size="12">sans couper les points</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue avec rabat – étape 4 : couper</text>
+  </g>
+</svg>

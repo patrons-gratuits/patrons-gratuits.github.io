@@ -1,1 +1,7 @@
-build 2026-11-26 10:57 (poches, guide des options, couleurs du site, bandeau, accueil, poches a soufflets, pli central)
+build 2026-11-27 17:30 (poche passepoilee, taille d'apercu stable avec clavier)
+build 2026-11-27 18:10 (menu page Poches, aide point 6, guides passepoil sans renvois)
+build 2026-11-27 17:30 (favicon ciseaux, toutes pages)
+build 2026-11-27 19:00 (robe saharienne: ceinture par defaut, apercu des robes)
+build 2026-11-27 19:10 (tuile chapeaux: bob aux valeurs par defaut)
+build 2026-11-27 21:30 (logo ciseaux et piqure dans le bandeau)
+build 2026-11-28 08:30 (bob: correction du trace de la piece Bord)

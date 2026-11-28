@@ -106,3 +106,13 @@ body.th .btn-real:hover,body.th .btn-real:focus-visible{background:var(--fu-soft
 body.th .card h3,body.th .cq-form h3,body.th .cq-form h4,body.th .wz-stage h3{font-family:inherit;font-weight:700}
 .dltip{margin:.8em 0 .4em;color:var(--mut,#556)}
 body.th #cpset,body.th #cpuser{font-weight:400!important}
+
+/* Logo : ciseaux + piqure sous le nom */
+body.th header nav>a.marque{order:0;display:inline-flex;align-items:center;margin-right:4px;padding:0;border-radius:0;background:none;box-shadow:none;color:#fff;font-weight:700;text-decoration:none}
+body.th header nav>a.marque:hover{background:none}
+.marque img{width:34px;height:34px;display:block;flex:none}
+body.th header nav>a.marque span{white-space:nowrap;font:700 1.1rem/1.05 "Titres",Georgia,"Times New Roman",serif;letter-spacing:.01em;padding:7px 2px 12px 5px;margin-top:5px;background:url(images/piqure-soulignement.svg) no-repeat left bottom / 100% 12px}
+@media(max-width:900px){body.th header nav>a.marque{margin-right:0;order:0}body.th header nav>a.marque span{font-size:1.25rem}}
+@media(max-width:600px){.marque img{width:34px;height:34px}body.th header nav>a.marque span{font-size:1.2rem;padding:6px 2px 11px 4px;margin-top:4px;background-size:100% 11px}}
+
+body.th header nav>a:not(.marque),body.th header nav details.dd>summary{padding-left:8px;padding-right:8px}

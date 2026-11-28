@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <rect x="60" y="58" width="240" height="162" fill="none" stroke="#5e3426" stroke-dasharray="4 3"/>
+    <polygon points="90,104 72,110 90,116" fill="#555" fill-opacity="0.35" stroke="#444" stroke-opacity="0.6" stroke-dasharray="2 2"/>
+    <polygon points="270,104 288,110 270,116" fill="#555" fill-opacity="0.35" stroke="#444" stroke-opacity="0.6" stroke-dasharray="2 2"/>
+    <rect x="90" y="104" width="180" height="12" fill="#efe3cf" stroke="#5e3426" stroke-width="1.4"/>
+    <polyline points="85,104 85,121 275,121 275,104" fill="none" stroke="#fbf1e4" stroke-opacity="0.45" stroke-width="1.6" stroke-dasharray="4 2"/>
+    <polyline points="85,108 85,99 275,99 275,108" fill="none" stroke="#fbf1e4" stroke-width="1.8" stroke-dasharray="4 2"/>
+    <text x="180" y="40" text-anchor="middle" fill="#fbf1e4">surpiquer le haut à 3–4 mm de la fente,</text>
+    <text x="180" y="56" text-anchor="middle" fill="#fbf1e4" font-size="12">à travers le dessus et le dessous de poche</text>
+    <text x="180" y="160" text-anchor="middle" fill="#fbf1e4">rejoindre la surpiqûre des côtés ; retirer les épingles</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue sans rabat – étape 8 : surpiquer le haut</text>
+  </g>
+</svg>

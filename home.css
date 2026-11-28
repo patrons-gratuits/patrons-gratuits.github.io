@@ -69,7 +69,7 @@ ul.news time{font-weight:700;color:var(--ac2)}
 body.home .gal.mosaic figure.here a{display:block;height:100%}
 body.home .gal.mosaic figure.here .ph{display:flex;align-items:center;justify-content:center;background:var(--sand);border:2px dashed var(--ac);font-size:3rem;color:var(--ac)}
 @media(max-width:760px){.hero3{grid-template-columns:1fr}.hero3 .lead{max-width:none}}
-@media(min-width:861px){body.home .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}body.home .tiles>.tile:nth-child(-n+4){grid-column:span 2}}
+@media(min-width:861px){body.home .tiles{grid-template-columns:repeat(20,minmax(0,1fr))}body.home .tiles>.tile{grid-column:span 4}body.home .tiles>.tile:nth-child(-n+4){grid-column:span 10}}
 .hero3 #mc-cta{display:inline-block;margin-top:1.1em}
 @media(max-width:760px){.hero3{display:flex;flex-direction:column}.hero3 .hero2-txt{display:contents}.hero3 .kicker{order:1}.hero3 h1{order:2}.hero3 .lead{order:3}.hero3 .mc-seg{order:4;margin:2px 0 14px!important}.hero3 .hero2-mc{order:5;width:100%}.hero3 #mc-cta{order:6;align-self:center;margin:.6em 0 1em}.hero3 .hero-also{order:7}}
 
@@ -83,3 +83,7 @@ body.home .tile .ph .bm-mini{display:block;width:100%;height:100%;background:tra
 @media(max-width:760px){.hero3 .hero-new{order:6;align-self:center;margin:0 0 1em;text-align:center}}
 
 body.home .tile .ph{background:#e4eef1;padding:14px;box-sizing:border-box;border:0}body.home .tile .ph img[src$=".svg"]{object-fit:contain}
+
+body.home .tile .ph:has(img[src*="carte-"]){background:none;padding:0;aspect-ratio:1}body.home .tile .ph img[src*="carte-"]{border-radius:10px;display:block;width:100%;height:100%}
+/* téléphone : Difficulté et Projetable collés au bouton, en bas de chaque carte */
+@media(max-width:760px){body.home .tiles .tile p.lvl{margin-top:auto}body.home .tiles .tile .go{margin-top:0}}

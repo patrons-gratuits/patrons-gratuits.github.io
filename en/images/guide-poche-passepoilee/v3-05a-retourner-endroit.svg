@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <rect x="60" y="58" width="240" height="162" fill="none" stroke="#5e3426" stroke-dasharray="4 3"/>
+    <!-- fente nette, on voit le dessous de poche au fond -->
+    <rect x="90" y="104" width="180" height="12" fill="#efe3cf" stroke="#5e3426" stroke-width="1.4"/>
+    <text x="180" y="40" text-anchor="middle" fill="#fbf1e4">passer le dessus de poche retourné</text><text x="180" y="56" text-anchor="middle" fill="#fbf1e4">par la fente, vers l&#8217;envers</text>
+    <text x="180" y="60" text-anchor="middle" fill="#fbf1e4" font-size="12"></text>
+    <text x="180" y="150" text-anchor="middle" fill="#fbf1e4">repasser en faisant rouler la couture</text>
+    <text x="180" y="166" text-anchor="middle" fill="#fbf1e4">d&#8217;un millimètre vers l&#8217;envers</text>
+    <text x="180" y="196" text-anchor="middle" fill="#fbf1e4" font-size="12">la fente forme une petite fenêtre nette</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue avec rabat – étape 5 : retourner (endroit)</text>
+  </g>
+</svg>

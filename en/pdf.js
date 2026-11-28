@@ -298,7 +298,10 @@
         // lignes internes
         (p.internal || []).forEach((ln, ii) => {
           const kd = (p.internalKind || [])[ii];
-          if (kd && kd.color === 'darkRed') c += '0.85 0.45 0.02 RG 1.6 w [] 0 d\n'; // boutonnière : trait plein orange (même couleur que l\'emplacement)
+          if (kd && kd.pp === 'win') c += '0 0 0 RG 1.9 w [] 0 d\n'; // cache du cadre : fenêtre à évider
+          else if (kd && kd.pp === 'cut') c += '0 0 0 RG 0.6 w [4 2.5] 0 d\n'; // ligne de coupe et coupes en Y
+          else if (kd && kd.pp === 'fold') c += '0 0 0 RG 0.6 w [7 2 1 2] 0 d\n'; // pli du passepoil
+          else if (kd && kd.color === 'darkRed') c += '0.85 0.45 0.02 RG 1.6 w [] 0 d\n'; // boutonnière : trait plein orange (même couleur que l\'emplacement)
           else if (kd && kd.color === 'green') c += '0 0.56 0.345 RG 1.2 w [] 0 d\n'; // trait plein vert (repère)
           else if (kd && kd.place) c += '0.85 0.45 0.02 RG 1.1 w [5 2.5] 0 d\n'; // emplacement (ex. poche) : tirets orange
           else c += '0.165 0.365 0.69 RG 0.4 w [3 2] 0 d\n';                           // repli : tirets bleus
@@ -364,16 +367,19 @@
       { // légende des lignes, en pied de page, alignée à droite
         const ps = (pg.tile ? [pg.tile.it] : pg.items).map(i => i.p), E = [['Sewing line', 0]];
         if (ps.some(p => p.sa)) E.push(['Seam allowance', 1]);
-        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].color === 'green' || p.internalKind[k].place))))) E.push(['Fold-under', 2]);
+        if (ps.some(p => (p.internal || []).some((l, k) => !((p.internalKind || [])[k] && (p.internalKind[k].color === 'darkRed' || p.internalKind[k].color === 'green' || p.internalKind[k].place || p.internalKind[k].pp))))) E.push(['Fold-under', 2]);
         if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'green'))) E.push(['Marker', 5]);
         if (ps.some(p => p.dot)) E.push(['End of cutting line', 4]);
+        if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.pp === 'win'))) E.push(['Template window to cut out', 7]);
+        if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.pp === 'cut'))) E.push(['Cutting line and Y cuts', 8]);
+        if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.pp === 'fold'))) E.push(['Welt fold line', 9]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'poche'))) E.push(['Pocket position', 3]);
         if (ps.some(p => (p.internalKind || []).some(kd => kd && kd.place === 'patte'))) E.push(['Tab position', 3]);
         if (ps.some(p => (p.internal || []).some((l, k) => (p.internalKind || [])[k] && p.internalKind[k].color === 'darkRed'))) E.push([opts.redLabel||'Buttonhole', 6]);
         const ly = VH - 2 * MARGIN + 2, wA = Math.min(PW / sc, PW) - 2 * MARGIN, LW = 22, GAP = 10;
         let lx = wA - E.reduce((t, e) => t + LW + 3 + tw(e[0], 6) + GAP, -GAP);
         E.forEach(e => {
-          c += ['0 G 0.4 w [] 0 d', '0.62 0.106 0.07 RG 1.2 w [] 0 d', '0.165 0.365 0.69 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.02 RG 1.1 w [5 2.5] 0 d', '0.62 0.106 0.07 RG 1.1 w [] 0 d', '0 0.56 0.345 RG 1.2 w [] 0 d', '0.85 0.45 0.02 RG 1.6 w [] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
+          c += ['0 G 0.4 w [] 0 d', '0.62 0.106 0.07 RG 1.2 w [] 0 d', '0.165 0.365 0.69 RG 0.4 w [3 2] 0 d', '0.85 0.45 0.02 RG 1.1 w [5 2.5] 0 d', '0.62 0.106 0.07 RG 1.1 w [] 0 d', '0 0.56 0.345 RG 1.2 w [] 0 d', '0.85 0.45 0.02 RG 1.6 w [] 0 d', '0 G 1.9 w [] 0 d', '0 G 0.6 w [4 2.5] 0 d', '0 G 0.6 w [7 2 1 2] 0 d'][e[1]] + (e[1] === 4 ? (() => { const r = 3, cx = lx + LW / 2, cy = ly - 2, U = (x, y) => `${X(x)} ${Y(y)}`; return `\n1 J ${U(cx - r, cy - r)} m ${U(cx + r, cy + r)} l S ${U(cx - r, cy + r)} m ${U(cx + r, cy - r)} l S\n0 G 0 J\n`; })() : `\n${X(lx)} ${Y(ly - 2)} m ${X(lx + LW)} ${Y(ly - 2)} l S\n0 G [] 0 d\n`);
           text(e[0], lx + LW + 3, ly, 6); lx += LW + 3 + tw(e[0], 6) + GAP;
         });
       }

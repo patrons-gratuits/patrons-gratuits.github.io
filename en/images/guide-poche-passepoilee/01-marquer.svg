@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <!-- Panneau gauche : envers + renfort -->
+  <g transform="translate(20,20)">
+    <rect width="280" height="220" rx="6" fill="#dcae99"/>
+    <rect x="50" y="85" width="180" height="50" fill="#fbf1e4" stroke="#94604b" stroke-dasharray="5 4"/>
+    <line x1="140" y1="85" x2="140" y2="91" stroke="#5e3426" stroke-width="2"/>
+    <line x1="140" y1="129" x2="140" y2="135" stroke="#5e3426" stroke-width="2"/>
+    <text x="140" y="114" text-anchor="middle" fill="#5e3426">renfort thermocollé</text>
+    <text x="140" y="250" text-anchor="middle" fill="#333" font-weight="bold">Étape 1 : envers</text>
+  </g>
+  <!-- Panneau droit : endroit + cadre -->
+  <g transform="translate(340,20)">
+    <rect width="280" height="220" rx="6" fill="#c1846c"/>
+    <rect x="60" y="92" width="160" height="36" fill="none" stroke="#fbf1e4" stroke-width="2"/>
+    <line x1="80" y1="110" x2="200" y2="110" stroke="#fbf1e4" stroke-width="1.5" stroke-dasharray="7 4"/>
+    <polyline points="60,92 80,110 60,128" fill="none" stroke="#fbf1e4" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polyline points="220,92 200,110 220,128" fill="none" stroke="#fbf1e4" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="140" y="76" text-anchor="middle" fill="#fbf1e4">cadre tracé avec le cache</text>
+    <text x="140" y="154" text-anchor="middle" fill="#fbf1e4" font-size="12">ligne de coupe et Y en pointillé</text>
+    <text x="140" y="250" text-anchor="middle" fill="#333" font-weight="bold">Étape 1 : endroit</text>
+  </g>
+</svg>

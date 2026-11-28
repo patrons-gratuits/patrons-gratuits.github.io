@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 380" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect y="-12" width="360" height="312" rx="6" fill="#dcae99"/>
+    <!-- triangles pris dans la couture -->
+    <polygon points="62,96 40,110 62,124" fill="#94604b" stroke="#5e3426"/>
+    <polygon points="298,96 320,110 298,124" fill="#94604b" stroke="#5e3426"/>
+    <!-- sacs superposés, vus de l'envers -->
+    <path d="M50,64 H310 V250 Q310,268 292,268 H68 Q50,268 50,250 Z" fill="#f6efe4" stroke="#5e3426" stroke-width="1.4"/>
+    <!-- couture d'assemblage -->
+    <path d="M58,72 V248 Q58,260 70,260 H290 Q302,260 302,248 V72" fill="none" stroke="#4a2a1e" stroke-width="1.8" stroke-dasharray="5 3"/>
+    <text x="180" y="150" text-anchor="middle" fill="#5e3426">dessus et dessous de poche</text>
+    <text x="180" y="14" text-anchor="middle" fill="#5e3426">replier le vêtement de côté, assembler</text>
+    <text x="180" y="30" text-anchor="middle" fill="#5e3426">dessus et dessous de poche sur leur contour ;</text><text x="180" y="46" text-anchor="middle" fill="#5e3426">surjeter si besoin</text>
+    <text x="180" y="340" text-anchor="middle" fill="#333" font-weight="bold">Étape 10 : assembler la poche</text>
+  </g>
+</svg>

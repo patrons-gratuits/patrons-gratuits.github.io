@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <!-- passepoil sur l'envers (transparence) -->
+    <rect x="62" y="92" width="236" height="60" fill="none" stroke="#5e3426" stroke-width="1" stroke-dasharray="4 3"/>
+    <!-- lèvre unique dans l'ouverture -->
+    <rect x="90" y="92" width="180" height="36" fill="#94604b"/>
+    <line x1="90" y1="93" x2="270" y2="93" stroke="#dcae99" stroke-width="2"/>
+    <rect x="90" y="92" width="180" height="36" fill="none" stroke="#5e3426" stroke-width="1"/>
+    <text x="180" y="44" text-anchor="middle" fill="#fbf1e4">passer le passepoil, les triangles et la marge du haut</text>
+    <text x="180" y="60" text-anchor="middle" fill="#fbf1e4">par l&#8217;ouverture, vers l&#8217;envers</text>
+    <text x="180" y="178" text-anchor="middle" fill="#fbf1e4">le pli de la lèvre rejoint le bord du haut</text>
+    <text x="180" y="194" text-anchor="middle" fill="#fbf1e4">et remplit l&#8217;ouverture ; repasser</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Un passepoil – étape 5 : retourner</text>
+  </g>
+</svg>

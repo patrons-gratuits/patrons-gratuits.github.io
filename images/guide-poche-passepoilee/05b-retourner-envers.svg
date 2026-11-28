@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#dcae99"/>
+    <!-- renfort -->
+    <rect x="70" y="80" width="220" height="60" fill="#fbf1e4" stroke="#94604b" stroke-dasharray="5 4"/>
+    <!-- passepoils passés sur l'envers : couvrent l'ouverture et s'étalent -->
+    <rect x="62" y="70" width="236" height="80" fill="#94604b"/>
+    <!-- ouverture (dos des lèvres) -->
+    <line x1="90" y1="92" x2="270" y2="92" stroke="#5e3426" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <line x1="90" y1="128" x2="270" y2="128" stroke="#5e3426" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <line x1="62" y1="110" x2="298" y2="110" stroke="#5e3426" stroke-width="1"/>
+    <!-- triangles rabattus vers l'extérieur, posés sur les bouts des passepoils -->
+    <!-- marges de la fente retournées sur l'envers -->
+    <polygon points="90,92 270,92 252,74 108,74" fill="#555" fill-opacity="0.22" stroke="#444" stroke-opacity="0.6" stroke-dasharray="3 2"/>
+    <polygon points="90,128 270,128 252,146 108,146" fill="#555" fill-opacity="0.22" stroke="#444" stroke-opacity="0.6" stroke-dasharray="3 2"/>
+    <line x1="90" y1="92" x2="270" y2="92" stroke="#5e3426" stroke-width="1.2" stroke-dasharray="5 3"/>
+    <line x1="90" y1="128" x2="270" y2="128" stroke="#5e3426" stroke-width="1.2" stroke-dasharray="5 3"/>
+    <polygon points="90,92 72,110 90,128" fill="#555" fill-opacity="0.35" stroke="#444" stroke-opacity="0.6" stroke-dasharray="3 2"/>
+    <polygon points="270,92 288,110 270,128" fill="#555" fill-opacity="0.35" stroke="#444" stroke-opacity="0.6" stroke-dasharray="3 2"/>
+    <line x1="90" y1="92" x2="90" y2="128" stroke="#5e3426" stroke-width="1.4"/>
+    <line x1="270" y1="92" x2="270" y2="128" stroke="#5e3426" stroke-width="1.4"/>
+    <text x="180" y="44" text-anchor="middle" fill="#5e3426">vu de l&#8217;envers : les passepoils couvrent l&#8217;ouverture,</text>
+    <text x="180" y="60" text-anchor="middle" fill="#5e3426">les triangles sont rabattus sur leurs bouts</text>
+    <text x="180" y="178" text-anchor="middle" fill="#5e3426">tirer légèrement sur les triangles</text>
+    <text x="180" y="194" text-anchor="middle" fill="#5e3426">pour des coins bien nets ; repasser</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Étape 5 : retourner (envers)</text>
+  </g>
+</svg>

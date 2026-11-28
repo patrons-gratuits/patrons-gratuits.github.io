@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#dcae99"/>
+    <!-- dessus de poche retourné, à plat (transparent pour voir dessous) -->
+    <path d="M60,58 H300 V220 H60 Z" fill="#efe3cf" fill-opacity="0.55" stroke="#94604b"/>
+    <!-- marges et triangles retournés dans la fente -->
+    <g fill="#c1846c" stroke="#5e3426" stroke-width="0.8">
+      <polygon points="90,84 270,84 252,78 108,78"/>
+      <polygon points="90,96 270,96 252,102 108,102"/>
+      <polygon points="90,84 72,90 90,96"/>
+      <polygon points="270,84 288,90 270,96"/>
+    </g>
+    <rect x="90" y="84" width="180" height="12" fill="none" stroke="#94604b" stroke-width="1.2" stroke-dasharray="4 2"/>
+    <text x="180" y="30" text-anchor="middle" fill="#5e3426">vu de l&#8217;envers : marges et triangles retournés</text>
+    <text x="180" y="46" text-anchor="middle" fill="#5e3426" font-size="12">autour de la fente, sous le dessus de poche retourné</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue avec rabat – étape 5 : retourner (envers)</text>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <path d="M60,58 H300 V220 H60 Z" fill="#efe3cf" stroke="#94604b"/>
+    <path fill-rule="evenodd" fill="#fdfbf7" fill-opacity="0.85" stroke="#777" d="M40,70 H320 V158 H40 Z M90,104 V116 H270 V104 Z"/>
+    <line x1="40" y1="110" x2="84" y2="110" stroke="#777" stroke-dasharray="4 3"/>
+    <line x1="276" y1="110" x2="320" y2="110" stroke="#777" stroke-dasharray="4 3"/>
+    <rect x="90" y="104" width="180" height="12" fill="none" stroke="#4a2a1e" stroke-width="1.6"/>
+    <line x1="108" y1="110" x2="252" y2="110" stroke="#4a2a1e" stroke-dasharray="6 4"/>
+    <polyline points="90,104 108,110 90,116" fill="none" stroke="#4a2a1e" stroke-dasharray="2 2"/>
+    <polyline points="270,104 252,110 270,116" fill="none" stroke="#4a2a1e" stroke-dasharray="2 2"/>
+    <text x="180" y="92" text-anchor="middle" fill="#444">cache posé sur le dessus de poche retourné</text>
+    <text x="180" y="134" text-anchor="middle" fill="#444">tracer le tour de la fenêtre,</text><text x="180" y="148" text-anchor="middle" fill="#444" font-size="12">la ligne de coupe et les Y</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue avec rabat – étape 2 : tracer</text>
+  </g>
+</svg>

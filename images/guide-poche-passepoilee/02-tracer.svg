@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <!-- passepoils -->
+    <rect x="62" y="68" width="236" height="84" fill="#94604b"/>
+    <line x1="62" y1="110" x2="298" y2="110" stroke="#dcae99" stroke-width="2"/>
+    <!-- cache papier avec fenêtre -->
+    <path fill-rule="evenodd" fill="#fdfbf7" fill-opacity="0.82" stroke="#777" stroke-width="1"
+      d="M40,40 H320 V180 H40 Z M90,92 V128 H270 V92 Z"/>
+    <!-- repère central du cache -->
+    <line x1="40" y1="110" x2="84" y2="110" stroke="#777" stroke-dasharray="4 3"/>
+    <line x1="276" y1="110" x2="320" y2="110" stroke="#777" stroke-dasharray="4 3"/>
+    <!-- traits de craie le long de la fenêtre -->
+    <line x1="90" y1="93.5" x2="270" y2="93.5" stroke="#fff" stroke-width="2.2"/>
+    <line x1="90" y1="126.5" x2="270" y2="126.5" stroke="#fff" stroke-width="2.2"/>
+    <text x="180" y="62" text-anchor="middle" fill="#444">cache posé sur les passepoils</text>
+    <text x="180" y="152" text-anchor="middle" fill="#444">tracer le long des grands bords</text>
+    <text x="180" y="168" text-anchor="middle" fill="#444">de la fenêtre ; plis sur le repère central</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Étape 2 : vérifier et tracer au cache</text>
+  </g>
+</svg>

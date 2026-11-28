@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <!-- cadre tracé à l'étape 1 -->
+    <rect x="90" y="92" width="180" height="36" fill="none" stroke="#fbf1e4" stroke-width="1.5"/>
+    <polyline points="90,92 108,110 90,128" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <polyline points="270,92 252,110 270,128" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <line x1="108" y1="110" x2="252" y2="110" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="6 4"/>
+    <!-- passepoil : bords bruts sur la ligne de coupe, pli vers le bas -->
+    <rect x="62" y="110" width="236" height="54" fill="#94604b" fill-opacity="0.92"/>
+    <line x1="62" y1="164" x2="298" y2="164" stroke="#dcae99" stroke-width="2"/>
+    <line x1="62" y1="110.6" x2="298" y2="110.6" stroke="#5e3426" stroke-width="1.2"/>
+    <!-- repères -->
+    <text x="304" y="108" fill="#fbf1e4" font-size="11">bords</text><text x="304" y="121" fill="#fbf1e4" font-size="11">bruts</text>
+    <text x="306" y="168" fill="#fbf1e4" font-size="11">pli</text>
+    
+    <text x="180" y="44" text-anchor="middle" fill="#fbf1e4">poser le passepoil plié sous la ligne de coupe,</text>
+    <text x="180" y="60" text-anchor="middle" fill="#fbf1e4">bords bruts sur la ligne, pli vers le bas</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Un passepoil – étape 2 : poser le passepoil</text>
+  </g>
+</svg>

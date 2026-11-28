@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#c1846c"/>
+    <rect x="90" y="80" width="180" height="24" fill="#555" fill-opacity="0.22" stroke="#444" stroke-opacity="0.6" stroke-dasharray="3 2"/>
+    <path d="M87,104 H273 V172 Q273,186 259,186 H101 Q87,186 87,172 Z" fill="#cd977f" stroke="#5e3426"/>
+    <path d="M93,106 V170 Q93,180 103,180 H257 Q267,180 267,170 V106" fill="none" stroke="#fbf1e4" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="87" y1="104" x2="273" y2="104" stroke="#5e3426" stroke-width="1.4"/>
+    <text x="180" y="150" text-anchor="middle" fill="#4a2a1e">rabat</text>
+    <text x="180" y="40" text-anchor="middle" fill="#fbf1e4">glisser la marge du rabat dans la fente,</text>
+    <text x="180" y="56" text-anchor="middle" fill="#fbf1e4">sous le bord du haut (en grisé)</text>
+    <text x="180" y="208" text-anchor="middle" fill="#fbf1e4">le rabat retombe sur la fente ; centrer, épingler</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Poche fendue avec rabat – étape 7 : glisser le rabat</text>
+  </g>
+</svg>

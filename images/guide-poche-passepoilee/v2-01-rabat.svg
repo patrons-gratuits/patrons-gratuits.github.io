@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <g transform="translate(20,20)">
+    <rect width="360" height="220" rx="6" fill="#f3ece4"/>
+    <!-- rabat préparé, endroit -->
+    <path d="M86,50 H274 V130 Q274,146 258,146 H102 Q86,146 86,130 Z" fill="#cd977f" stroke="#5e3426"/>
+    <path d="M92,76 V128 Q92,140 104,140 H256 Q268,140 268,128 V76" fill="none" stroke="#fbf1e4" stroke-width="1.2" stroke-dasharray="4 2"/>
+    <!-- marge invisible (bord brut ouvert) -->
+    <line x1="86" y1="74" x2="274" y2="74" stroke="#5e3426" stroke-width="1" stroke-dasharray="2 3"/>
+    <!-- boutonnière -->
+    <rect x="174" y="118" width="12" height="20" rx="5" fill="none" stroke="#4a2a1e" stroke-width="2"/>
+    <text x="290" y="64" fill="#5e3426" font-size="11">bord brut</text>
+    <text x="290" y="78" fill="#5e3426" font-size="11">(marge 1 cm)</text>
+    <text x="180" y="102" text-anchor="middle" fill="#4a2a1e">rabat entoilé, doublé,</text>
+    <text x="180" y="117" text-anchor="middle" fill="#4a2a1e" font-size="12"></text>
+    <text x="180" y="176" text-anchor="middle" fill="#5e3426">retourné, surpiqué à 3–4 mm,</text>
+    <text x="180" y="192" text-anchor="middle" fill="#5e3426">boutonnière s&#8217;il est boutonné</text>
+    <text x="180" y="250" text-anchor="middle" fill="#333" font-weight="bold">Un passepoil avec rabat – étape 1 : préparer le rabat</text>
+  </g>
+</svg>

@@ -79,7 +79,7 @@
   var PAGES = { p: 'poches-simple.html', c: 'poches-soufflet-central.html', l: 'poches-soufflets-lateraux.html', d: 'poches-double-soufflet.html' };
 
   var DEF = { sea: '', man: 'l', fen: '0', emp: PV === 'd', epa: true, pat: true, pmc: true, cart: '0', same: true, ps: 'c', psr: true, pss: 'i', pd: 'c', pdr: true, pds: 'i', pg: 'c', pgr: true, pgs: 'i', pb: 'l', pbr: true, pbs: 'i', rab: 'p' };
-  if (ROBE) Object.assign(DEF, { len: 'mini', belt: '0', man: 'c', emp: false, epa: true, pat: false, pmc: false, ps: 'p', pss: 'e', pd: 'p', pds: 'e', pg: 'p', pgs: 'e', pb: 'p', pbs: 'e' });
+  if (ROBE) Object.assign(DEF, { len: 'mini', belt: '1', man: 'c', emp: false, epa: true, pat: false, pmc: false, ps: 'p', pss: 'e', pd: 'p', pds: 'e', pg: 'p', pgs: 'e', pb: 'p', pbs: 'e' });
   function lsGet() { try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
   function lsSet(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } }
   function lsDel() { try { localStorage.removeItem(KEY); } catch (e) { } }
