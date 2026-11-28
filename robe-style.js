@@ -13,7 +13,7 @@
     neck: 'Necklines', ed: 'Front neckline', eb: 'Back neckline', orig: 'as designed', low: 'lowered by %d', rai: 'raised by %d',
     bra: 'If you wear a bra, do not lower the back neckline by more than about 6 cm, or the strap will show.',
     poc: 'Pockets', pc: 'In the side seams', pp: 'Welt pockets', nb: 'Number', n1: 'One', n2: 'Two',
-    ang: 'Opening', a0: 'Horizontal', a1: 'Slanted', a2: 'Steeply slanted', a3: 'Vertical', ppHint: 'Trickier to sew: a video guides you step by step.',
+    ang: 'Opening', a0: 'Horizontal', a1: 'Slanted', a2: 'Steeply slanted', a3: 'Vertical', ppHint: 'Trickier to sew: a video guides you step by step.', ppTxt: 'Welt pockets are cut and sewn with the Welt pocket pattern. This button opens it already set for your dress: single welt, 14 cm opening angled at %a°, %c, 14 cm deep. On the dress front, the pattern marks where the opening goes: place the frame template there, with both ends of its window on the two short marks.', ppBtn: 'Create the pocket pattern', ppPair: 'a pair', ppOne: 'one pocket, on the right side when worn',
     face: 'Front', dos: 'Back', lr: ['right', 'left'], rl: ['left', 'right'], alt: 'Sketch of the dress',
     rl_: 'Length', re: 'Front neckline', rb: 'Back neckline', rp: 'Pockets', cm: 'cm'
   } : {
@@ -24,7 +24,7 @@
     neck: 'Encolures', ed: 'Encolure devant', eb: 'Encolure dos', orig: 'd’origine', low: 'descendue de %d', rai: 'remontée de %d',
     bra: 'Si vous portez un soutien-gorge, ne descendez pas l’encolure dos de plus de 6 cm environ : l’attache deviendrait visible.',
     poc: 'Poches', pc: 'Dans les coutures de côté', pp: 'Passepoilées', nb: 'Nombre', n1: 'Une', n2: 'Deux',
-    ang: 'Ouverture', a0: 'Horizontale', a1: 'Inclinée', a2: 'Très inclinée', a3: 'Verticale', ppHint: 'Plus délicates à coudre : une vidéo vous guide pas à pas.',
+    ang: 'Ouverture', a0: 'Horizontale', a1: 'Inclinée', a2: 'Très inclinée', a3: 'Verticale', ppHint: 'Plus délicates à coudre : une vidéo vous guide pas à pas.', ppTxt: 'Les poches passepoilées se coupent et se cousent avec le patron Poches passepoilées. Ce bouton l’ouvre déjà réglé pour votre robe : un passepoil, ouverture de 14 cm inclinée à %a°, %c, profondeur 14 cm. Sur le devant de la robe, le patron marque l’emplacement de l’ouverture : posez-y le cache du cadre, les deux bouts de sa fenêtre sur les deux petits traits.', ppBtn: 'Créer le patron des poches', ppPair: 'une paire', ppOne: 'une poche, côté droit une fois la robe portée',
     face: 'Face', dos: 'Dos', lr: ['droite', 'gauche'], rl: ['gauche', 'droite'], alt: 'Croquis de la robe',
     rl_: 'Longueur', re: 'Encolure devant', rb: 'Encolure dos', rp: 'Poches', cm: 'cm'
   };
@@ -86,7 +86,7 @@
       '<fieldset><legend>' + T.neck + '</legend>' + slider('ed', T.ed, -5, 4) + slider('eb', T.eb, -12, 8) + '<p class="hint">' + T.bra + '</p></fieldset>' +
       '<fieldset><legend>' + T.poc + '</legend>' + chips('poc', [['cote', T.pc], ['passepoil', T.pp]]) +
       '<div id="st-pp"><p class="hint">' + T.ppHint + '</p><h3>' + T.nb + '</h3>' + chips('nb', [['1', T.n1], ['2', T.n2]]) +
-      '<h3>' + T.ang + '</h3>' + chips('ang', [['0', T.a0], ['41.3', T.a1], ['65', T.a2], ['90', T.a3]]) + '</div></fieldset></div>';
+      '<h3>' + T.ang + '</h3>' + chips('ang', [['0', T.a0], ['41.3', T.a1], ['65', T.a2], ['90', T.a3]]) + '<div id="st-ppbox" class="ppbox"><p id="st-pptxt"></p><p><a id="st-ppgo" class="btn" href="poches-passepoilees.html">' + T.ppBtn + '</a></p></div></div></fieldset></div>';
     root = sec;
     var h2 = sec.querySelector('h2'); if (h2) h2.insertAdjacentHTML('beforebegin', '<p class="cq-lead">' + T.lead + '</p>'); else sec.insertAdjacentHTML('afterbegin', '<p class="cq-lead">' + T.lead + '</p>');
     sec.insertAdjacentHTML('beforeend', h);
@@ -118,10 +118,23 @@
     if (t.id === 'st-eb') view = 'dos'; else if (t.id === 'st-ed') view = 'face'; else return;
     render(true);
   }
+  /* encadré : lien vers le patron Poches passepoilées, déjà réglé (un passepoil, ouverture de 14 cm) */
+  function ppHref() {
+    var sm = document.getElementById('v_seam'), seam = sm && sm.value !== '' && !isNaN(parseFloat(sm.value)) ? parseFloat(sm.value) : 1;
+    return 'poches-passepoilees.html?type=simple&L=14&ang=' + st.ang + '&cote=' + (st.nb === 2 ? 'paire' : 'droite') + '&lev=1.5&prof=14&seam=' + seam;
+  }
+  function ppBox() {
+    var t = $('st-pptxt'), a = $('st-ppgo'); if (!t || !a) return;
+    t.textContent = T.ppTxt.replace('%a', String(st.ang).replace('.', EN ? '.' : ',')).replace('%c', st.nb === 2 ? T.ppPair : T.ppOne);
+    a.href = ppHref();
+  }
+  document.addEventListener('input', function (e) { if (e.target && e.target.id === 'v_seam') ppBox(); });
+  document.addEventListener('click', function (e) { var a = e.target && e.target.closest && e.target.closest('#st-ppgo'); if (a) a.href = ppHref(); });
   function render(fromUser) {
     if (!root) return;
     readDom();
     $('st-pp').hidden = st.poche !== 'passepoil';
+    ppBox();
     $('st-ed-v').textContent = neckTxt(st.ed); $('st-eb-v').textContent = neckTxt(st.eb);
     $('st-lenv').textContent = lenLabel(); rallHint();
     $('st-vf').setAttribute('aria-pressed', String(view === 'face')); $('st-vd').setAttribute('aria-pressed', String(view === 'dos'));

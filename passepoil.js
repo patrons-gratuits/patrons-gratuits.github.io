@@ -249,7 +249,16 @@
   document.addEventListener('input', function (e) { if (e.target && e.target.id === 'v_type' && TY[e.target.value]) setType(e.target.value); });
   [].forEach.call(document.querySelectorAll('#form input[type=number], #form select, #bouton'), function (i) { i.addEventListener('input', draw); i.addEventListener('change', draw); });
   $('dl').onclick = function () { download(false); }; $('dl1').onclick = function () { download(true); };
-  try { var Q = new URLSearchParams(location.search); Object.keys(DEF).forEach(function (n) { var v = Q.get(n), e = $('v_' + n); if (e && v !== null && v !== '' && !isNaN(parseFloat(v))) e.value = v; });
-    var qt = Q.get('type'); if (qt && TY[qt]) { cur = qt; var s0 = $('v_type'); if (s0) s0.value = qt; renderTypes(); } } catch (e) {}
+  try { var Q = new URLSearchParams(location.search);
+    function setV(id, v) { var e = $(id); if (e && v !== null && v !== '' && !isNaN(parseFloat(v))) { e.value = v; e.dispatchEvent(new Event('input', { bubbles: true })); } }
+    Object.keys(DEF).forEach(function (n) { setV('v_' + n, Q.get(n)); });
+    var qt = Q.get('type'); if (qt === 'simple') qt = 'one';
+    if (qt && TY[qt]) { cur = qt; var s0 = $('v_type'); if (s0) s0.value = qt; renderTypes(); }
+    /* adresse courte, utilisée par la robe Béa : ?type=simple&L=14&ang=41.3&cote=paire&lev=1.5&prof=14&seam=1 */
+    setV('v_LongOuv', Q.get('L')); setV('v_AngleEntree', Q.get('ang')); setV('v_ProfUtile', Q.get('prof')); setV('v_seam', Q.get('seam'));
+    setV(cur === 'dbl' ? 'v_LevreD' : 'v_LevreS', Q.get('lev'));
+    var qc = ({ paire: 'gd', pair: 'gd', gd: 'gd', droite: 'd', right: 'd', d: 'd', gauche: 'g', left: 'g', g: 'g' })[Q.get('cote')];
+    if (qc && $('v_cote')) $('v_cote').value = qc;
+  } catch (e) {}
   draw();
 })();

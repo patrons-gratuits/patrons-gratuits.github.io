@@ -7,19 +7,18 @@
   var $ = function (id) { return document.getElementById(id); };
   E.setBevel(0.34);
   var ENG = {}; /* les parementures se superposent au devant et au dos (voir sheet.js) */
-  ENG['Parementure devant'] = 'PareDevant'; ENG['Parementure dos'] = 'PareDos'; ENG['Deco Devant'] = 'DecoDevant'; ENG['Deco dos'] = 'DecoDos'; ENG['Garniture poche'] = 'GarniturePoche'; ENG['Poche int'] = 'PocheInt';
+  ENG['Parementure devant'] = 'PareDevant'; ENG['Parementure dos'] = 'PareDos'; ENG['Deco Devant'] = 'DecoDevant'; ENG['Deco dos'] = 'DecoDos';
   var N = CFG.names, STY = function () { return window.ROBE_STYLE || { longueur: 'mini', ed: 0, eb: 0, poche: 'cote', nb: 1, ang: 41.3 }; };
 
-  /* le tracé « Poche » (ouverture) du devant n'est affiché qu'avec les poches passepoilées */
+  /* la ligne d'ouverture et ses deux repères sur le devant ne sont affichés qu'avec les poches passepoilées (la poche se fait avec le patron Poches passepoilées) */
   function hideOpening(p, on) {
     var b = D.blocks[0];
     var base = p.__ip || (p.__ip = (p.iPaths || []).slice());
-    p.iPaths = base.filter(function (id) { var m = b.modeling[id]; return on || !(m && m.name === 'Poche'); });
+    p.iPaths = base.filter(function (id) { var m = b.modeling[id]; return on || !(m && /^(Ouverture poche passepoilée|Repère bas ouverture|Repère haut ouverture)$/.test(m.name || '')); });
   }
   function selected() {
     var s = STY(), out = [N.devant, N.dos, N.parDev, N.parDos, N.decDev, N.decDos];
     if (s.poche === 'cote') out.push(N.pCote);
-    else out.push(N.devPoche, N.pInt, N.passepoil, N.garniture, N.entoilage);
     return out;
   }
 
@@ -72,10 +71,9 @@
     return k;
   }
   function prepare(r) {
-    var s = STY(), per = s.poche === 'passepoil' ? (s.nb === 2 ? 2 : 1) : null;
+    var s = STY();
     return r.pieces.map(function (p) {
       var q = p.quantity || 1;
-      if (per && /^(Devant poche|Poche int|Passepoil|Garniture poche|Entoilage passepoil)$/.test(p.name)) q = per;
       var fab = CFG.fab[p.name] || CFG.fab._;
       var note = (p.name === N.devant && s.poche === 'passepoil' && s.nb === 1) ? CFG.t.oneSide : '';
       return Object.assign({}, p, {
@@ -186,12 +184,12 @@
     }
     return H;
   }
-  var SEC = { 'Parementure devant': 1, 'Parementure dos': 1 }, DEC = { 'Deco Devant': 1, 'Deco dos': 1, 'Passepoil': 1, 'Garniture poche': 1 };
+  var SEC = { 'Parementure devant': 1, 'Parementure dos': 1 }, DEC = { 'Deco Devant': 1, 'Deco dos': 1 };
   function yardage(r) {
-    var per = STY().poche === 'passepoil' ? (STY().nb === 2 ? 2 : 1) : null, g = { main: [], sec: [], dec: [] };
+    var g = { main: [], sec: [], dec: [] };
     r.pieces.forEach(function (p) {
       if (p.name === N.entoilage) return;
-      var q = p.quantity || 1; if (per && /^(Devant poche|Poche int|Passepoil|Garniture poche)$/.test(p.name)) q = per;
+      var q = p.quantity || 1;
       g[SEC[p.name] ? 'sec' : DEC[p.name] ? 'dec' : 'main'].push({ p: p, q: q });
     });
     var res = {};

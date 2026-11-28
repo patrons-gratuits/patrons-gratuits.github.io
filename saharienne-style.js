@@ -54,6 +54,7 @@
   /* textes propres à la robe (les autres intitulés sont ceux de la saharienne) */
   var RLEN = { mini: { ext: 9.5, flare: 1.5, dChest: 2, dSpread: 1.5, dLow: 4, btnStop: 11, waist: 40, waistIn: 0.11, trueW: 1.35, slitSide: 12, slitBack: 12, flapOver: 0.25 },
                midi: { ext: 33, flare: 3.5, dChest: 2, dSpread: 1.5, dLow: 8, btnStop: 18, waist: 40, waistIn: 0.11, trueW: 1.35, slitSide: 12, slitBack: 18, flapOver: 0.25 } };
+  Object.assign(T, EN ? { belt: 'Belt', b0: 'Without', b1: 'Tie belt', beltTxt: 'tie belt' } : { belt: 'Ceinture', b0: 'Sans', b1: 'À nouer', beltTxt: 'ceinture à nouer' });
   if (ROBE) {
     Object.assign(T, EN ? {
       lead: 'Design a safari dress that suits you: the sketch reflects each of your choices. Measurements come next.',
@@ -79,6 +80,7 @@
   var PAGES = { p: 'poches-simple.html', c: 'poches-soufflet-central.html', l: 'poches-soufflets-lateraux.html', d: 'poches-double-soufflet.html' };
 
   var DEF = { sea: '', man: 'l', fen: '0', emp: PV === 'd', epa: true, pat: true, pmc: true, cart: '0', same: true, ps: 'c', psr: true, pss: 'i', pd: 'c', pdr: true, pds: 'i', pg: 'c', pgr: true, pgs: 'i', pb: 'l', pbr: true, pbs: 'i', rab: 'p' };
+  DEF.belt = FEM ? '1' : '0';   /* ceinture à nouer : choisie par défaut pour la saharienne femme et la robe */
   if (ROBE) Object.assign(DEF, { len: 'mini', belt: '1', man: 'c', emp: false, epa: true, pat: false, pmc: false, ps: 'p', pss: 'e', pd: 'p', pds: 'e', pg: 'p', pgs: 'e', pb: 'p', pbs: 'e' });
   function lsGet() { try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
   function lsSet(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } }
@@ -98,7 +100,7 @@
   if (st.same && (st.pd === 'k' || st.pg === 'k')) st.same = false;
   if (FEM) { if (PV !== 'd') st.emp = false; } else if (PV === 'd') st.man = 'l'; else st.emp = false;
   function seaVal() { return (st.sea === '0' || st.sea === '1') ? st.sea : (PV === 'd' ? '1' : '0'); }
-  window.SAH_STYLE = { man: 'l', fen: '0' };
+  window.SAH_STYLE = { man: 'l', fen: '0', belt: st.belt };
 
   var view = 'face';
   var sk = document.createElement('div');
@@ -131,7 +133,7 @@
       '<fieldset><legend>' + T.sleeves + '</legend>' + chips('man', [['l', T.ml], ['c', T.mc]]) + '<p class="hint" id="st-manhint" hidden>' + T.mcn + '</p>' +
       '<div class="sub"><h3>' + T.slits + '</h3>' + chips('fen', [['0', T.f0], ['c', T.fc, 0], ['d', T.fd, 0]]) + (ROBE ? '<p class="hint" id="st-hfen" hidden>' + T.hfen + '</p>' : '') + '</div></fieldset>' +
       '<fieldset><legend>' + T.small + '</legend><div class="chips">' + chk('emp', T.emp) + chk('epa', T.epa) + chk('pat', T.pat) + chk('pmc', T.pmc) + '</div><p class="hint" id="st-emphint" hidden>' + T.empn + '</p></fieldset>' +
-      (ROBE ? '<fieldset><legend>' + T.belt + '</legend>' + chips('belt', [['0', T.b0], ['1', T.b1]]) + '</fieldset>' : '') +
+      (FEM ? '<fieldset><legend>' + T.belt + '</legend>' + chips('belt', [['0', T.b0], ['1', T.b1]]) + '</fieldset>' : '') +
       '<fieldset><legend>' + T.cart + '</legend><p class="hint">' + T.cart_h + '</p>' + chips('cart', [['0', T.c0], ['g', T.cg], ['d', T.cd]]) + '</fieldset>' +
       '<fieldset><legend>' + T.chest + '</legend><label class="check"><input type="checkbox" id="st-same"> ' + T.same + '</label>' +
       '<div id="st-pSame">' + pocketGroup('ps', '', false) + '</div><div id="st-pSides" hidden><div class="sub">' + pocketGroup('pd', T.right, true) + '</div><div class="sub">' + pocketGroup('pg', T.left, true) + '</div></div></fieldset>' +
@@ -149,7 +151,7 @@
 
   function applyDom() {
     function rad(n, v) { var e = I(n + '-' + v); if (e) e.checked = true; }
-    rad('ver', PV); if (ROBE) { rad('len', st.len); rad('belt', st.belt); } rad('sea', seaVal()); rad('man', st.man); rad('fen', st.fen); rad('cart', st.cart); rad('rab', st.rab);
+    rad('ver', PV); if (ROBE) rad('len', st.len); if (FEM) rad('belt', st.belt); rad('sea', seaVal()); rad('man', st.man); rad('fen', st.fen); rad('cart', st.cart); rad('rab', st.rab);
     ['ps', 'pd', 'pg', 'pb'].forEach(function (k) { rad(k, st[k]); rad(k + '-souf', st[k + 's']); I(k + '-rab').checked = !!st[k + 'r']; });
     ['emp', 'epa', 'pat', 'pmc', 'same'].forEach(function (k) { I(k).checked = !!st[k]; });
   }
@@ -218,7 +220,8 @@
     var sv = seaVal(); I('sea-' + sv).checked = true;
     var seaChanged = window.SAH_STYLE.sea !== +sv; window.SAH_STYLE.sea = +sv; window.SAH_STYLE.seaTxt = sv === '0' ? T.se : T.sd;
     window.SAH_STYLE.man = o.man; window.SAH_STYLE.fen = o.fen; window.SAH_STYLE.ver = PV;
-    if (ROBE) { window.SAH_STYLE.len = o.len; window.SAH_STYLE.belt = o.belt; $('st-hfen').hidden = o.len !== 'midi'; }
+    if (FEM) window.SAH_STYLE.belt = o.belt;
+    if (ROBE) { window.SAH_STYLE.len = o.len; $('st-hfen').hidden = o.len !== 'midi'; }
     if (seaChanged && !FEM) { var g0 = document.querySelector('.grp'); if (g0) setTimeout(function () { g0.dispatchEvent(new Event('change', { bubbles: true })); }, 0); }
     var ob = $('opt_epaule'); if (PV === 'd' && ob && ob.checked !== o.emp) { ob.checked = o.emp; ob.dispatchEvent(new Event('change', { bubbles: true })); }
     var g = document.querySelector('.grp[value="manches"]');
@@ -232,7 +235,7 @@
     var RB = { p: T.fpn, d: T.fdn, a: T.fan, c: T.fcn };
     var parts = [ROBE ? (EN ? (PV === 's' ? 'Simple ' : 'Lined ') + o.len + ' dress' : 'Robe ' + o.len + (PV === 's' ? ' simple' : ' doublée')) : PV === 's' ? T.simple : T.lined, (sv === '0' ? T.se : T.sd).toLowerCase(), o.man === 'l' ? T.long : T.short, o.fen === '0' ? T.noslit : (o.fen === 'c' ? T.sslit : T.bslit)];
     if (o.emp) parts.push(T.yoke); if (o.epa) parts.push(T.epaul); if (o.pat) parts.push(T.tabs); if (o.pmc) parts.push(T.spock);
-    if (ROBE && o.belt === '1') parts.push(T.beltTxt);
+    if (FEM && o.belt === '1') parts.push(T.beltTxt);
     parts.push(T.flapsOf + RB[o.rab]);
     var poit = o.same ? T.chestP + pk(o.ps, o.psr, o.pss) : T.rchest + pk(o.pd, o.pdr, o.pds) + ' ; ' + T.lchest + pk(o.pg, o.pgr, o.pgs);
     var sumTxt = parts.join(', ') + ' ; ' + poit + ' ; ' + T.lowP + pk(o.pb, o.pbr, o.pbs) + '.';
@@ -368,7 +371,7 @@
       rows.push([T.rm, o.man === 'l' ? T.ml : T.mc]);
       if (ROBE) rows.push([T.rf, o.fen === '0' ? T.f0 : (o.fen === 'c' ? T.fc : T.fd)]);
       rows.push([T.rs, [o.emp ? T.emp : '', o.epa ? T.epa : '', o.pat ? T.pat : '', o.pmc ? T.pmc : ''].filter(Boolean).join(', ') || T.none]);
-      if (ROBE) rows.push([T.belt, o.belt === '1' ? T.b1 : T.b0]);
+      if (FEM) rows.push([T.belt, o.belt === '1' ? T.b1 : T.b0]);
       rows.push([T.rch, last.poit.replace(T.chestP, '')]);
       rows.push([T.rlo, pk(o.pb, o.pbr, o.pbs)]);
       rows.push([T.flaps, ({ p: T.fp, d: T.fdr, a: T.fa, c: T.fcc })[o.rab]]);

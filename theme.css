@@ -116,3 +116,4 @@ body.th header nav>a.marque span{white-space:nowrap;font:700 1.1rem/1.05 "Titres
 @media(max-width:600px){.marque img{width:34px;height:34px}body.th header nav>a.marque span{font-size:1.2rem;padding:6px 2px 11px 4px;margin-top:4px;background-size:100% 11px}}
 
 body.th header nav>a:not(.marque),body.th header nav details.dd>summary{padding-left:8px;padding-right:8px}
+.ppbox{margin-top:12px;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card)}.ppbox p{margin:0 0 .6em;font-size:.92rem;line-height:1.4}.ppbox p:last-child{margin:0}

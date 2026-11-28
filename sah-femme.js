@@ -36,6 +36,7 @@
     if (g.doublure && v === 'd') out.push(N.dblDev, N.dblDos);
     if (g.doublure && v === 'd' && !sh) out.push(N.dblM1, N.dblM2);
     if (g.thermo) out.push(N.colT, N.parT, N.parTm);
+    if (g.ceinture && window.SAH_STYLE && window.SAH_STYLE.belt === '1') out.push(N.ceinture, N.passants);
     return out.filter(Boolean);
   }
 
@@ -154,6 +155,7 @@
     var d = ver() === 'd', ep = $('opt_epaule'), g = document.querySelector('.grp[value="doublure"]');
     if (ep && ep.closest('label')) ep.closest('label').hidden = !d;
     if (g) { g.closest('label').hidden = !d; }
+    var gb = document.querySelector('.grp[value="ceinture"]'); if (gb) gb.closest('label').hidden = !(window.SAH_STYLE && window.SAH_STYLE.belt === '1');
   }
   /* l'étape « Style » est celle des pages homme (saharienne-style.js), avec le croquis femme ; on y ajoute la mention de validation */
   var M = window.SAH_STYLE_UI;

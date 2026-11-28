@@ -59,7 +59,7 @@ function mount(root){
   if(!cta){cta=document.createElement('a');cta.className='mc-cta';cta.textContent=L.cta;root.appendChild(cta);}
   function draw(){
     root.dataset.modele=s.genre==='f'?'saharienne-femme':'saharienne-homme';
-    window.SahCroquis.draw(sv,{ver:'s',genre:s.genre,man:s.man,fen:'0',emp:false,epa:true,pat:true,pmc:true,same:!s.cart,
+    window.SahCroquis.draw(sv,{ver:'s',genre:s.genre,belt:s.genre==='f'?'1':'0',man:s.man,fen:'0',emp:false,epa:true,pat:true,pmc:true,same:!s.cart,
       ps:'c',psr:true,pss:'i',pd:'c',pdr:true,pds:'i',pg:s.cart?'k':'c',pgr:true,pgs:'i',pb:'l',pbr:true,pbs:'i'},s.rab,'face');
     for(const k in rows) rows[k].querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(String(s[k])===b.dataset.v)));
     cta.href=href+'?coupe='+QP.genre[s.genre]+'&manches='+QP.man[s.man]+'&cartouchiere='+QP.cart[s.cart]+'&rabats='+QP.rab[s.rab];
